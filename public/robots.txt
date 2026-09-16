@@ -1,0 +1,29 @@
+# Dhaka's Metro Lifeline and Its Ballooning Price Tag - The Daily Star
+# Canonical home: https://campaign.thedailystar.net/metro-rail-story/
+#
+# Note: crawlers only read robots.txt at the root of a domain. This copy takes
+# effect where the story is served from a domain root (for example a Vercel
+# preview). On campaign.thedailystar.net the site-wide robots.txt applies.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Search and AI answer engines are welcome to read and cite this story.
+User-agent: Googlebot
+User-agent: Google-Extended
+User-agent: Bingbot
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+
+Sitemap: https://campaign.thedailystar.net/metro-rail-story/sitemap.xml

@@ -1,0 +1,1731 @@
+/*
+ * Dhaka's Metro Lifeline: visual story styles.
+ *
+ * One committed dark theme: the story is read on top of a night-toned map
+ * (FT / NYT scrollytelling convention), so the page never flips to light.
+ *
+ * Type rule: serif (Newsreader) carries the narrative voice; sans
+ * (Libre Franklin) carries data, labels and controls.
+ *
+ * Shape rule: editorial surfaces are square-cornered. The only round shapes
+ * are map glyphs (line bullets, station dots), following transit-map convention.
+ *
+ * Z-index scale: stage 0 · after-map sections 2 · steps 3 · masthead 20 · back-to-top 25 ·
+ * skip link 30 · loading screen 100 (inline in index.html).
+ */
+
+:root {
+  --ink: #0f141a;
+  --land: #1a2029;
+  --card: rgb(15 20 26 / 0.92);
+  --text-1: #eef1f4;
+  --text-2: #aeb6c0;
+  --text-3: #818b97;
+  --rule: rgb(238 241 244 / 0.1);
+  --rule-strong: rgb(238 241 244 / 0.22);
+
+  /* Line colours: validated as a set for colour-vision deficiency on the map surface. */
+  --line-6: #5ddca5;
+  --line-1: #e4303c;
+  --line-5n: #52acf2;
+  --line-5s: #e9853e;
+  --line-2: #7e62d6;
+  --line-4: #f0ca2c;
+  /*
+   * Line colours as text on the dark cards. Identical to the map colours except
+   * Line 1: its red is lifted a touch (3.3:1 -> 5.1:1 contrast) so the name
+   * stays readable at body size while still reading as the red line.
+   */
+  --text-line-6: var(--line-6);
+  --text-line-1: #f04c57;
+  --text-line-5n: var(--line-5n);
+  --text-line-5s: var(--line-5s);
+  --text-line-2: #9a83e6;
+  --text-line-4: var(--line-4);
+
+  --serif: 'Newsreader Variable', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
+  --sans: 'Libre Franklin Variable', 'Libre Franklin Fallback', 'Helvetica Neue', Arial, sans-serif;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* Drawers and sheets (iOS-like). */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --gutter: clamp(1rem, 4vw, 3.5rem);
+  /* Left inset of the reading column on wide screens. */
+  --step-inset: clamp(2rem, 5vw, 5rem);
+  --col: min(29rem, 100%);
+  --masthead-h: 4.25rem;
+
+  color-scheme: dark;
+}
+
+/*
+ * Metric-matched fallbacks (measured from the font files) so the swap to the
+ * web fonts does not shift the headline or the cards.
+ */
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia');
+  size-adjust: 96.6%;
+  ascent-override: 76.1%;
+  descent-override: 27.4%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Libre Franklin Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  size-adjust: 102.7%;
+  ascent-override: 94%;
+  descent-override: 23.9%;
+  line-gap-override: 0%;
+}
+
+/* ------------------------------------------------------------------ reset */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+p,
+ol,
+ul,
+figure {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--text-1);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  z-index: 30;
+  padding: 0.625rem 1rem;
+  background: var(--text-1);
+  color: var(--ink);
+  font: 600 0.875rem/1 var(--sans);
+  text-decoration: none;
+  transform: translate(-50%, -200%);
+}
+
+.skip-link:focus-visible {
+  transform: translate(-50%, 0);
+}
+
+/* --------------------------------------------------------------- masthead */
+
+.masthead {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 20;
+  height: var(--masthead-h);
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to bottom, rgb(15 20 26 / 0.88), rgb(15 20 26 / 0));
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+
+.masthead[data-hidden] {
+  opacity: 0;
+}
+
+/* Past the map, the masthead needs its own ground so text never runs under the logo. */
+.masthead[data-solid] {
+  background: rgb(15 20 26 / 0.96);
+  box-shadow: 0 1px 0 var(--rule);
+}
+
+.masthead__logo {
+  display: block;
+  padding: 0.5rem 0;
+  pointer-events: auto;
+}
+
+.masthead__logo img {
+  width: auto;
+  height: 1.375rem;
+}
+
+@media (min-width: 768px) {
+  .masthead__logo img {
+    height: 1.625rem;
+  }
+}
+
+/* ---------------------------------------------------------------- scrolly */
+
+.scrolly {
+  position: relative;
+  timeline-scope: --hero;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100vh;
+  height: 100lvh;
+  overflow: hidden;
+  background: var(--land);
+}
+
+/* Doubled class beats mapbox-gl.css (.mapboxgl-map { position: relative }). */
+.stage__map.stage__map {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.stage__map[data-ready] {
+  opacity: 1;
+}
+
+.stage__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%, rgb(15 20 26 / 0.72), rgb(15 20 26 / 0.3) 75%),
+    linear-gradient(rgb(15 20 26 / 0.15), rgb(15 20 26 / 0.15));
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.stage[data-step='hero'] .stage__scrim {
+  opacity: 1;
+}
+
+.stage__fallback {
+  position: absolute;
+  inset: auto var(--gutter) 2rem;
+  display: grid;
+  place-items: center;
+  color: var(--text-2);
+  font: 400 0.9375rem/1.5 var(--sans);
+  text-align: center;
+}
+
+/*
+ * Above the after-map sections (2): the afterword's fade-to-ink gradient
+ * reaches up over the end of the map, and it must darken only the map, never
+ * the cards or the network explorer sitting on top of it.
+ */
+.steps {
+  position: relative;
+  z-index: 3;
+  margin-top: -100vh;
+  margin-top: -100lvh;
+  pointer-events: none;
+}
+
+.step {
+  padding: 0 var(--gutter) 78svh;
+}
+
+.step--pause {
+  padding-bottom: 115svh;
+}
+
+/* Hero */
+
+.step--hero {
+  min-height: 100svh;
+  padding-top: var(--masthead-h);
+  padding-bottom: 12svh;
+  display: grid;
+  place-items: center;
+  view-timeline: --hero block;
+}
+
+.hero__title {
+  max-width: 24ch;
+  font-family: var(--serif);
+  font-size: clamp(2.375rem, 1.4rem + 3.6vw, 4.75rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.012em;
+  text-align: center;
+  text-wrap: balance;
+  pointer-events: auto;
+  animation: hero-in 900ms var(--ease-out) both;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+/* Focus lands here programmatically after "back to top"; no ring for that. */
+.hero__title:focus {
+  outline: none;
+}
+
+/* The headline waits behind the loading screen and rises as it lifts. */
+.js:not(.is-ready) .hero__title {
+  animation-play-state: paused;
+}
+
+/* Cards */
+
+.card {
+  position: relative;
+  width: 100%;
+  max-width: var(--col);
+  margin-inline: auto;
+  padding: clamp(1.125rem, 0.95rem + 0.7vw, 1.625rem) clamp(1.25rem, 1rem + 1vw, 1.875rem);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  box-shadow: 0 1.25rem 2.5rem -1rem rgb(4 7 10 / 0.6);
+  font-family: var(--serif);
+  font-size: clamp(1.0625rem, 0.98rem + 0.36vw, 1.25rem);
+  line-height: 1.55;
+  font-variant-numeric: lining-nums;
+  text-wrap: pretty;
+  pointer-events: auto;
+}
+
+.card p + p {
+  margin-top: 0.75em;
+}
+
+.card strong {
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --col: 29rem;
+  }
+
+  .step:not(.step--hero) {
+    padding-left: var(--step-inset);
+  }
+
+  .card {
+    margin-inline: 0;
+  }
+}
+
+/*
+ * A line named in the text takes that line's map colour, so readers can
+ * follow it from the sentence to the map. Nothing else in the copy is coloured.
+ */
+.line-ref {
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ref, inherit);
+}
+
+.line-ref[data-line='6'] {
+  --ref: var(--text-line-6);
+}
+
+.line-ref[data-line='1'] {
+  --ref: var(--text-line-1);
+}
+
+.line-ref[data-line='5N'] {
+  --ref: var(--text-line-5n);
+}
+
+.line-ref[data-line='5S'] {
+  --ref: var(--text-line-5s);
+}
+
+.line-ref[data-line='2'] {
+  --ref: var(--text-line-2);
+}
+
+.line-ref[data-line='4'] {
+  --ref: var(--text-line-4);
+}
+
+/* Line-6 cost bars */
+
+.costbars {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.125rem;
+  font: 500 0.8125rem/1.2 var(--sans);
+  color: var(--text-2);
+}
+
+.costbar {
+  display: grid;
+  grid-template-columns: 5.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.costbar__track {
+  display: block;
+  height: 0.625rem;
+}
+
+.costbar__fill {
+  display: block;
+  height: 100%;
+  background: var(--line-6);
+  transform-origin: left center;
+  transform: scaleX(var(--v));
+}
+
+.costbar:first-child .costbar__fill {
+  opacity: 0.55;
+}
+
+.costbar__value {
+  color: var(--text-1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Kamlapur progress: built portion solid, unbuilt portion dashed, like the map. */
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 1.125rem;
+  font: 500 0.8125rem/1.2 var(--sans);
+  color: var(--text-2);
+}
+
+.progress__bar {
+  position: relative;
+  flex: 1;
+  height: 0.625rem;
+  border: 1px dashed rgb(93 220 165 / 0.55);
+}
+
+.progress__fill {
+  position: absolute;
+  inset: -1px auto -1px -1px;
+  width: calc(100% + 2px);
+  background: var(--line-6);
+  transform-origin: left center;
+  transform: scaleX(var(--p));
+}
+
+.progress figcaption strong {
+  color: var(--text-1);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bars grow from their axis once, when their card becomes active. */
+.js .card:not([data-revealed]) .costbar__fill,
+.js .card:not([data-revealed]) .progress__fill {
+  transform: scaleX(0);
+}
+
+.card[data-revealed] .costbar__fill,
+.card[data-revealed] .progress__fill {
+  transition: transform 700ms var(--ease-out);
+}
+
+.card[data-revealed] .costbar:nth-child(2) .costbar__fill {
+  transition-delay: 90ms;
+}
+
+/* Elevated / underground key */
+
+.depth-key,
+.map-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+  font: 500 0.8125rem/1.2 var(--sans);
+  color: var(--text-2);
+}
+
+.depth-key__item,
+.map-key__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.depth-key__swatch {
+  display: inline-block;
+  width: 1.625rem;
+  height: 0.5rem;
+  background: var(--text-1);
+}
+
+.depth-key__swatch--hollow {
+  background: transparent;
+  border-block: 2px solid var(--text-1);
+}
+
+.map-key__interchange {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--text-1);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+/* Scroll-linked exit: a card fades as it reaches the top of the screen. */
+@supports (animation-timeline: view()) {
+  .card {
+    animation: card-exit linear both;
+    animation-timeline: view(block 16% 0%);
+    animation-range: exit 0% exit 70%;
+  }
+
+  .hero__title {
+    animation:
+      hero-in 900ms var(--ease-out) both,
+      hero-exit linear both;
+    animation-timeline: auto, view(block);
+    animation-range: normal, cover 50% cover 72%;
+  }
+
+  .stage__scrim {
+    transition: none;
+    animation: scrim-exit linear both;
+    animation-timeline: --hero;
+    animation-range: cover 50% cover 78%;
+  }
+}
+
+@keyframes card-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+@keyframes hero-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-2.5rem);
+  }
+}
+
+@keyframes scrim-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Fallback for browsers without scroll-driven animations. */
+@supports not (animation-timeline: view()) {
+  .js .card {
+    transition: opacity 320ms ease;
+  }
+
+  .js .card[data-past] {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------- network explorer */
+
+/*
+ * Short on purpose: once the explorer has arrived it holds for about half a
+ * screen of scrolling, then the story moves on. Exploring needs no scrolling.
+ */
+.step--network {
+  min-height: 140svh;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.step--network:focus {
+  outline: none;
+}
+
+/* The sticky wrapper is transparent; the panel and its tab take the pointer. */
+.network {
+  position: sticky;
+  top: calc(var(--masthead-h) + 0.75rem);
+  width: 100%;
+  max-width: var(--col);
+  margin-inline: auto;
+  font-family: var(--sans);
+}
+
+.network__panel {
+  position: relative;
+  padding: 1.25rem 1.25rem 1rem;
+  background: rgb(15 20 26 / 0.95);
+  border: 1px solid var(--rule);
+  box-shadow: 0 1.25rem 2.5rem -1rem rgb(4 7 10 / 0.6);
+  pointer-events: auto;
+}
+
+.network__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.network__title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.network__hint {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+/* Controls that only exist in one layout. */
+.dock-tab,
+.sheet-grip,
+.sheet-toggle {
+  display: none;
+}
+
+.icon-btn {
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -0.5rem -0.625rem -0.5rem 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text-2);
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn:hover {
+    color: var(--text-1);
+  }
+}
+
+.icon-btn__icon,
+.dock-tab__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 420ms var(--ease-drawer);
+}
+
+/* Desktop: the panel slides off to the left behind a tab on its edge. */
+@media (min-width: 1024px) {
+  .network {
+    margin-inline: 0;
+    transition: transform 440ms var(--ease-drawer);
+  }
+
+  .network__panel {
+    max-height: calc(100svh - var(--masthead-h) - 2rem);
+    overflow-y: auto;
+    /* auto, not contain: once the panel reaches its end the page keeps scrolling. */
+    overscroll-behavior: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(238 241 244 / 0.22) transparent;
+  }
+
+  /* Off by exactly its width plus the page inset: the tab lands flush on the screen edge. */
+  .network[data-collapsed] {
+    transform: translateX(calc(-100% - var(--step-inset)));
+  }
+
+  .dock-tab {
+    position: absolute;
+    top: 1rem;
+    left: 100%;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 3.75rem;
+    margin-left: -1px;
+    padding: 0;
+    background: rgb(15 20 26 / 0.95);
+    border: 1px solid var(--rule);
+    border-left: 0;
+    box-shadow: 0.75rem 0.75rem 1.5rem -0.75rem rgb(4 7 10 / 0.6);
+    color: var(--text-2);
+    cursor: pointer;
+    pointer-events: auto;
+    transition:
+      color 160ms ease,
+      background-color 160ms ease,
+      transform 160ms var(--ease-out);
+  }
+
+  .dock-tab:active {
+    transform: scale(0.96);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .dock-tab:hover {
+      color: var(--text-1);
+      background: rgb(30 37 46 / 0.97);
+    }
+  }
+
+  .network[data-collapsed] .dock-tab {
+    border-color: var(--rule-strong);
+    color: var(--text-1);
+  }
+
+  .network[data-collapsed] .dock-tab__icon {
+    transform: rotate(180deg);
+  }
+}
+
+.lines {
+  display: grid;
+  gap: 1px;
+  margin-top: 0.875rem;
+  list-style: none;
+}
+
+.line-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.5rem;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    opacity 200ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.line-btn:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .line-btn:hover {
+    background: rgb(238 241 244 / 0.06);
+  }
+}
+
+.line-btn[aria-pressed='true'] {
+  background: rgb(238 241 244 / 0.1);
+}
+
+.lines[data-selection] .line-btn[aria-pressed='false'] {
+  opacity: 0.5;
+}
+
+.line-btn__text {
+  display: grid;
+  min-width: 0;
+}
+
+.line-btn__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.line-btn__route {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--text-2);
+}
+
+.badge {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  min-width: 1.875rem;
+  height: 1.875rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--c);
+  color: var(--ink);
+  font: 700 0.8125rem/1 var(--sans);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge--sm {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.6875rem;
+}
+
+.detail:empty {
+  display: none;
+}
+
+.detail {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.detail__head {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.detail__title {
+  font-size: 1.0625rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.detail__status {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0.875rem 0 0;
+}
+
+.facts dt {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.facts dd {
+  margin: 0.125rem 0 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.875rem;
+  list-style: none;
+}
+
+.station-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+  background: rgb(238 241 244 / 0.05);
+  border: 1px solid transparent;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.station-btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .station-btn:hover {
+    background: rgb(238 241 244 / 0.12);
+  }
+}
+
+.station-btn[data-interchange]::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--text-1);
+}
+
+.served {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  list-style: none;
+}
+
+.served li {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+}
+
+.served__depth {
+  color: var(--text-2);
+}
+
+.detail__back {
+  margin-top: 0.875rem;
+  padding: 0.5rem 0;
+  min-height: 2.75rem;
+  background: none;
+  border: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.network__note {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+/*
+ * Phones and tablets: the explorer is a bottom sheet over the pinned map.
+ * Drag the grip to any height, flick to minimise or expand, or use the chevron.
+ */
+@media (max-width: 1023px) {
+  .step--network {
+    justify-content: flex-end;
+    padding-inline: 0.625rem;
+  }
+
+  .network {
+    top: auto;
+    bottom: calc(0.625rem + env(safe-area-inset-bottom));
+    max-width: 40rem;
+  }
+
+  .network__panel {
+    padding: 0 0.875rem 0.625rem;
+  }
+
+  .sheet-grip {
+    display: grid;
+    place-items: center;
+    width: calc(100% + 1.75rem);
+    height: 1.75rem;
+    margin: 0 -0.875rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: grab;
+    /* The grip owns vertical drags; the page must not scroll under the finger. */
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sheet-grip:focus-visible {
+    outline-offset: -4px;
+  }
+
+  .sheet-grip__bar {
+    display: block;
+    width: 2.5rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: rgb(238 241 244 / 0.3);
+    transition:
+      background-color 160ms ease,
+      transform 200ms var(--ease-out);
+  }
+
+  .network[data-dragging] .sheet-grip {
+    cursor: grabbing;
+  }
+
+  .network[data-dragging] .sheet-grip__bar {
+    background: rgb(238 241 244 / 0.55);
+    transform: scaleX(1.2);
+  }
+
+  .network__head {
+    align-items: center;
+  }
+
+  .sheet-toggle {
+    display: grid;
+  }
+
+  .network[data-minimized] .sheet-toggle .icon-btn__icon {
+    transform: rotate(180deg);
+  }
+
+  .network__title {
+    font-size: 1.0625rem;
+  }
+
+  /* Full panel width, so the line chips can scroll edge to edge inside it. */
+  .network__body {
+    margin-inline: -0.875rem;
+    padding-inline: 0.875rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: auto;
+    transition: height 380ms var(--ease-drawer);
+  }
+
+  /* Until the reader picks a height, the sheet follows its content up to a cap. */
+  .network__body:not([style*='height']) {
+    max-height: min(50svh, 28rem);
+  }
+
+  /* Flicked open: still content-sized, with most of the screen available. */
+  .network[data-sheet-full] .network__body:not([style*='height']) {
+    max-height: calc(78svh - 5.25rem);
+  }
+
+  .network[data-dragging] .network__body {
+    transition: none;
+  }
+
+  .network__hint,
+  .map-key,
+  .network__note {
+    font-size: 0.75rem;
+  }
+
+  /* Six lines in two rows of three: every line visible, nothing scrolls sideways. */
+  .lines {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+  }
+
+  .lines li {
+    display: flex;
+    min-width: 0;
+  }
+
+  .line-btn {
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.3125rem 0.5rem 0.3125rem 0.3125rem;
+    background: rgb(238 241 244 / 0.06);
+  }
+
+  .line-btn .badge {
+    min-width: 1.625rem;
+    height: 1.625rem;
+    font-size: 0.75rem;
+  }
+
+  /* "Line 5 North" breaks after "Line 5" on phones; rows keep equal height. */
+  .line-btn__name {
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .line-btn__route {
+    display: none;
+  }
+
+  .map-key {
+    margin-top: 0.625rem;
+  }
+}
+
+/* The narrowest phones (320px class): tighter chips so "Line 6" never breaks. */
+@media (max-width: 359px) {
+  .lines {
+    gap: 0.25rem;
+  }
+
+  .line-btn {
+    gap: 0.3125rem;
+    padding: 0.25rem 0.3125rem 0.25rem 0.25rem;
+  }
+
+  .line-btn .badge {
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.2rem;
+    font-size: 0.6875rem;
+  }
+
+  .line-btn__name {
+    font-size: 0.75rem;
+  }
+}
+
+/* --------------------------------------------------------- map furniture */
+
+.map-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  max-width: 16rem;
+  padding: 0.5rem 0.625rem;
+  background: rgb(15 20 26 / 0.96);
+  border: 1px solid var(--rule-strong);
+  font: 500 0.8125rem/1.35 var(--sans);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.map-tip[data-visible] {
+  opacity: 1;
+}
+
+.map-tip__name {
+  font-weight: 650;
+}
+
+.map-tip__lines {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+}
+
+.train {
+  will-change: transform;
+}
+
+.train__body {
+  width: 1.25rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #f4f6f7;
+  box-shadow:
+    0 0 0 1.5px var(--line-6),
+    0 0 0 3.5px rgb(15 20 26 / 0.55);
+  transform: scale(var(--train-scale, 1));
+}
+
+.annot {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  pointer-events: none;
+}
+
+.annot__ring {
+  position: relative;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+}
+
+.annot__ring::before,
+.annot__ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-6);
+}
+
+.annot__ring::after {
+  animation: ripple 2200ms var(--ease-out) infinite;
+}
+
+@keyframes ripple {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+.annot__label {
+  display: grid;
+  padding: 0.375rem 0.625rem;
+  background: rgb(15 20 26 / 0.92);
+  border-left: 3px solid var(--line-6);
+  font: 500 0.8125rem/1.3 var(--sans);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.annot__label strong {
+  color: var(--text-1);
+  font-weight: 650;
+}
+
+.annot-enter {
+  opacity: 0;
+  transform: translateY(0.375rem);
+  transition:
+    opacity 400ms var(--ease-out),
+    transform 400ms var(--ease-out);
+}
+
+.annot-enter[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+  background: rgb(15 20 26 / 0.72);
+  color: var(--text-3);
+  font-family: var(--sans);
+}
+
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib a {
+  color: var(--text-2);
+}
+
+.mapboxgl-ctrl-attrib.mapboxgl-compact {
+  background: rgb(238 241 244 / 0.9);
+}
+
+.stage .mapboxgl-ctrl-group:not(:empty) {
+  border-radius: 0;
+  background: rgb(15 20 26 / 0.92);
+  box-shadow: 0 0 0 1px var(--rule-strong);
+  transition: opacity 240ms ease;
+}
+
+.stage .mapboxgl-ctrl-group button {
+  width: 2.25rem;
+  height: 2.25rem;
+  transition: background-color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stage .mapboxgl-ctrl-group button:not(:disabled):hover {
+    background-color: rgb(238 241 244 / 0.08);
+  }
+}
+
+.stage .mapboxgl-ctrl-group button + button {
+  border-top-color: var(--rule);
+}
+
+.stage .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+  filter: invert(1);
+}
+
+.stage:not([data-interactive]) .mapboxgl-ctrl-group:not(:empty) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------- after the map */
+
+.afterword {
+  position: relative;
+  z-index: 2;
+  padding: clamp(4rem, 10vw, 8rem) var(--gutter) clamp(3rem, 7vw, 5rem);
+  background: var(--ink);
+}
+
+.afterword::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 100%;
+  height: 32svh;
+  background: linear-gradient(to bottom, rgb(15 20 26 / 0), var(--ink));
+  pointer-events: none;
+}
+
+.afterword p {
+  max-width: 38rem;
+  margin-inline: auto;
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 1.08rem + 0.75vw, 1.625rem);
+  line-height: 1.5;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.afterword p + p {
+  margin-top: 1.25em;
+  color: var(--text-2);
+}
+
+/* Timeline */
+
+.timeline {
+  position: relative;
+  z-index: 2;
+  padding: clamp(3rem, 7vw, 5rem) var(--gutter) clamp(4rem, 10vw, 7rem);
+  background: var(--ink);
+}
+
+.timeline__title,
+.tl {
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+.timeline__title {
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 1.3rem + 1.9vw, 2.875rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.tl {
+  --date-col: 8.5rem;
+  --axis-col: 2.5rem;
+  --axis-x: calc(var(--date-col) + var(--axis-col) / 2);
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  list-style: none;
+}
+
+.tl__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--date-col) var(--axis-col) minmax(0, 36rem);
+  align-items: start;
+  padding-top: clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem);
+}
+
+.tl__item:first-child {
+  padding-top: 0.25rem;
+}
+
+/* Axis segment running from the previous event down through this one. */
+.tl__item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--axis-x) - 1px);
+  width: 2px;
+  background: var(--rule-strong);
+}
+
+.tl__item:first-child::before {
+  top: 0.9rem;
+}
+
+.tl__item:last-child::before {
+  bottom: auto;
+  height: calc(clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem) + 0.9rem);
+}
+
+.tl__item::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--axis-x) - 0.375rem);
+  top: calc(clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem) + 0.525rem);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--text-1);
+  box-shadow: 0 0 0 4px var(--ink);
+}
+
+.tl__item:first-child::after {
+  top: 0.775rem;
+}
+
+.tl__item[data-future]::before {
+  background: repeating-linear-gradient(to bottom, var(--rule-strong) 0 0.375rem, transparent 0.375rem 0.75rem);
+}
+
+.tl__item[data-future]::after {
+  background: var(--ink);
+  box-shadow:
+    inset 0 0 0 2px var(--text-2),
+    0 0 0 4px var(--ink);
+}
+
+.tl__date {
+  grid-column: 1;
+  padding-right: 1rem;
+  font: 650 0.9375rem/1.9 var(--sans);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tl__text {
+  grid-column: 3;
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.tl__lines {
+  grid-column: 3;
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.tl__item--today .tl__date {
+  color: var(--text-3);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.tl__item--today::after {
+  width: 1.25rem;
+  height: 2px;
+  left: calc(var(--axis-x) - 0.625rem);
+  top: calc(clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem) + 0.9rem);
+  border-radius: 0;
+  background: var(--text-3);
+  box-shadow: none;
+}
+
+.tl__today-text {
+  grid-column: 3;
+  font: 500 0.875rem/1.9 var(--sans);
+  color: var(--text-3);
+}
+
+@media (max-width: 639px) {
+  .tl {
+    --axis-col: 1.75rem;
+    --axis-x: calc(var(--axis-col) / 2);
+  }
+
+  .tl__item {
+    grid-template-columns: var(--axis-col) minmax(0, 1fr);
+    padding-top: clamp(1.5rem, calc(var(--gap) * 1rem), 5rem);
+  }
+
+  .tl__item::after {
+    top: calc(clamp(1.5rem, calc(var(--gap) * 1rem), 5rem) + 0.525rem);
+  }
+
+  .tl__item:last-child::before {
+    height: calc(clamp(1.5rem, calc(var(--gap) * 1rem), 5rem) + 0.9rem);
+  }
+
+  .tl__item--today::after {
+    top: calc(clamp(1.5rem, calc(var(--gap) * 1rem), 5rem) + 0.9rem);
+  }
+
+  .tl__date,
+  .tl__text,
+  .tl__lines,
+  .tl__today-text {
+    grid-column: 2;
+    padding-left: 0.25rem;
+  }
+
+  .tl__date {
+    padding-right: 0;
+    text-align: left;
+  }
+
+  .tl__text {
+    font-size: 1.0625rem;
+  }
+}
+
+.js .tl__item {
+  opacity: 0;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 500ms var(--ease-out);
+}
+
+.js .tl__item[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Footer */
+
+.site-footer {
+  position: relative;
+  z-index: 2;
+  /* Bottom room so the back-to-top button never sits on the credits. */
+  padding: 2rem var(--gutter) calc(4.75rem + env(safe-area-inset-bottom));
+  background: var(--ink);
+  border-top: 1px solid var(--rule);
+}
+
+.site-footer__row,
+.site-footer__legal,
+.site-footer__credits {
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.site-footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+}
+
+.site-footer__logo img {
+  width: auto;
+  height: 1.75rem;
+}
+
+.social {
+  display: flex;
+  gap: 0.25rem;
+  margin-right: -0.625rem;
+  list-style: none;
+}
+
+.social a {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--text-2);
+  transition:
+    color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.social a:active {
+  transform: scale(0.94);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .social a:hover {
+    color: var(--text-1);
+  }
+}
+
+.social svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  fill: currentColor;
+}
+
+.site-footer__legal {
+  margin-top: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+
+.site-footer__credits {
+  margin-top: 0.625rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.site-footer__credits-label {
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------ back to top */
+
+.to-top {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 25;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  background: rgb(15 20 26 / 0.94);
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 0.75rem 1.5rem -0.75rem rgb(4 7 10 / 0.75);
+  color: var(--text-1);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(0.5rem);
+  pointer-events: none;
+  /* Leaving is quicker than arriving. */
+  transition:
+    opacity 160ms ease,
+    transform 160ms var(--ease-out),
+    background-color 160ms ease;
+}
+
+.to-top[data-visible] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition-duration: 240ms, 240ms, 160ms;
+}
+
+.to-top[data-visible]:active {
+  transform: scale(0.95);
+  transition-duration: 120ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .to-top:hover {
+    background: rgb(34 42 52 / 0.96);
+  }
+}
+
+.to-top__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------ reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__title {
+    animation: none;
+  }
+
+  @supports (animation-timeline: view()) {
+    .hero__title {
+      animation: hero-exit-fade linear both;
+      animation-timeline: view(block);
+      animation-range: cover 50% cover 72%;
+    }
+
+    .card {
+      animation-name: card-exit-fade;
+    }
+  }
+
+  .annot__ring::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  .card[data-revealed] .costbar__fill,
+  .card[data-revealed] .progress__fill {
+    transition: none;
+  }
+
+  .js .tl__item {
+    transform: none;
+  }
+
+  .line-btn,
+  .station-btn,
+  .social a {
+    transition-property: background-color, opacity, color;
+  }
+
+  /* Panels change state in place: no sliding, no resizing animation. */
+  .network,
+  .network__body,
+  .icon-btn__icon,
+  .dock-tab__icon {
+    transition: none;
+  }
+
+  .to-top,
+  .to-top[data-visible],
+  .to-top[data-visible]:active {
+    transform: none;
+  }
+}
+
+@keyframes hero-exit-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes card-exit-fade {
+  to {
+    opacity: 0;
+  }
+}
