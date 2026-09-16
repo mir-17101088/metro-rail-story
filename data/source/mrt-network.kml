@@ -1,0 +1,1573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document id="document">
+	<name>MRT all 6 routes &amp; Stations</name>
+	<gx:CascadingStyle kml:id="__managed_style_011684CD6D41DF9D6BC4_highlight">
+		<styleUrl>https://earth.google.com/balloon_components/base/1.1.0.0/card_template.kml#main</styleUrl>
+		<Style>
+			<IconStyle>
+				<scale>1.2</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>6</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_011684CD6D41DF9D6BC4_normal">
+		<styleUrl>https://earth.google.com/balloon_components/base/1.1.0.0/card_template.kml#main</styleUrl>
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_011684CD6D41DF9D6BC4">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_011684CD6D41DF9D6BC4_normal</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_011684CD6D41DF9D6BC4_highlight</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark id="058EEB55FE41DF9D6A74">
+		<name>Bangladesh Secretariat Metro Station(MRT 6)</name>
+		<LookAt>
+			<longitude>90.43086645590552</longitude>
+			<latitude>23.72766539247625</latitude>
+			<altitude>8.72287902094344</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>8298.001846843401</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.40790299999998,23.730028,11.35078042982742</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="088515228F41DF9E5B13">
+		<name>Motijheel Metro Station(MRT6,MRT-2)</name>
+		<LookAt>
+			<longitude>90.41924470537451</longitude>
+			<latitude>23.7279742998842</latitude>
+			<altitude>9.20860364693495</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>766.0484917739814</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41925963571072,23.72799936738058,9.247691528048591</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="042363351241DF9EEB70">
+		<name>Dhaka University Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.39658510443837</longitude>
+			<latitude>23.73183019906722</latitude>
+			<altitude>12.14512629521503</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>765.9844288893511</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.39659007938171,23.73189629496639,12.06338137366388</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="059339B39C41DF9FA8C7">
+		<name>Shahbagh Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.39602040222098</longitude>
+			<latitude>23.73941357044103</latitude>
+			<altitude>10.90458501139576</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>957.3592709118386</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.39597599999999,23.739303,11.26972793622784</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0235C2213C41DFA05E3B">
+		<name>Karwan Bazar Metro Station(MRT6, MRT-5S))</name>
+		<LookAt>
+			<longitude>90.3927799028348</longitude>
+			<latitude>23.75142559311465</latitude>
+			<altitude>11.0926902968314</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>765.5695035056124</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.39326474931485,23.74995387527688,10.93832965233668</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0DF51C93C041DFA0EDB6">
+		<name>Farmgate Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.38702216173162</longitude>
+			<latitude>23.75903295244791</latitude>
+			<altitude>12.96140693192917</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>957.1606852405239</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.38705900000001,23.759056,13.14709817362954</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="028CA3150B41DFA17B00">
+		<name>Bijoy Sarani Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.38307870007569</longitude>
+			<latitude>23.76652505004245</latitude>
+			<altitude>10.93818264207512</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>957.1121049922658</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.383072476793,23.76656776657761,10.93822582421748</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="03277E210941DFA241F7">
+		<name>Agargaon Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.38004900098815</longitude>
+			<latitude>23.77887504187732</latitude>
+			<altitude>10.87744829073461</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.7166024367909</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.3800490009864,23.77857021810122,10.13139054729615</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00131CAC2141DFA2E91C">
+		<name>Shewrapara Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.3755604003693</longitude>
+			<latitude>23.79077014917678</latitude>
+			<altitude>12.90245693037023</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.8281330449099</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.37547599999999,23.790966,13.39451075412617</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0F3669F4F341DFA3A843">
+		<name>Kazipara Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.37176790061206</longitude>
+			<latitude>23.79980529874198</latitude>
+			<altitude>13.50671299345085</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>765.2720885506278</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.37177785523953,23.79978935952112,13.4889859523206</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0A67F7945D41DFA493CC">
+		<name>Mirpur 10 Metro Station(MRT6,MRT-5N)</name>
+		<LookAt>
+			<longitude>90.36820425112215</longitude>
+			<latitude>23.80837284710491</latitude>
+			<altitude>11.23885318400491</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.8542773769877</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36847166867005,23.80736542007866,11.55629807775962</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="026E4D785341DFA52C8C">
+		<name>Mirpur 11 Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.3654277499959</longitude>
+			<latitude>23.81866639983281</latitude>
+			<altitude>13.03300897441636</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.6900872631234</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36524999999999,23.819105,13.62304516155383</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="03157E1B1741DFA5E1BC">
+		<name>Pallabi Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.36402653508132</longitude>
+			<latitude>23.82711701577232</latitude>
+			<altitude>12.26234969322367</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>765.1827157274967</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36418092217866,23.82626280585868,11.86601292100267</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0DF9FF466641DFA65828">
+		<name>Uttara South Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.36313175560856</longitude>
+			<latitude>23.84580063293173</latitude>
+			<altitude>6.732715115087884</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.5573259739904</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36305710454459,23.84586606652588,7.131655399148107</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0A29B271A141DFA6E761">
+		<name>Uttara Center Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.36512723020081</longitude>
+			<latitude>23.85963511270127</latitude>
+			<altitude>7.702411200383981</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.4141811203444</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36507742429593,23.85980307614787,7.320233239393352</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="09A87E548641DFA770CE">
+		<name>Uttara North Metro Station(MRT6)</name>
+		<LookAt>
+			<longitude>90.36747882288319</longitude>
+			<latitude>23.86902814194854</latitude>
+			<altitude>8.500775138301035</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>956.331946997816</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36746669999999,23.8689095,8.423968144595317</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0BB2B7CB9E41DFA8991F">
+		<name>Kamlapur Metro Station(MRT6 - 77.2% completed,MRT-2,MRT-4)</name>
+		<LookAt>
+			<longitude>90.42319227133754</longitude>
+			<latitude>23.73156507681358</latitude>
+			<altitude>10.29530752792123</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2545.026866684784</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.4253932356406,23.73140599344737,9.876940714877307</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0DCC1FDDF941DFAF3914">
+		<name>MRT6 line</name>
+		<LookAt>
+			<longitude>90.37277214775889</longitude>
+			<latitude>23.87219300701989</latitude>
+			<altitude>10.9309398063744</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2463.835550706717</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.42538642936077,23.73166307183672,0 90.42543327748723,23.72938727886832,0 90.4253466476126,23.72871411294662,0 90.42487625080894,23.72815102999527,0 90.42436902228231,23.72795266452405,0 90.42349220975341,23.7276187781679,0 90.42293464044521,23.72726758169315,0 90.42239447622605,23.72697671480203,0 90.42182498514092,23.72690320466373,0 90.42142807942783,23.72684500547426,0 90.42100532114668,23.72694537901544,0 90.42031747357886,23.72729751847953,0 90.41919481563997,23.72801671330287,0 90.41758986002048,23.72886786623296,0 90.41644329747186,23.72955284540423,0 90.41569487419878,23.72999475780036,0 90.41511409739057,23.73027097491476,0 90.41450014347032,23.73030408400835,0 90.41394494849339,23.73030406307835,0 90.41071087661742,23.73016056782161,0 90.40874540976699,23.73005036235015,0 90.40787717076617,23.73005037614216,0 90.40700601244733,23.73009411482191,0 90.40616509170393,23.73002831452652,0 90.40536682473984,23.72980712286688,0 90.40474218649035,23.72934326280344,0 90.4043910800282,23.72890207516348,0 90.40404073339219,23.72858244523326,0 90.40358272636668,23.72838366199106,0 90.40305175024768,23.72823039425547,0 90.40247330436426,23.72817686727466,0 90.40165366458685,23.72816277969754,0 90.40072480874804,23.72816223135433,0 90.4000855882597,23.72840512465092,0 90.39950664322222,23.72886883197716,0 90.39896391427037,23.72945400797175,0 90.3984803488697,23.72990663227364,0 90.39776983987701,23.73067954310953,0 90.3965795353587,23.73185973259237,0 90.39589175562098,23.73256445493238,0 90.39573501947723,23.73289572925493,0 90.39561584865382,23.73319552580252,0 90.39551921381909,23.73357030571005,0 90.39544729473272,23.73403384087086,0 90.39549470878876,23.73462919212585,0 90.39549468002537,23.7352029470415,0 90.39554351588576,23.73574333113333,0 90.3955438575364,23.7362945351233,0 90.39567592811183,23.73710011474237,0 90.39596405610901,23.73944126159334,0 90.39606001698486,23.74037945060219,0 90.39597515521373,23.74138447203523,0 90.39589187240141,23.74216782149979,0 90.39569870001563,23.74289685691999,0 90.39548143141845,23.7434263553787,0 90.39376846531648,23.74864874020963,0 90.39096930287397,23.75585899752939,0 90.39009175128513,23.75809631472869,0 90.38979101871364,23.75849388432028,0 90.38928282084809,23.75884627587213,0 90.38884918199935,23.75900092742287,0 90.38818705544212,23.75912249004101,0 90.38717700384859,23.75914484449522,0 90.38666763402919,23.75907825370881,0 90.38570354361713,23.75904515849906,0 90.38479965613431,23.75900156030626,0 90.38408851376592,23.75907861147524,0 90.38369209878296,23.75933270713382,0 90.38336677377086,23.75965234165956,0 90.38309959095595,23.7600822932213,0 90.38296691984398,23.76062289674134,0 90.3829769363257,23.76120847976766,0 90.38307851540134,23.76158096207554,0 90.38319724750492,23.76194585669582,0 90.38334219800861,23.76267323781808,0 90.38340459493183,23.76335875316082,0 90.38333273591414,23.76396485323596,0 90.38320532550783,23.76560631383801,0 90.38306088761466,23.76672144783108,0 90.38266321253808,23.7697359247098,0 90.38244553639109,23.77058584878816,0 90.38219422769156,23.77141364296219,0 90.38149328744555,23.77383076187933,0 90.38119110813221,23.77473587226307,0 90.3800187194532,23.778600057675,0 90.37962236709311,23.77998008828497,0 90.37870476910216,23.78317087699255,0 90.37837775099992,23.78410973481092,0 90.37756861683988,23.78619952947647,0 90.37714497448049,23.78718256512179,0 90.37545026684079,23.79109421311447,0 90.37507389599554,23.79198784960187,0 90.37187141060963,23.79947211714764,0 90.37060597080128,23.80241854883332,0 90.36996869496247,23.8040278521254,0 90.36904063764783,23.80583549819299,0 90.36863209842178,23.80684425599051,0 90.36859695595524,23.80720952894102,0 90.36801271009443,23.80927548428527,0 90.36739483573308,23.81137073424227,0 90.36550431075626,23.81824937219483,0 90.36451290849786,23.82190350478506,0 90.36439311635186,23.82240029489257,0 90.36431997687734,23.82319514514937,0 90.36427185729994,23.82414446558469,0 90.36420980127338,23.8253268012312,0 90.36416341761719,23.82701968039932,0 90.36413970468301,23.8275496749052,0 90.3640160302504,23.82822200056179,0 90.36392064754946,23.82882960192096,0 90.36383784361391,23.82950304891619,0 90.36379424435603,23.83057223586482,0 90.36373243052417,23.83431710645649,0 90.3636576954006,23.83598261677314,0 90.36349861829055,23.83712175292487,0 90.36359237305435,23.83771674340029,0 90.36380161894456,23.83838888543044,0 90.36396115417499,23.83900927313904,0 90.36407088004218,23.83962900865709,0 90.36407997564385,23.84032746786976,0 90.36383868927453,23.84121598434585,0 90.36360856293103,23.84178095730702,0 90.36337843342174,23.84244563091018,0 90.36320886010719,23.84313246020348,0 90.36316117833817,23.84390796365656,0 90.3630665222301,23.84584494714468,0 90.36309101369751,23.84680790269431,0 90.36322206212188,23.84745874868846,0 90.36332969435695,23.84828830108248,0 90.36368101177007,23.85057067126017,0 90.3644454314876,23.85548592555394,0 90.36507590244976,23.85985889504606,0 90.36545153126086,23.86176180788426,0 90.36592234898103,23.86500326131246,0 90.36604414796537,23.86574458291603,0 90.36640714861426,23.8663972932472,0 90.36685474885529,23.86706107342378,0 90.36726605503365,23.86816739848017,0 90.36738849714462,23.86904085620939,0 90.36749670763119,23.8696935545537,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="0D30C091C741DFB40A99">
+		<name>Rajarbagh MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42659574682102</longitude>
+			<latitude>23.74429944557734</latitude>
+			<altitude>11.29772247562877</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5065.856690479559</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.416320983636,23.74241505981432,11.55578192914497</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="000B92DFB241DFB52766">
+		<name>Malibagh MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.41690173508429</longitude>
+			<latitude>23.75239434850566</latitude>
+			<altitude>10.12461770730608</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1818.129141355749</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41433055437187,23.75242904980141,14.00562360809141</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="09F80876A241DFB5DB47">
+		<name>Rampura MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42071084332248</longitude>
+			<latitude>23.76143096350132</latitude>
+			<altitude>11.5314722701362</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2122.932558753819</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.42018588611749,23.76268730933969,10.29597751671991</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0DD183AC2E41DFB64521">
+		<name>Aftabnagar MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42436222026393</longitude>
+			<latitude>23.76829358408208</latitude>
+			<altitude>9.905318799410612</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1722.763888975605</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.42373270725568,23.76891635490581,8.4441802349079</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00ED55AF0041DFB70E51">
+		<name>Badda MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42731951645074</longitude>
+			<latitude>23.78255344113168</latitude>
+			<altitude>11.53207208954502</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2383.850953261717</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.4256137337763,23.78055966496857,10.7378360263368</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="040A35FB8441DFB760EF">
+		<name>North Badda MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42663691540369</longitude>
+			<latitude>23.78728071783039</latitude>
+			<altitude>11.57931147180654</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2383.803670959023</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.4256441829074,23.78589681098864,10.16631690487415</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0ED20F29AA41DFB7DF53">
+		<name>Notun Bazar MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42444219722211</longitude>
+			<latitude>23.79759379875004</latitude>
+			<altitude>9.15868555154</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1545.894515736436</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.42348781152519,23.79764142038858,9.485356876930675</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0F5AD9383741DFB8FB60">
+		<name>Nadda MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42258811695126</longitude>
+			<latitude>23.81173650015898</latitude>
+			<altitude>12.33554109177184</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1634.757802523382</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.42127859820167,23.81189720810264,10.29424413672013</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="07FFF94CA941DFB9DD50">
+		<name>Khilkhet MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42372261404705</longitude>
+			<latitude>23.83269686090639</latitude>
+			<altitude>10.52043440243384</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3150.496592705604</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41966415292404,23.83208744761932,10.2529931238137</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0C0A92A57D41DFBA9014">
+		<name>Airport Terminal 3 MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42469341105547</longitude>
+			<latitude>23.84280179019009</latitude>
+			<altitude>9.726326882666982</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>9836.198618280469</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41522388254623,23.84277223872572,11.49413971587759</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="046568154441DFBAE009">
+		<name>Airport MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.42469341105547</longitude>
+			<latitude>23.84280179019009</latitude>
+			<altitude>9.726326882666982</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>9836.198618280469</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.40216729988749,23.85810477727468,11.48052437295173</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00354AB9B541DFBC0598">
+		<name>Joar Sahara MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.42995133157801</longitude>
+			<latitude>23.82973667686393</latitude>
+			<altitude>6.885621536395233</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15446.4214660367</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.43538072877033,23.82848861223774,9.140555032881441</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="048EE748EE41DFBD80D9">
+		<name>Boalia MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.46391921851338</longitude>
+			<latitude>23.83304137297694</latitude>
+			<altitude>6.955570819694872</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15446.35174781783</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.45196131389169,23.83161617171355,8.629730970900045</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="04174AB84741DFBDCA7C">
+		<name>Mostul MRT1(Underground)</name>
+		<LookAt>
+			<longitude>90.46391921851338</longitude>
+			<latitude>23.83304137297694</latitude>
+			<altitude>6.955570819694872</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15446.35174781783</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.46592897972843,23.83492567606721,6.948092808600459</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="01B5BE009941DFBE3E90">
+		<name>Purbachal Cricket Stadium MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.51032977105041</longitude>
+			<latitude>23.83846427906627</latitude>
+			<altitude>14.63963171598652</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15438.66791007807</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.48550801933654,23.83758904890378,7.013563264143348</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0C2866AA5741DFBEFC18">
+		<name>Purbachal Center MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.51032977105041</longitude>
+			<latitude>23.83846427906627</latitude>
+			<altitude>14.63963171598652</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15438.66791007807</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.49998448139532,23.83740741048286,14.74106745396446</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="020A0E7C5C41DFBF479F">
+		<name>Purbachal East MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.51032977105041</longitude>
+			<latitude>23.83846427906627</latitude>
+			<altitude>14.63963171598652</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15438.66791007807</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.51736409003799,23.83749898095125,6.949063070668188</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0F731CCBE241DFBFC8EC">
+		<name>Purbachal Terminal MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.51032977105041</longitude>
+			<latitude>23.83846427906627</latitude>
+			<altitude>14.63963171598652</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>15438.66791007807</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.53826653485736,23.8341873940132,6.907651159896869</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0BDBBE096B41DFC2C3F7">
+		<name>MRT1(UnderGround)</name>
+		<LookAt>
+			<longitude>90.41207472572951</longitude>
+			<latitude>23.85613793812042</latitude>
+			<altitude>11.47885024832942</altitude>
+			<heading>-3.038812632422711</heading>
+			<tilt>33.10037920566221</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>6683.191428012215</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.42541656641583,23.73209665146449,0 90.42415241133321,23.73518247946245,0 90.42297251107372,23.73699538352728,0 90.42044411988923,23.73923253757439,0 90.41619046993671,23.74254844892018,0 90.41223309991031,23.74555446250328,0 90.4123959894393,23.74631800149682,0 90.41247496034863,23.74711253487402,0 90.41247985253588,23.74789211499914,0 90.41253335603604,23.74872228585885,0 90.41255169733307,23.74935162119376,0 90.41281442046457,23.74992589416961,0 90.41316535334836,23.75044410770894,0 90.41356675111143,23.75124029833372,0 90.41429513653061,23.75246171015262,0 90.41510165592599,23.75377929768504,0 90.42018245092584,23.7627076824416,0 90.42394448551489,23.76934462720143,0 90.4248380131443,23.77066065954918,0 90.42534284160482,23.77180525870018,0 90.42560554464673,23.77260188974729,0 90.42572706637445,23.77352853857953,0 90.42586915540603,23.77443667441537,0 90.42593141395379,23.77558547669076,0 90.42562680529446,23.77913955269115,0 90.4255697696731,23.78025181536873,0 90.4257074119713,23.78102939156904,0 90.4257679924186,23.78210407858536,0 90.42579183980324,23.78421457901426,0 90.4256854745997,23.78536079864807,0 90.42564540543165,23.78597248888542,0 90.4253016935395,23.78782556665955,0 90.42390343889478,23.79543949461869,0 90.42345863121214,23.79784736016451,0 90.42230242311072,23.80394414623753,0 90.42145601790604,23.80747219979783,0 90.42131561790889,23.80887352329374,0 90.42125660769358,23.81068153915663,0 90.42119213092241,23.81259228881659,0 90.42112970491445,23.81477202921744,0 90.4209912070296,23.81738678463682,0 90.4207026796668,23.81887806937854,0 90.4200612540083,23.81998268212834,0 90.41963244701391,23.82084248664119,0 90.41950642554337,23.82161037244569,0 90.42010155120772,23.82212625937312,0 90.42047146665479,23.82652219388081,0 90.41998856129389,23.82958586260234,0 90.41958536009926,23.83249077231631,0 90.41859938690908,23.83778661684032,0 90.41780895993197,23.83926058823624,0 90.41516797677653,23.84277890986405,0 90.4114422304492,23.84697137814684,0 90.40211051242568,23.85841258952527,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="0EEC44646241DFC40D60">
+		<name>MRT1(Elevated)</name>
+		<LookAt>
+			<longitude>90.51752548562516</longitude>
+			<latitude>23.84669751599354</latitude>
+			<altitude>15.07719874256336</altitude>
+			<heading>-3.038915901664763</heading>
+			<tilt>33.10480808144944</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>7585.770164706046</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.42339910173364,23.79803200693194,0 90.42504160990742,23.79860935044142,0 90.4250217834613,23.80053574793603,0 90.42218280269483,23.82300047079648,0 90.4232807611611,23.82523359506443,0 90.42667591435,23.82601722727605,0 90.43541371632753,23.82795627754098,0 90.45221377604823,23.8315322950565,0 90.46631901923352,23.83474589843902,0 90.47744057537571,23.83697339788103,0 90.48186780431392,23.83732743885816,0 90.48671335006225,23.83740553138151,0 90.49991529105766,23.8371646371202,0 90.51926124081223,23.83725228682118,0 90.5229125458748,23.83707596771258,0 90.5268959609773,23.83435284876656,0 90.53069164887214,23.83432254925124,0 90.53833459310611,23.8342727165076,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="0411F6A69D41DFC6F074">
+		<name>Vatara MRT-5N</name>
+		<LookAt>
+			<longitude>90.44089743662462</longitude>
+			<latitude>23.80215094437999</latitude>
+			<altitude>7.188719776246632</altitude>
+			<heading>-3.038802801068228</heading>
+			<tilt>33.1000419237661</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>6614.451489251805</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.45279651552026,23.8010419139111,6.54106202868989</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0BE6155A8741DFC7AA14">
+		<name>Gulshan 2 MRT-5N</name>
+		<LookAt>
+			<longitude>90.41753592569503</longitude>
+			<latitude>23.79815501749114</latitude>
+			<altitude>10.30031039378675</altitude>
+			<heading>-3.038594371696947</heading>
+			<tilt>33.09112078861286</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4796.387986857444</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41181126534237,23.79396591721382,10.96479948652309</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0902E40C2941DFC92128">
+		<name>Banani MRT-5N</name>
+		<LookAt>
+			<longitude>90.40607534647732</longitude>
+			<latitude>23.7949570383359</latitude>
+			<altitude>13.28997553989771</altitude>
+			<heading>-3.0382339851213</heading>
+			<tilt>33.07569363759011</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1652.439900364552</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.40340191869861,23.79411154178943,10.85332858646883</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="02ABC6B73341DFC9C086">
+		<name>Kochukhet MRT-5N</name>
+		<LookAt>
+			<longitude>90.39968343710601</longitude>
+			<latitude>23.79725139034138</latitude>
+			<altitude>9.136815596573797</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3706.509400950164</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.38816525615574,23.79825413476287,10.73344864569646</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="030D80566641DFCB20A0">
+		<name>Mirpur 14 MRT-5N</name>
+		<LookAt>
+			<longitude>90.38033635980906</longitude>
+			<latitude>23.80666345658627</latitude>
+			<altitude>9.295585429928558</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3749.368676003069</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.37843481874046,23.80319501683772,10.4226879189409</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0311A10BB141DFCC135C">
+		<name>Mirpur 1 MRT-5N</name>
+		<LookAt>
+			<longitude>90.36076602876678</longitude>
+			<latitude>23.80136568871421</latitude>
+			<altitude>17.58660261782175</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3741.077399739298</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.35743208251311,23.8012877229822,17.02383515077283</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="06998C814341DFCCBD3B">
+		<name>Dar-us-Salam MRT-5N</name>
+		<LookAt>
+			<longitude>90.35635217798814</longitude>
+			<latitude>23.79300048712581</latitude>
+			<altitude>11.60814546498175</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5250.176827519318</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.3540296098479,23.78885937973194,9.793884773581507</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0FB865BAFF41DFCD39F8">
+		<name>Gabtoli MRT-5N,MRT-2</name>
+		<LookAt>
+			<longitude>90.34686331582786</longitude>
+			<latitude>23.78537916589266</latitude>
+			<altitude>12.4628359573933</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3677.49252991809</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.34032958360831,23.78290673606153,9.36445095533411</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0E868B5A7841DFCD9F44">
+		<name>Amin Bazar MRT-5N</name>
+		<LookAt>
+			<longitude>90.33162042498836</longitude>
+			<latitude>23.78865720094345</latitude>
+			<altitude>6.49373438792944</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5100.623460360803</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.32761879099287,23.78760670963622,11.60513206442768</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="01B45758BF41DFCE261B">
+		<name>Bilamia MRT-5N</name>
+		<LookAt>
+			<longitude>90.32125436335305</longitude>
+			<latitude>23.80161669769253</latitude>
+			<altitude>4.163526085027415</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>8215.309364109999</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.30918231441734,23.79083883316043,8.855394408818341</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0D4A2004AC41DFCEF421">
+		<name>Baliarpur MRT-5N</name>
+		<LookAt>
+			<longitude>90.28451521362818</longitude>
+			<latitude>23.79758092094674</latitude>
+			<altitude>6.566429551868465</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>9486.286586166827</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.28877304474887,23.79551999847862,4.694107146346271</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0066EE8C3141DFCF3910">
+		<name>Hemayetpur MRT-5N</name>
+		<LookAt>
+			<longitude>90.28451521362818</longitude>
+			<latitude>23.79758092094674</latitude>
+			<altitude>6.566429551868465</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>9486.286586166827</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.26576935906859,23.7927556043458,11.48993785788682</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="090A11639341DFD2702C">
+		<name>MRT-5N</name>
+		<LookAt>
+			<longitude>90.26987744619174</longitude>
+			<latitude>23.79903231137388</latitude>
+			<altitude>8.871891578680026</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4682.74840261729</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.45285252847734,23.80099968795945,0 90.44855099674837,23.80036540819745,0 90.43832916710045,23.79905616045431,0 90.42357974861189,23.79787082371999,0 90.42058103119994,23.79702815855906,0 90.41451502913262,23.79490928677232,0 90.41168191102653,23.79407097418818,0 90.41028383973153,23.79361157468735,0 90.40918070246056,23.79342187071854,0 90.40770277472413,23.79363237150651,0 90.40320696189595,23.79422444065991,0 90.40143490592997,23.79450831806092,0 90.39525098822432,23.7958461519436,0 90.38824931080762,23.79824151941437,0 90.38392474987634,23.79960792404297,0 90.38057468549289,23.80133324387543,0 90.37835183644897,23.80336663491851,0 90.37564169061893,23.80548358627585,0 90.37317609591614,23.80662301761029,0 90.36909819086422,23.80723865337287,0 90.36839805787191,23.80712721156205,0 90.36402230780087,23.80551742857033,0 90.36098219719494,23.80371001880115,0 90.3581840998107,23.80184509461464,0 90.3565992321312,23.80092352376178,0 90.35337916636733,23.79878576431152,0 90.35334791255468,23.79747804358728,0 90.35346812605927,23.79444180616666,0 90.35368141568011,23.79187870741201,0 90.35386429748557,23.78931612735612,0 90.35395577948104,23.78561066229537,0 90.35371185401125,23.78469069593312,0 90.35264704510145,23.78282551787296,0 90.35185441471656,23.78162556295752,0 90.35002536066671,23.78220877788335,0 90.34816986742848,23.78265642208166,0 90.34537162370175,23.783159019198,0 90.34278079075065,23.78324146128914,0 90.34031437017843,23.78307405432928,0 90.33846054351633,23.78307305280837,0 90.33581301621814,23.78396124387856,0 90.33081867741046,23.78577734324666,0 90.32877978687982,23.78664109612914,0 90.32731882465315,23.78794998119874,0 90.32479252298664,23.7896765545908,0 90.32337615887629,23.79009973606306,0 90.32118169482872,23.79009460265006,0 90.31719435242272,23.78970971238106,0 90.31222786231578,23.79029337296218,0 90.30793224417303,23.79115686906778,0 90.30513409013827,23.79165334102064,0 90.29951798499674,23.7929703610873,0 90.29409697534145,23.79436304676169,0 90.29123367569849,23.79500553682127,0 90.28955882679401,23.79522858226199,0 90.2871816901805,23.79531073218113,0 90.28443999213874,23.79528276948963,0 90.28010491656003,23.79478462305828,0 90.27581616611386,23.7938908523484,0 90.27127750024695,23.79291941045635,0 90.26564600722109,23.79283457282287,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="064700A60841DFD7ED96">
+		<name>Aftabnagar Central MRT-5S</name>
+		<LookAt>
+			<longitude>90.43945176419462</longitude>
+			<latitude>23.76871288977122</latitude>
+			<altitude>6.888845476241139</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2317.941277514329</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.44012946188346,23.76542566465706,8.685239343688231</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="07B52FEC1841DFD86FAC">
+		<name>Aftabnagar East MRT-5S</name>
+		<LookAt>
+			<longitude>90.44517639558674</longitude>
+			<latitude>23.76759592578799</latitude>
+			<altitude>8.98992998816791</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2315.840274487564</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.44847457185507,23.76491506465284,8.647636799538834</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="03A1A4823841DFD8FF54">
+		<name>Nasirabad MRT-5S</name>
+		<LookAt>
+			<longitude>90.45236316295802</longitude>
+			<latitude>23.76643747012006</latitude>
+			<altitude>8.03244933945021</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2316.797416630725</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.45632537835957,23.76421064428133,7.822952619430263</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0BCB43DF2541DFD9B610">
+		<name>Dasherkandi MRT-5S</name>
+		<LookAt>
+			<longitude>90.45984724259525</longitude>
+			<latitude>23.76536159470862</latitude>
+			<altitude>5.492172207252246</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1993.204012142087</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.46406159993899,23.76516572004699,4.399780179252584</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="084927743341DFDCA7C1">
+		<name>Tejgaon MRT-5S</name>
+		<LookAt>
+			<longitude>90.40523665658186</longitude>
+			<latitude>23.7584149279799</latitude>
+			<altitude>6.6652622547437</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5226.781173304771</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.40900717402558,23.76268959721056,9.136264377410704</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00D359F7C641DFDE92A9">
+		<name>Hatirjheel MRT-5S</name>
+		<LookAt>
+			<longitude>90.40523665658186</longitude>
+			<latitude>23.7584149279799</latitude>
+			<altitude>6.6652622547437</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5226.781173304771</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.40275720756564,23.75647196690231,9.414822851544844</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="03704F106341DFDFBF23">
+		<name>Russel Square MRT-5S</name>
+		<LookAt>
+			<longitude>90.37988929392786</longitude>
+			<latitude>23.75661796903479</latitude>
+			<altitude>11.64696430260438</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3715.013540286455</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.37737699532526,23.75271545207151,11.11595197581873</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0D36289A1041DFE034B1">
+		<name>Asad Gate MRT-5S</name>
+		<LookAt>
+			<longitude>90.37689105356827</longitude>
+			<latitude>23.75945217918616</latitude>
+			<altitude>11.60610588292148</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3271.935346419923</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.373003,23.759866,12.23592802781523</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="01B552630B41DFE0C107">
+		<name>College Gate MRT-5S</name>
+		<LookAt>
+			<longitude>90.36990711675482</longitude>
+			<latitude>23.77035148924479</latitude>
+			<altitude>10.49651304743465</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4177.206393055385</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36871232495648,23.76961838184943,11.61193088726488</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="007A35862F41DFE19B48">
+		<name>Shyamoli MRT-5S</name>
+		<LookAt>
+			<longitude>90.36428215946385</longitude>
+			<latitude>23.77932306481742</latitude>
+			<altitude>8.547009997125265</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3895.376426721923</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36589654382813,23.77466979495938,10.52435275073908</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="01CCAF089441DFE2DBC0">
+		<name>Kallyanpur MRT-5S</name>
+		<LookAt>
+			<longitude>90.36431680607987</longitude>
+			<latitude>23.77767342579982</latitude>
+			<altitude>10.49101822202745</altitude>
+			<heading>-2.50668043102317</heading>
+			<tilt>21.27583393204696</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3343.626813393203</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.36002345672848,23.77851251337089,9.134148429800597</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="03371891AC41DFE384CE">
+		<name>Technical MRT-5S</name>
+		<LookAt>
+			<longitude>90.35592769254264</longitude>
+			<latitude>23.78247721352361</latitude>
+			<altitude>9.828399882967556</altitude>
+			<heading>-2.506680523466368</heading>
+			<tilt>21.2758362520502</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>3344.337716720765</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.35295611052122,23.78103776832302,11.60807239131873</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="04F843516341DFE6FFF3">
+		<name>MRT-5S</name>
+		<LookAt>
+			<longitude>90.34682980414662</longitude>
+			<latitude>23.78618926210791</latitude>
+			<altitude>11.7155046753195</altitude>
+			<heading>-46.39637903744013</heading>
+			<tilt>0.1940194831998447</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>2772.899196287909</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.46409461872366,23.76519569089358,0 90.45794011294625,23.76401901733984,0 90.45626016990829,23.76424425442411,0 90.44832293883198,23.76493675748245,0 90.44449459770642,23.76510771201613,0 90.44149870681737,23.76538285726007,0 90.43917297146216,23.76557474519765,0 90.43767611048023,23.76565095698986,0 90.43640455282454,23.76497144928565,0 90.43495732106982,23.76414506035919,0 90.43432872693076,23.76393554193413,0 90.43312938894611,23.76413945174607,0 90.43072442329377,23.76539325883211,0 90.42375017839265,23.76895921932681,0 90.41725660800974,23.77116477467331,0 90.41443706671642,23.76909129295633,0 90.41139259209936,23.76692031441387,0 90.40991978740269,23.7654554748717,0 90.40990046037699,23.76394371568558,0 90.40899758471542,23.76277761287144,0 90.40776676185619,23.76146559908765,0 90.40592851582096,23.76011840672821,0 90.40439425791072,23.75912758469205,0 90.4034257462182,23.75832867978341,0 90.4025589336582,23.75742762868662,0 90.40270268455286,23.75644503628267,0 90.40204311419205,23.75547320206938,0 90.40186714593025,23.75396312961842,0 90.39980105592173,23.75291174500617,0 90.39787017521233,23.75164707447827,0 90.39608751703669,23.75074559274179,0 90.39354090306036,23.7499940981,0 90.39310925616017,23.74997249124666,0 90.39177949826346,23.75020622527892,0 90.38778955896851,23.75085623874464,0 90.38659148435119,23.75125485050114,0 90.38552172440272,23.75182692099459,0 90.38459600570971,23.75265601232664,0 90.38294514639601,23.75288675743534,0 90.37974213956473,23.75215292232899,0 90.37818420822531,23.75137780180624,0 90.37719623361903,23.75292891503142,0 90.37496645879943,23.75666923612326,0 90.37294982765249,23.7600691108716,0 90.37116085937809,23.76313111343597,0 90.37033424213139,23.76499000516868,0 90.3692537044308,23.76770463556944,0 90.36858493238518,23.76979054901513,0 90.36815950238467,23.77098382692691,0 90.36736875030914,23.77285433920418,0 90.36678445218249,23.77372965187689,0 90.3658130278038,23.77473356160137,0 90.36504293470183,23.77538219096832,0 90.36426077209487,23.77597169589612,0 90.36320916251445,23.77659054840161,0 90.36072562680548,23.77822906745017,0 90.35989946636806,23.77858452106691,0 90.35905196480809,23.77875092341444,0 90.3574371303274,23.77897192560423,0 90.35593135157458,23.77939384666038,0 90.35314206721095,23.78082453778142,0 90.35271290438968,23.78113041303229,0 90.35171453937042,23.78170278777516,0 90.35033601058993,23.78210268797926,0 90.34678148296533,23.78297074490275,0 90.34342899250409,23.78324516586111,0 90.34025344190697,23.7829976260927,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="0729ACEA3741DFF593A0">
+		<name>Narayanganj MRT-2</name>
+		<LookAt>
+			<longitude>90.49313281454044</longitude>
+			<latitude>23.62496860917313</latitude>
+			<altitude>9.485530293019245</altitude>
+			<heading>-20.51548496792151</heading>
+			<tilt>9.508512708977893</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>21152.71676108474</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.5034760995191,23.60492279013466,13.44081234757395</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0F4EF5336D41DFF65E0B">
+		<name>Jalkuri MRT-2</name>
+		<LookAt>
+			<longitude>90.48628394646289</longitude>
+			<latitude>23.67419199933203</latitude>
+			<altitude>6.936580541398929</altitude>
+			<heading>-20.51824266902698</heading>
+			<tilt>9.50851655113896</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>21155.30078528216</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.48877501308814,23.65817633393322,6.930026587126257</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0F51BD81F541DFF69F29">
+		<name>Bhuighar MRT-2</name>
+		<LookAt>
+			<longitude>90.48628394646289</longitude>
+			<latitude>23.67419199933203</latitude>
+			<altitude>6.936580541398929</altitude>
+			<heading>-20.51824266902698</heading>
+			<tilt>9.50851655113896</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>21155.30078528216</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.48248598138925,23.67843486006349,6.974543045662602</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00A68565E941DFF7DE48">
+		<name>Signboard MRT-2,MRT-4</name>
+		<LookAt>
+			<longitude>90.48236009925405</longitude>
+			<latitude>23.70523320324896</latitude>
+			<altitude>7.022172217314528</altitude>
+			<heading>-20.5237336204146</heading>
+			<tilt>9.509772629974437</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>22003.56235432439</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.47771726087655,23.69288833579264,6.932227481543391</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0325D5520941DFFAF90F">
+		<name>Damripara MRT-2</name>
+		<LookAt>
+			<longitude>90.45747847436796</longitude>
+			<latitude>23.73191921246969</latitude>
+			<altitude>7.013493087680247</altitude>
+			<heading>-27.87712331823932</heading>
+			<tilt>7.207902106128845</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>20321.44122021971</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.46775048917995,23.74110950229712,6.901487538239586</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0D3CB0E2EA41DFFB42C8">
+		<name>Manda MRT-2</name>
+		<LookAt>
+			<longitude>90.45747847436796</longitude>
+			<latitude>23.73191921246969</latitude>
+			<altitude>7.013493087680247</altitude>
+			<heading>-27.87712331823932</heading>
+			<tilt>7.207902106128845</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>20321.44122021971</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.44873511837855,23.7369069110323,6.903767699650429</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0D9BB93AAF41DFFC7014">
+		<name>Gulistan MRT-2</name>
+		<LookAt>
+			<longitude>90.41712027392515</longitude>
+			<latitude>23.7254959025941</latitude>
+			<altitude>11.95485601630931</altitude>
+			<heading>-24.14619996471558</heading>
+			<tilt>5.64148451223381</tilt>
+			<gx:fovy>34.99999999999999</gx:fovy>
+			<range>4477.88623739616</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41306304419329,23.72317345230676,9.553183855190305</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="04BC3C05E641DFFCBA2C">
+		<name>DMCH MRT-2</name>
+		<LookAt>
+			<longitude>90.405947591508</longitude>
+			<latitude>23.72700131632459</latitude>
+			<altitude>14.85807238640628</altitude>
+			<heading>-24.15069447456577</heading>
+			<tilt>5.641481932653638</tilt>
+			<gx:fovy>34.99999999999999</gx:fovy>
+			<range>4474.968826609548</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.39832910548596,23.72430258192353,11.96712044216174</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0BBE1675DA41DFFEA084">
+		<name>Azimpur MRT-2</name>
+		<LookAt>
+			<longitude>90.38991966800158</longitude>
+			<latitude>23.73614308786528</latitude>
+			<altitude>16.42262232883959</altitude>
+			<heading>-14.08769313888282</heading>
+			<tilt>5.529857043793287</tilt>
+			<gx:fovy>34.99999999999999</gx:fovy>
+			<range>6308.264647303151</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.38641984749354,23.72690180904131,11.51274623967319</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0E927F291341DFFFBCE7">
+		<name>New Market MRT-2</name>
+		<LookAt>
+			<longitude>90.39118460110656</longitude>
+			<latitude>23.73417894889391</latitude>
+			<altitude>13.39233050791706</altitude>
+			<heading>-9.635890126325041</heading>
+			<tilt>5.471590881463364</tilt>
+			<gx:fovy>34.99999999999999</gx:fovy>
+			<range>5756.721592739923</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.38448728205314,23.73438184137028,11.61106040600728</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0A6A3E988B41E00049B8">
+		<name>Science Lab MRT-2</name>
+		<LookAt>
+			<longitude>90.38565832951815</longitude>
+			<latitude>23.74148290208873</latitude>
+			<altitude>14.22872248934344</altitude>
+			<heading>-6.781706945051437</heading>
+			<tilt>5.420681522074934</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5316.928684517043</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.38327764012229,23.73951668712778,15.09908273084167</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="003B1DC02F41E000ACA9">
+		<name>Jhigatola MRT-2</name>
+		<LookAt>
+			<longitude>90.38201832897452</longitude>
+			<latitude>23.74137002906115</latitude>
+			<altitude>15.89016182082988</altitude>
+			<heading>-2.410393095238165</heading>
+			<tilt>5.059909535219192</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>6114.766180916922</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.37606082115242,23.73821231361045,11.48926110282485</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="07A09CC6FE41E0015B5B">
+		<name>Mohammadpur Bus Stand MRT-2</name>
+		<LookAt>
+			<longitude>90.36599907833266</longitude>
+			<latitude>23.7585738747107</latitude>
+			<altitude>12.40409870480699</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5101.463416561601</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.361752,23.757261,14.04974781857843</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0AC28C200941E0022A8B">
+		<name>Dhaka Uddan MRT-2</name>
+		<LookAt>
+			<longitude>90.35394064845536</longitude>
+			<latitude>23.76584059369788</latitude>
+			<altitude>8.958223217562686</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>7524.736314180773</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.34753135501614,23.7649225280854,11.38751741569565</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0145EE460541E00571A0">
+		<name>MRT-2 (Main Line)</name>
+		<LookAt>
+			<longitude>90.34743151374029</longitude>
+			<latitude>23.7761162138056</latitude>
+			<altitude>9.025961933079444</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4644.236874362688</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.50341410602604,23.6052750254729,0 90.50092376574329,23.62221322594897,0 90.49743697352039,23.62523328868201,0 90.4961311080958,23.63192217344811,0 90.49359524933354,23.64396424606242,0 90.49075094325751,23.65298130846961,0 90.48836673720608,23.6591103529052,0 90.48313820380797,23.67502476607311,0 90.48221508089497,23.67840662628333,0 90.48190751992919,23.68587348569237,0 90.48029198105488,23.69305912496872,0 90.4774455065134,23.69319999575978,0 90.46759790535884,23.74047034793061,0 90.46729007846463,23.741808847807,0 90.45797808268424,23.73927252996805,0 90.45074402696754,23.73758127118348,0 90.4476656491548,23.73680603893941,0 90.43750765271665,23.73363428789034,0 90.42936397568576,23.73243476822056,0 90.42505516257121,23.73172942394351,0 90.42544776882808,23.72965960831786,0 90.42505551251202,23.72805756775293,0 90.42233939779783,23.72697886410099,0 90.42083038996027,23.72681338182488,0 90.41920167755565,23.72797443379234,0 90.4171248650994,23.72607139479556,0 90.41425390251297,23.72617896655404,0 90.41313230647464,23.72305399768088,0 90.40815932480743,23.72308502970759,0 90.40318568165213,23.72333728124608,0 90.39808785144513,23.72441283410634,0 90.39277124067945,23.725293435426,0 90.38963354806148,23.72736595722176,0 90.38637588764146,23.7269245950431,0 90.38456433483458,23.73449156214216,0 90.38339188380267,23.73951484835235,0 90.37848254596047,23.73881975932163,0 90.37594894180459,23.73831886778391,0 90.3713923314438,23.74621981843556,0 90.36759392965742,23.75173741155927,0 90.36542105697049,23.75364470729712,0 90.3615605650461,23.75717957458614,0 90.35847999831935,23.75673790020065,0 90.35528039728212,23.75745523274881,0 90.35111515754261,23.76107413654048,0 90.34758362948486,23.76480320796376,0 90.34434988097884,23.77300571876777,0 90.3404856737632,23.77552187695377,0 90.34030466603008,23.78314890510169,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="0B6CDD573441E00654CC">
+		<name>Sadarghat MRT-2(Branch Station)</name>
+		<LookAt>
+			<longitude>90.41457528591881</longitude>
+			<latitude>23.71449294647804</latitude>
+			<altitude>11.4834850382428</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>7469.110817400506</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.41807080988774,23.70131229419301,10.47627055349869</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="059C903B6241E0071BB3">
+		<name>Nayabazar MRT-2(Branch Station)</name>
+		<LookAt>
+			<longitude>90.40603604213371</longitude>
+			<latitude>23.71406864533256</latitude>
+			<altitude>11.49841494743684</altitude>
+			<heading>1.278127219048106</heading>
+			<tilt>2.508969648521766</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>6502.42617845186</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.4089635003282,23.71449241906133,13.2959282289909</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0D4AA8751441E00794AF">
+		<name>MRT-2(Branch Line)</name>
+		<LookAt>
+			<longitude>90.40603604213371</longitude>
+			<latitude>23.71406864533256</latitude>
+			<altitude>11.49841494743684</altitude>
+			<heading>1.278127219048106</heading>
+			<tilt>2.508969648521766</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>6502.42617845186</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.41800227258845,23.70152064538768,0 90.41981598108106,23.7090959498343,0 90.41509425593449,23.71173660810548,0 90.40963186610848,23.71416924726042,0 90.40872364359001,23.7150018784899,0 90.40894662404199,23.71861582981338,0 90.41005238053164,23.72027264357865,0 90.4121016176159,23.72222190012293,0 90.41311924329878,23.72346216638013,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="02EBD291D641E0088128">
+		<name>Madanpur MRT-4</name>
+		<LookAt>
+			<longitude>90.53135393674116</longitude>
+			<latitude>23.69861757634859</latitude>
+			<altitude>13.2527058752483</altitude>
+			<heading>0.3554637290645637</heading>
+			<tilt>1.081867696718268</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>11993.64892678801</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.5476371914139,23.68893485597491,7.026802873625289</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="07A8BB923B41E008C804">
+		<name>Kanchpur MRT-4</name>
+		<LookAt>
+			<longitude>90.53135393674116</longitude>
+			<latitude>23.69861757634859</latitude>
+			<altitude>13.2527058752483</altitude>
+			<heading>0.3554637290645637</heading>
+			<tilt>1.081867696718268</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>11993.64892678801</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.52109713314422,23.70586193531415,9.271493936581141</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0C2ED44C0641E0097FF0">
+		<name>Chittagong Road MRT-4</name>
+		<LookAt>
+			<longitude>90.50753048196064</longitude>
+			<latitude>23.69972557443716</latitude>
+			<altitude>9.131962056749272</altitude>
+			<heading>0.3554603870556085</heading>
+			<tilt>1.080642582279552</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4765.057064305292</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.50887569183702,23.69746617847589,11.58716367720742</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0BEDE7C95841E00A07B0">
+		<name>Jatrabari MRT-4</name>
+		<LookAt>
+			<longitude>90.43782147575116</longitude>
+			<latitude>23.71532190050197</latitude>
+			<altitude>9.912785487659244</altitude>
+			<heading>0.3554606749779414</heading>
+			<tilt>1.080752617829541</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>5414.305010838435</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.43469562660192,23.71001791425966,10.72713438096053</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="082BDB995A41E00AAE61">
+		<name>Sayedabad MRT-4</name>
+		<LookAt>
+			<longitude>90.43071045338949</longitude>
+			<latitude>23.71846836665855</latitude>
+			<altitude>9.165300972285584</altitude>
+			<heading>0.2457280298883346</heading>
+			<tilt>1.067916045242156</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>4403.238421269343</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<Point>
+			<coordinates>90.42825872569891,23.71269160650023,11.61101920578733</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0437128A4D41E00C32FC">
+		<name>MRT-4</name>
+		<LookAt>
+			<longitude>90.4294626677478</longitude>
+			<latitude>23.73276202670352</latitude>
+			<altitude>11.50478413023825</altitude>
+			<heading>0.2457286679515346</heading>
+			<tilt>1.068253319914339</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>6416.9049160718</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_011684CD6D41DF9D6BC4</styleUrl>
+		<LineString>
+			<coordinates>
+				90.54785682342892,23.68899218115118,0 90.54447710469587,23.69111147160189,0 90.53944106540621,23.69253650980949,0 90.5333265176007,23.69778785829137,0 90.52391002620391,23.70508300744953,0 90.52093991448261,23.70595334568623,0 90.51718087308933,23.70304347341628,0 90.51228150216745,23.69932977589342,0 90.50870431447215,23.69748158724414,0 90.49330959524671,23.69542924322004,0 90.48583018122935,23.69460342509721,0 90.47741934379469,23.69358006335952,0 90.47324299643192,23.69319392700124,0 90.46971430881713,23.6936622180826,0 90.46348035854949,23.69654740499216,0 90.4347256479827,23.71015385372944,0 90.43037444804619,23.71138306816477,0 90.42800013633639,23.71287730585352,0 90.42896680044926,23.71508262653558,0 90.42875180168531,23.72383723751455,0 90.42896902562183,23.72508719467254,0 90.42605583292016,23.72490856259218,0 90.42537194732789,23.73191894135195,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+</Document>
+</kml>
