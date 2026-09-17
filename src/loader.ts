@@ -8,9 +8,37 @@ import { prefersReducedMotion } from './lib/motion';
  * looks stuck. Everything is CSS transitions on `transform`: they keep
  * running smoothly on the compositor while the map code parses on the main
  * thread.
+ *
+ * The bar is the progress. The line under it is not: "Laying the tracks" told
+ * a reader nothing they could use, so it carries the waiting lines instead,
+ * which at least keep them company while Mapbox pulls tiles down a connection
+ * we do not control. index.html paints the first one before any script runs;
+ * this picks up from there. On a quick connection only that first one is seen.
  */
 
 const SCROLL_KEYS = new Set([' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'Home', 'End']);
+
+/**
+ * Shown in turn while the map loads. The first is in index.html, so this list
+ * has to start with the same one; the rotation begins at the second.
+ */
+const WAITING_LINES = [
+  'Stuck in traffic',
+  'Your internet is probably slow',
+  'Waiting at the signal',
+  'Still quicker than Gulistan',
+  'Counting the pillars',
+  'Buying a single journey ticket',
+  'Please mind the gap',
+  'The next train is approaching',
+  'Blaming it on the traffic',
+  'Almost at the platform',
+];
+
+/** How long a line holds before the next one. */
+const LINE_MS = 2600;
+/** Cross-fade between two lines. */
+const SWAP_MS = 200;
 
 export class Loader {
   private readonly root = document.querySelector<HTMLElement>('[data-loader]');
@@ -19,6 +47,9 @@ export class Loader {
   private readonly main = document.querySelector<HTMLElement>('main');
   private value = 0.04;
   private creepTimer = 0;
+  private lineTimer = 0;
+  /** index.html painted WAITING_LINES[0] already; the rotation goes on from it. */
+  private lineIndex = 0;
   private finished = false;
   private readonly unlockScroll: () => void;
 
@@ -33,6 +64,7 @@ export class Loader {
     html.classList.add('is-loading');
     this.main?.setAttribute('aria-busy', 'true');
     this.unlockScroll = lockScroll();
+    this.armLines(LINE_MS);
   }
 
   /**
@@ -40,10 +72,8 @@ export class Loader {
    * milestone arrives. Transitions retarget from wherever the bar is, so a
    * milestone that lands mid-drift never jumps backwards.
    */
-  step(value: number, status?: string, toward = Math.min(0.95, value + 0.2)): void {
-    if (this.finished || !this.bar) return;
-    if (status && this.status) this.status.dataset.status = status;
-    if (value <= this.value) return;
+  step(value: number, toward = Math.min(0.95, value + 0.2)): void {
+    if (this.finished || !this.bar || value <= this.value) return;
     this.value = value;
     this.setBar(value, 600);
     window.clearTimeout(this.creepTimer);
@@ -57,6 +87,7 @@ export class Loader {
     // Visible in DevTools > Performance, or via performance.getEntriesByName('story:revealed').
     performance.mark('story:revealed');
     window.clearTimeout(this.creepTimer);
+    window.clearTimeout(this.lineTimer);
     const root = this.root;
     const reduced = prefersReducedMotion();
     this.setBar(1, 240);
@@ -73,6 +104,25 @@ export class Loader {
       },
       reduced ? 0 : 260,
     );
+  }
+
+  /** Show the next waiting line after `delay`, then keep going every LINE_MS. */
+  private armLines(delay: number): void {
+    window.clearTimeout(this.lineTimer);
+    const status = this.status;
+    if (this.finished || !status) return;
+    this.lineTimer = window.setTimeout(() => {
+      this.lineIndex = (this.lineIndex + 1) % WAITING_LINES.length;
+      const text = WAITING_LINES[this.lineIndex];
+      // Fade out, swap, fade back: the two lines never overlap mid-word.
+      status.style.opacity = '0';
+      window.setTimeout(() => {
+        if (this.finished) return;
+        status.dataset.status = text;
+        status.style.opacity = '';
+      }, SWAP_MS);
+      this.armLines(LINE_MS);
+    }, delay);
   }
 
   private setBar(value: number, duration: number, drift = false): void {

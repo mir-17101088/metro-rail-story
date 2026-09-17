@@ -95,6 +95,7 @@ export class StoryMap {
   private readonly drawer: LineDrawer;
   private readonly trains: Trains | null;
   private readonly tip: HTMLDivElement;
+  private readonly reset: HTMLButtonElement | null;
   private readonly finePointer = window.matchMedia('(pointer: fine)').matches;
 
   private stepId: string | null = null;
@@ -114,6 +115,13 @@ export class StoryMap {
   private stageVisible = true;
   private lastSize = { w: 0, h: 0 };
 
+  /**
+   * Resolves once the map has something worth looking at: the style is up and
+   * the first tiles of the opening view have been drawn. This is what fades the
+   * stage in and what the loading screen waits on.
+   */
+  readonly painted: Promise<void>;
+
   /** Resolves once the first scene has fully rendered: tiles, glyphs and lines. */
   readonly ready: Promise<void>;
 
@@ -129,12 +137,19 @@ export class StoryMap {
     this.tip.setAttribute('aria-hidden', 'true');
     options.stage.appendChild(this.tip);
 
-    this.ready = new Promise((resolve) =>
-      map.once('idle', () => {
+    this.reset = this.addResetButton();
+
+    this.painted = new Promise((resolve) => {
+      const show = () => {
         options.container.setAttribute('data-ready', '');
         resolve();
-      }),
-    );
+      };
+      // `load` has already gone by if the opening view needed no tiles at all.
+      if (map.loaded()) show();
+      else map.once('load', show);
+    });
+
+    this.ready = new Promise((resolve) => map.once('idle', () => resolve()));
 
     this.bindInteractions();
     this.watchVisibility();
@@ -489,7 +504,43 @@ export class StoryMap {
       this.map.getCanvas().style.cursor = '';
       if (panel.current) panel.select(null, { silent: true });
       this.selection = null;
+      this.syncReset();
     }
+  }
+
+  /**
+   * "Show all lines", added under the zoom buttons in their own control group.
+   *
+   * The explorer's way back sits at the top of the detail, over in the panel,
+   * but a reader who has just tapped a station on the map is looking at the
+   * map. This puts the way out where their eye already is. It exists only
+   * while something is selected.
+   *
+   * Sharing the zoom control's group rather than adding a control of its own
+   * keeps it under the zoom buttons in both layouts (the group is bottom-right
+   * on desktop, top-right on phones, and mapbox stacks whole controls in
+   * opposite orders in the two corners) and inherits the group's divider.
+   */
+  private addResetButton(): HTMLButtonElement | null {
+    const group = this.map.getContainer().querySelector('.mapboxgl-ctrl-group');
+    if (!group) return null;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'map-reset';
+    button.hidden = true;
+    button.title = 'Show all lines';
+    button.setAttribute('aria-label', 'Show all lines');
+    button.innerHTML =
+      '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" /></svg>';
+    button.addEventListener('click', () => this.options.panel.select(null));
+    group.appendChild(button);
+    return button;
+  }
+
+  /** The button is only there when there is something to clear. */
+  private syncReset(): void {
+    if (this.reset) this.reset.hidden = !this.selection;
   }
 
   private bindInteractions(): void {
@@ -596,6 +647,7 @@ export class StoryMap {
   private applySelection(selection: Selection): void {
     if (!this.interactive || !this.state) return;
     this.selection = selection;
+    this.syncReset();
 
     if (!selection) {
       this.applyFocus(null, STORY_DIM, false);

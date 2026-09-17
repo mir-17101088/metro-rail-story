@@ -2,13 +2,16 @@ import { prefersReducedMotion } from './lib/motion';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const years = (a: Date, b: Date) => Math.abs(b.getTime() - a.getTime()) / (365.25 * 24 * 3600 * 1000);
-
 /**
  * Splits the timeline into what has happened and what is still planned
- * (solid vs dashed axis, echoing the map's dashed unfinished track), inserts a
- * "today" mark at its proportional place, and reveals items as they scroll in.
- * Labels only: nothing here is clickable.
+ * (solid vs dashed axis, echoing the map's dashed unfinished track), drops a
+ * "today" mark between the last event and the next one, and reveals items as
+ * they scroll in. Labels only: nothing here is clickable.
+ *
+ * Spacing is one fixed step per event, not one scaled to the years between
+ * them: a list that ran from 2005 to 2036 left huge voids around the sparse
+ * years and crammed 2026-2027 together. Every entry now reads at the same
+ * rhythm, and the dates themselves carry the passage of time.
  */
 export function initTimeline(list: HTMLOListElement): void {
   const items = [...list.querySelectorAll<HTMLLIElement>('.tl__item')];
@@ -28,14 +31,10 @@ export function initTimeline(list: HTMLOListElement): void {
   }
 
   if (insertBefore && previous) {
-    const prevDate = new Date(previous.dataset.date!);
-    const nextDate = new Date(insertBefore.dataset.date!);
     const today = document.createElement('li');
     today.className = 'tl__item tl__item--today';
-    today.style.setProperty('--gap', years(prevDate, now).toFixed(2));
     today.innerHTML = `<span class="tl__date">Today</span><span class="tl__today-text">${MONTHS[now.getMonth()]} ${now.getFullYear()}</span>`;
     list.insertBefore(today, insertBefore);
-    insertBefore.style.setProperty('--gap', years(now, nextDate).toFixed(2));
     items.splice(items.indexOf(insertBefore), 0, today);
   }
 

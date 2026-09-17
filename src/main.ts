@@ -1,27 +1,30 @@
-import '@fontsource-variable/newsreader/wght.css';
-import '@fontsource-variable/libre-franklin/wght.css';
+// Game styles travel with the game chunk; see "the route game" below.
+import './styles/fonts.css';
 import './styles/main.css';
 import './styles/costs.css';
-import './styles/game.css';
 
 import { Loader, wait } from './loader';
 import { observeSteps } from './scroll/steps';
 import { initTimeline } from './timeline';
 import { initCosts } from './costs';
+import { initNav } from './nav';
 import { NetworkPanel } from './explorer/panel';
 import { Dock } from './explorer/dock';
 import { fetchMapToken, type MapToken } from './map/token';
 import { prefersReducedMotion } from './lib/motion';
-import { initGame } from './game/game';
 import type { StoryMap } from './map/story-map';
 
 document.documentElement.classList.add('js');
 
 /** The loading screen never stays up longer than this (ms since navigation). */
-const MAX_LOADING_MS = 12000;
+const MAX_LOADING_MS = 9000;
+/** ...and it does not wait on a slow tile server past this, either. */
+const MAX_MAP_WAIT_MS = 5000;
+/** However long the map takes, the stage stops hiding it after this. */
+const MAX_HIDDEN_MS = 8000;
 
 const loader = new Loader();
-loader.step(0.1, 'Loading the map');
+loader.step(0.1);
 
 const stage = document.querySelector<HTMLElement>('[data-stage]')!;
 const mapContainer = document.querySelector<HTMLElement>('#map')!;
@@ -31,7 +34,7 @@ const dock = new Dock(document.querySelector<HTMLElement>('[data-dock]')!);
 
 let story: StoryMap | null = null;
 let currentStep = 'hero';
-/** While the page glides back to the top, scenes wait until it lands. */
+/** While the page glides somewhere else, scenes wait until it lands. */
 let holdScenes = false;
 
 /* ----------------------------------------------------------- scroll steps */
@@ -54,7 +57,15 @@ dock.onLayout(() => {
 // station also reopens a minimised tray, so the click visibly leads somewhere.
 panel.onChange((selection) => {
   dock.fitContent();
-  if (selection) dock.reveal();
+  if (!selection) {
+    dock.sync();
+    return;
+  }
+  dock.reveal();
+  // A station tapped on the map writes its detail into a box the reader may
+  // have scrolled away from, or never scrolled at all. Carry it to the top of
+  // that box so the answer arrives with the tap instead of waiting to be found.
+  dock.showDetail(panel.detailBox);
 });
 
 /* --------------------------------------------------------------- the map */
@@ -88,12 +99,14 @@ async function loadMap(): Promise<void> {
     const [token, module] = await Promise.all([
       mapToken(),
       import('./map/story-map').then((m) => {
-        loader.step(0.4, 'Laying the tracks');
+        loader.step(0.4);
         return m;
       }),
     ]);
     story = await module.createStoryMap({ container: mapContainer, stage, panel, token });
-    loader.step(0.7, 'Drawing the network', 0.97);
+    // Everything measurable is done; what is left is Mapbox pulling tiles over
+    // the reader's connection, so the bar creeps the rest of the way.
+    loader.step(0.7, 0.97);
     story.go(currentStep, { instant: true });
 
     if (import.meta.env.DEV) {
@@ -107,8 +120,12 @@ async function loadMap(): Promise<void> {
       }
     }
 
-    await story.ready;
-    performance.mark('story:map-ready');
+    // The stage fades the map in on `painted` (style up, first tiles drawn),
+    // not on `ready` (every tile in the viewport settled). Waiting for the
+    // latter is what used to leave a reader on a blank stage when the loading
+    // screen timed out first.
+    void story.ready.then(() => performance.mark('story:map-ready'));
+    await Promise.race([story.painted, wait(MAX_MAP_WAIT_MS)]);
   } catch (error) {
     showFallback(error);
   }
@@ -117,13 +134,19 @@ async function loadMap(): Promise<void> {
 // Start immediately: the loading screen is already covering the page, so there
 // is no headline paint to protect, and every millisecond here is map time.
 const mapLoaded = loadMap();
+// Last resort: a map still short of its first full frame is shown anyway rather
+// than leaving the stage empty behind a loading screen that has already gone.
+window.setTimeout(() => mapContainer.setAttribute('data-ready', ''), MAX_HIDDEN_MS);
 // Reveal once the map has rendered and the typefaces are in (no swap flash),
 // or when the cap is reached; a slow map then fades in on its own.
 const fontsLoaded = Promise.race([document.fonts?.ready ?? Promise.resolve(), wait(3000)]);
 void Promise.race([
   Promise.all([mapLoaded, fontsLoaded]),
   wait(Math.max(0, MAX_LOADING_MS - performance.now())),
-]).then(() => loader.finish());
+]).then(() => {
+  loader.finish();
+  whenIdle(() => void ensureGame());
+});
 
 /* ---------------------------------------------- card fade without CSS support */
 
@@ -145,11 +168,65 @@ if (!CSS.supports('animation-timeline: view()')) {
 const timeline = document.querySelector<HTMLOListElement>('[data-timeline]');
 if (timeline) initTimeline(timeline);
 
-const costs = document.querySelector<HTMLElement>('[data-costs]');
-if (costs) initCosts(costs);
+const costsSection = document.querySelector<HTMLElement>('[data-costs]');
+if (costsSection) initCosts(costsSection);
 
-const game = document.querySelector<HTMLElement>('[data-game]');
-if (game) initGame(game, { token: mapToken, webgl: webglAvailable() });
+/* --------------------------------------------------------- the route game */
+
+/**
+ * The game is the largest single piece of the page's own script, and it sits
+ * below the timeline and the cost chart. Loading it with the entry meant its
+ * bytes raced the map for the same connection while the reader was looking at
+ * a loading screen, so it is fetched once the story is readable instead: at
+ * the first idle moment, or sooner if the reader is already scrolling towards
+ * it. Its stylesheet travels in the same chunk.
+ */
+const gameRoot = document.querySelector<HTMLElement>('[data-game]');
+let gameRequest: Promise<unknown> | null = null;
+
+function ensureGame(): Promise<unknown> {
+  if (!gameRoot) return Promise.resolve();
+  return (gameRequest ??= import('./game/game').then((module) =>
+    module.initGame(gameRoot, { token: mapToken, webgl: webglAvailable() }),
+  ));
+}
+
+function whenIdle(run: () => void): void {
+  if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(run, { timeout: 3000 });
+  else window.setTimeout(run, 1200);
+}
+
+if (gameRoot) {
+  // Linked to directly: the section has to exist before the browser can put
+  // the reader in front of it.
+  if (location.hash === '#game') void ensureGame();
+
+  // Otherwise, whichever comes first: the page falling quiet, or the reader arriving.
+  const ahead = document.querySelector('.timeline');
+  if (ahead && 'IntersectionObserver' in window) {
+    const near = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        near.disconnect();
+        void ensureGame();
+      },
+      { rootMargin: '0px 0px 100% 0px' },
+    );
+    near.observe(ahead);
+  }
+}
+
+/* ---------------------------------------------------------- section jumps */
+
+const nav = document.querySelector<HTMLElement>('[data-sitenav]');
+if (nav) {
+  initNav(nav, {
+    // The game section is `hidden` until its chunk arrives; without a box on
+    // the page there is nothing for the browser to scroll to.
+    prepare: (id) => (id === 'game' ? ensureGame().then(() => undefined) : undefined),
+    onJump: () => holdSceneryUntilSettled(),
+  });
+}
 
 const year = document.querySelector('[data-year]');
 if (year) year.textContent = String(new Date().getFullYear());
@@ -190,15 +267,26 @@ if (toTop && scrolly) {
   const hero = document.querySelector<HTMLElement>('.hero__title');
   toTop.addEventListener('click', () => {
     const smooth = !prefersReducedMotion();
-    // Gliding through a dozen scenes in a second would strobe the map; let it
-    // rest on the current view and move once, when the page arrives.
-    holdScenes = smooth;
     window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
-    whenScrollSettles(() => {
-      holdScenes = false;
-      story?.go(currentStep);
-      hero?.focus({ preventScroll: true });
-    });
+    holdSceneryUntilSettled(() => hero?.focus({ preventScroll: true }));
+  });
+}
+
+/**
+ * Gliding the length of the page passes through a dozen scenes in a second,
+ * which would strobe the map. Let it rest on the view it is already showing
+ * and move once, when the page arrives.
+ */
+function holdSceneryUntilSettled(then?: () => void): void {
+  if (prefersReducedMotion()) {
+    then?.();
+    return;
+  }
+  holdScenes = true;
+  whenScrollSettles(() => {
+    holdScenes = false;
+    story?.go(currentStep);
+    then?.();
   });
 }
 

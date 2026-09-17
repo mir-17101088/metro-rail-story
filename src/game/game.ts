@@ -1,3 +1,7 @@
+// Travels with this chunk rather than the entry stylesheet: the section is
+// hidden until the code below runs, so its styles are never needed sooner.
+import '../styles/game.css';
+
 import type { PaddingOptions } from 'mapbox-gl/esm';
 import { LINES, type LineId } from '../data/lines';
 import { prefersReducedMotion } from '../lib/motion';

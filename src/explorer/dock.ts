@@ -12,6 +12,12 @@ import { prefersReducedMotion } from '../lib/motion';
  *
  * `onLayout` fires once a change has settled, so the map can re-frame itself
  * around the space that is now free.
+ *
+ * Either way the explorer is a box with its own scrollbar, so it also owns the
+ * two things that make that readable: `showDetail` scrolls a freshly written
+ * detail up to the top of the box (a reader who taps a station on the map sees
+ * the answer, instead of an unchanged title over a box that silently grew a
+ * scrollbar), and `sync` flags whether anything is still below the fold.
  */
 
 const WIDE = window.matchMedia('(min-width: 1024px)');
@@ -23,6 +29,8 @@ const MIN_OPEN = 72;
 const SNAP_MS = 380;
 /** Share of the screen the whole sheet may cover when expanded. */
 const ROOM = 0.78;
+/** Sliver of the previous content left showing above a revealed detail. */
+const PEEK = 10;
 
 /**
  * How tall the open sheet is:
@@ -46,6 +54,7 @@ export class Dock {
   private settleTimer = 0;
   /** Increments per height animation, so a superseded one cannot clean up after the next. */
   private animation = 0;
+  private syncFrame = 0;
 
   constructor(private readonly root: HTMLElement) {
     this.panel = root.querySelector('[data-dock-panel]')!;
@@ -60,7 +69,13 @@ export class Dock {
     this.toggle.addEventListener('click', () => this.setMinimized(!this.minimized));
     this.bindGrip();
 
+    for (const scroller of [this.panel, this.body]) {
+      scroller.addEventListener('scroll', () => this.sync(), { passive: true });
+    }
+    window.addEventListener('resize', () => this.sync(), { passive: true });
+
     WIDE.addEventListener('change', () => this.reset());
+    this.sync();
   }
 
   onLayout(listener: () => void): void {
@@ -77,6 +92,55 @@ export class Dock {
     if (this.contentHeight() >= this.size) return;
     this.setSize('auto');
     this.instantly(() => (this.body.style.height = ''));
+  }
+
+  /** Whichever element carries the explorer's scrollbar in the current layout. */
+  private scroller(): HTMLElement {
+    return WIDE.matches ? this.panel : this.body;
+  }
+
+  /**
+   * Put a freshly written part of the panel at the top of what the reader can
+   * actually see, leaving a sliver of what came before it so the scroll reads
+   * as a scroll. Runs twice: once against the layout as it stands, and once
+   * more after a sheet that is growing to fit the new content has landed.
+   */
+  showDetail(element: HTMLElement): void {
+    const smooth = !prefersReducedMotion();
+    let asked = -1;
+
+    const run = (second = false) => {
+      const scroller = this.scroller();
+      // The reader took over in the meantime: their scroll wins over ours.
+      if (second && asked >= 0 && Math.abs(scroller.scrollTop - asked) > 24) return;
+      const offset = element.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+      const limit = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+      const target = Math.min(limit, Math.max(0, scroller.scrollTop + offset - PEEK));
+      asked = target;
+      if (Math.abs(target - scroller.scrollTop) > 2) {
+        scroller.scrollTo({ top: target, behavior: smooth ? 'smooth' : 'auto' });
+      }
+      this.sync();
+    };
+
+    requestAnimationFrame(() => run());
+    // A sheet growing to fit the new content lands after its height animation,
+    // and only then is there room to scroll to.
+    window.setTimeout(() => run(true), SNAP_MS + 40);
+  }
+
+  /**
+   * Refresh the "there is more below" cue. Cheap, and coalesced to one layout
+   * read per frame, so scroll events and content changes can both call it.
+   */
+  sync(): void {
+    if (this.syncFrame) return;
+    this.syncFrame = requestAnimationFrame(() => {
+      this.syncFrame = 0;
+      const scroller = this.scroller();
+      const below = scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop;
+      this.root.toggleAttribute('data-more', !this.minimized && below > 4);
+    });
   }
 
   /**
@@ -186,6 +250,7 @@ export class Dock {
       if (id !== this.animation) return;
       if (!this.minimized && typeof this.size !== 'number') body.style.height = '';
       delete root.dataset.settledHeight;
+      this.sync();
     };
     this.instantly(() => (body.style.height = `${from}px`));
     // What the tray will measure once it lands, for anything framing around it meanwhile.
@@ -343,6 +408,7 @@ export class Dock {
     this.tab.setAttribute('aria-expanded', 'true');
     this.label(this.tab, 'Hide the network panel');
     this.syncExpanded();
+    this.sync();
   }
 
   private label(button: HTMLElement, text: string): void {

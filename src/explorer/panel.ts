@@ -19,6 +19,16 @@ const cssVar = (line: LineId) => `var(--line-${line.toLowerCase()})`;
 const badge = (line: LineId, small = false) =>
   `<span class="badge${small ? ' badge--sm' : ''}" style="--c: ${cssVar(line)}" aria-hidden="true">${line}</span>`;
 
+/**
+ * The way out, first thing in every detail. The panel scrolls a new detail up
+ * to its own top edge, which takes the line list out of view, so the step back
+ * has to travel with the detail rather than sit under a screenful of stations.
+ */
+const back = (to?: LineId) =>
+  `<button class="detail__back" type="button" data-back="${to ?? ''}">${
+    to ? `Back to ${esc(LINES[to].name)}` : 'All lines'
+  }</button>`;
+
 export class NetworkPanel {
   private selection: Selection = null;
   private readonly listeners = new Set<Listener>();
@@ -70,6 +80,11 @@ export class NetworkPanel {
     return this.selection;
   }
 
+  /** The box the detail is written into, for whatever has to scroll it into view. */
+  get detailBox(): HTMLElement {
+    return this.detail;
+  }
+
   select(selection: Selection, { silent = false } = {}): void {
     this.selection = selection;
     const activeLine = selection?.kind === 'line' ? selection.line : null;
@@ -82,16 +97,20 @@ export class NetworkPanel {
 
   private render(): void {
     const s = this.selection;
-    if (!s) {
-      this.detail.innerHTML = '';
-      return;
+    this.detail.innerHTML = !s
+      ? ''
+      : s.kind === 'line'
+        ? this.lineDetail(s.line)
+        : (stationById.get(s.id) && this.stationDetail(stationById.get(s.id)!, s.from)) || '';
+
+    // Same element every time, so the entrance animation has to be re-armed by
+    // hand: without the reflow between the two toggles the browser sees no
+    // change and one selection slides into the next with no sign of it.
+    this.detail.classList.remove('detail--in');
+    if (this.detail.innerHTML) {
+      void this.detail.offsetWidth;
+      this.detail.classList.add('detail--in');
     }
-    if (s.kind === 'line') {
-      this.detail.innerHTML = this.lineDetail(s.line);
-      return;
-    }
-    const station = stationById.get(s.id);
-    this.detail.innerHTML = station ? this.stationDetail(station, s.from) : '';
   }
 
   private lineDetail(line: LineId): string {
@@ -110,6 +129,7 @@ export class NetworkPanel {
       )
       .join('');
     return `
+      ${back()}
       <div class="detail__head">${badge(line)}<h3 class="detail__title">${esc(meta.name)}</h3></div>
       <p class="detail__status">${esc(meta.status)}</p>
       ${facts}
@@ -132,12 +152,10 @@ export class NetworkPanel {
         : '';
     const kind = p.interchange ? `Interchange for ${p.lines.length} lines` : 'Station';
     return `
+      ${back(from)}
       <div class="detail__head"><h3 class="detail__title">${esc(p.name)}</h3></div>
       <p class="detail__status">${esc(kind)}</p>
       ${note}
-      <ul class="served" role="list">${served}</ul>
-      <button class="detail__back" type="button" data-back="${from ?? ''}">${
-        from ? `Back to ${esc(LINES[from].name)}` : 'Show all lines'
-      }</button>`;
+      <ul class="served" role="list">${served}</ul>`;
   }
 }

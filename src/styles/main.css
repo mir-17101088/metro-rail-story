@@ -173,13 +173,24 @@ a {
   padding: 0 var(--gutter);
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   background: linear-gradient(to bottom, rgb(15 20 26 / 0.88), rgb(15 20 26 / 0));
   pointer-events: none;
-  transition: opacity 240ms ease;
+  transition:
+    opacity 240ms ease,
+    visibility 0s linear 240ms;
 }
 
+/* Out of the way over the footer, which carries the logo itself. Hidden for
+   real, not just invisible: an unseen link must not still take a click. */
 .masthead[data-hidden] {
   opacity: 0;
+  visibility: hidden;
+}
+
+.masthead:not([data-hidden]) {
+  transition-delay: 0s;
 }
 
 /* Past the map, the masthead needs its own ground so text never runs under the logo. */
@@ -205,7 +216,216 @@ a {
   }
 }
 
+/* ------------------------------------------------------------ section jumps */
+
+/*
+ * Four ways into the page from the masthead. Wide screens take all four in a
+ * row; below that only the ride keeps its place, beside a button holding the
+ * rest, because four labels do not fit a phone next to the logo.
+ *
+ * Square corners, per the shape rule: these are editorial controls, not map
+ * glyphs. Everything is an ordinary anchor, so it all works before (and
+ * without) src/nav.ts.
+ */
+.sitenav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  pointer-events: auto;
+}
+
+.sitenav__list {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.125rem, 0.6vw, 0.5rem);
+  list-style: none;
+}
+
+.sitenav__link,
+.sitenav__ride {
+  display: block;
+  padding: 0.5rem clamp(0.4rem, 0.9vw, 0.75rem);
+  font: 600 clamp(0.75rem, 0.66rem + 0.28vw, 0.875rem) / 1.2 var(--sans);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--text-2);
+  text-decoration: none;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+/* The rule under the current section, drawn only when there is one. */
+.sitenav__link {
+  position: relative;
+}
+
+.sitenav__link::after {
+  content: '';
+  position: absolute;
+  inset: auto clamp(0.4rem, 0.9vw, 0.75rem) 0.25rem;
+  height: 2px;
+  background: currentcolor;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.sitenav__link[data-current] {
+  color: var(--text-1);
+}
+
+.sitenav__link[data-current]::after {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sitenav__link:hover,
+  .sitenav__ride:hover {
+    color: var(--text-1);
+  }
+}
+
+/*
+ * "Take a tour!" is the one link a reader jumps to out of order, so it is the
+ * one with a box around it. Line 6's green is the accent: the only stretch of
+ * this network anyone can actually ride.
+ */
+.sitenav__link--ride,
+.sitenav__ride {
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+  padding-inline: clamp(0.5rem, 1vw, 0.875rem);
+  border: 1px solid var(--rule-strong);
+  background: rgb(15 20 26 / 0.7);
+  color: var(--text-1);
+}
+
+.sitenav__link--ride::before,
+.sitenav__ride::before {
+  content: '';
+  flex: none;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background: var(--line-6);
+}
+
+.sitenav__link--ride::after {
+  content: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sitenav__link--ride:hover,
+  .sitenav__ride:hover {
+    border-color: var(--line-6);
+    background: rgb(93 220 165 / 0.14);
+  }
+}
+
+.sitenav__toggle {
+  display: none;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--rule-strong);
+  background: rgb(15 20 26 / 0.7);
+  color: var(--text-2);
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.sitenav__toggle-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.sitenav[data-open] .sitenav__toggle {
+  color: var(--text-1);
+  background: rgb(30 37 46 / 0.97);
+}
+
+/* Phones and small tablets: the list folds into a tray under the button. */
+@media (max-width: 899px) {
+  .sitenav__toggle {
+    display: grid;
+  }
+
+  .sitenav__ride {
+    display: flex;
+  }
+
+  .sitenav__tray {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 11rem;
+    padding: 0.25rem;
+    background: rgb(15 20 26 / 0.97);
+    border: 1px solid var(--rule);
+    box-shadow: 0 1rem 2rem -0.75rem rgb(4 7 10 / 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.375rem);
+    transition:
+      opacity 180ms var(--ease-out),
+      transform 180ms var(--ease-out),
+      visibility 0s linear 180ms;
+  }
+
+  .sitenav[data-open] .sitenav__tray {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .sitenav__list {
+    display: grid;
+    gap: 1px;
+  }
+
+  .sitenav__link {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .sitenav__link::after {
+    inset: auto auto 0.5rem 0.75rem;
+    width: 1rem;
+  }
+
+  .sitenav__link--ride {
+    justify-content: flex-start;
+  }
+}
+
+/* Wide: the four links sit in the masthead, no tray, no second ride link. */
+@media (min-width: 900px) {
+  .sitenav__ride {
+    display: none;
+  }
+}
+
 /* ---------------------------------------------------------------- scrolly */
+
+/* Room for the fixed masthead above anything the section jumps land on. */
+#network,
+#timeline,
+#costs,
+#game {
+  scroll-margin-top: calc(var(--masthead-h) + 0.5rem);
+}
+
 
 /*
  * svh and lvh need Chrome 108, Safari 15.4, Firefox 101 or Samsung Internet 21.
@@ -625,6 +845,27 @@ a {
   font-family: var(--sans);
 }
 
+/*
+ * "There is more below." The explorer carries its own scrollbar, and a reader
+ * who cannot see one has no way of knowing that the answer to their tap is a
+ * few lines further down. src/explorer/dock.ts sets data-more whenever the box
+ * has content past its bottom edge.
+ */
+.network::after {
+  content: '';
+  position: absolute;
+  inset: auto 1px 1px;
+  height: 2.25rem;
+  background: linear-gradient(to top, rgb(15 20 26 / 0.97), rgb(15 20 26 / 0));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.network[data-more]::after {
+  opacity: 1;
+}
+
 .network__panel {
   position: relative;
   padding: 1.25rem 1.25rem 1rem;
@@ -857,10 +1098,41 @@ a {
   display: none;
 }
 
+/*
+ * The prompt has been answered, so it steps aside: the detail below now names
+ * the line or station. Browsers without :has() simply keep the hint.
+ */
+.network__body:has(.detail:not(:empty)) .network__hint {
+  display: none;
+}
+
 .detail {
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--rule);
+}
+
+/*
+ * Every selection lands on the same element, so the change needs its own
+ * movement to be noticed: the panel scrolls the detail up to its top edge
+ * (see Dock.showDetail) and the detail itself slides in under the scroll.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .detail--in {
+    animation: detail-in 380ms var(--ease-out) both;
+  }
+
+  @keyframes detail-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 .detail__head {
@@ -960,17 +1232,36 @@ a {
   color: var(--text-2);
 }
 
+/* A breadcrumb, not a footer: it leads the detail it belongs to. */
 .detail__back {
-  margin-top: 0.875rem;
-  padding: 0.5rem 0;
-  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+  min-height: 2.25rem;
   background: none;
   border: 0;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  color: var(--text-2);
   cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.detail__back::before {
+  content: '';
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border: solid currentcolor;
+  border-width: 1.5px 0 0 1.5px;
+  transform: rotate(-45deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .detail__back:hover {
+    color: var(--text-1);
+  }
 }
 
 .network__note {
@@ -1308,6 +1599,46 @@ a {
   pointer-events: none;
 }
 
+/*
+ * "Show all lines": joins the zoom buttons' group while a line or a station is
+ * selected (see StoryMap.addResetButton). Its icon is inline SVG rather than
+ * one of mapbox's background images, so it needs its own strokes.
+ */
+.stage .map-reset {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.stage .map-reset svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: var(--text-1);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Scale only: growing the group would otherwise shunt the zoom buttons. */
+@media (prefers-reduced-motion: no-preference) {
+  .stage .map-reset:not([hidden]) {
+    animation: map-reset-in 220ms var(--ease-out) both;
+  }
+
+  @keyframes map-reset-in {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
 /* ----------------------------------------------------------- after the map */
 
 .afterword {
@@ -1370,6 +1701,13 @@ a {
   --date-col: 8.5rem;
   --axis-col: 2.5rem;
   --axis-x: calc(var(--date-col) + var(--axis-col) / 2);
+  /*
+   * One step per event, the same for every pair. Spacing scaled to the years
+   * between entries left the 2005-2012 stretch empty and squeezed 2026-2027
+   * into a smudge; an even rhythm reads as a list of moments, which is what
+   * this is. The dates carry the intervals.
+   */
+  --tl-step: clamp(2.25rem, 4.5vw, 3.5rem);
   margin-top: clamp(1.5rem, 4vw, 3rem);
   list-style: none;
 }
@@ -1379,7 +1717,7 @@ a {
   display: grid;
   grid-template-columns: var(--date-col) var(--axis-col) minmax(0, 36rem);
   align-items: start;
-  padding-top: clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem);
+  padding-top: var(--tl-step);
 }
 
 .tl__item:first-child {
@@ -1403,14 +1741,14 @@ a {
 
 .tl__item:last-child::before {
   bottom: auto;
-  height: calc(clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem) + 0.9rem);
+  height: calc(var(--tl-step) + 0.9rem);
 }
 
 .tl__item::after {
   content: '';
   position: absolute;
   left: calc(var(--axis-x) - 0.375rem);
-  top: calc(clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem) + 0.525rem);
+  top: calc(var(--tl-step) + 0.525rem);
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 50%;
@@ -1468,7 +1806,7 @@ a {
   width: 1.25rem;
   height: 2px;
   left: calc(var(--axis-x) - 0.625rem);
-  top: calc(clamp(1.75rem, calc(var(--gap) * 1.375rem), 8rem) + 0.9rem);
+  top: calc(var(--tl-step) + 0.9rem);
   border-radius: 0;
   background: var(--text-3);
   box-shadow: none;
@@ -1484,23 +1822,11 @@ a {
   .tl {
     --axis-col: 1.75rem;
     --axis-x: calc(var(--axis-col) / 2);
+    --tl-step: clamp(1.75rem, 6vw, 2.75rem);
   }
 
   .tl__item {
     grid-template-columns: var(--axis-col) minmax(0, 1fr);
-    padding-top: clamp(1.5rem, calc(var(--gap) * 1rem), 5rem);
-  }
-
-  .tl__item::after {
-    top: calc(clamp(1.5rem, calc(var(--gap) * 1rem), 5rem) + 0.525rem);
-  }
-
-  .tl__item:last-child::before {
-    height: calc(clamp(1.5rem, calc(var(--gap) * 1rem), 5rem) + 0.9rem);
-  }
-
-  .tl__item--today::after {
-    top: calc(clamp(1.5rem, calc(var(--gap) * 1rem), 5rem) + 0.9rem);
   }
 
   .tl__date,

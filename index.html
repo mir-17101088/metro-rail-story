@@ -157,7 +157,15 @@
         z-index: 100;
         display: grid;
         place-items: center;
-        padding: 1.5rem;
+        /*
+         * One unit sizes the whole stack, so it keeps its proportions as it
+         * grows and shrinks, and follows whichever axis is tighter: the width
+         * on a phone held upright, the height on one held sideways or on a
+         * short laptop, where there is far less of it. The floor is the phone
+         * size, the ceiling stops it ballooning on a 4K display.
+         */
+        --u: clamp(0.875rem, min(1.9vw, 2.2vh), 1.3rem);
+        padding: calc(var(--u) * 1.5);
         background: radial-gradient(110% 80% at 50% 42%, #1a2029 0%, #0f141a 68%);
         color: #eef1f4;
         transition:
@@ -185,13 +193,13 @@
       .loader__logo {
         display: block;
         width: auto;
-        height: 1.5rem;
+        height: calc(var(--u) * 1.9);
       }
       .loader__map {
         display: block;
-        width: 11.5rem;
-        height: 11.5rem;
-        margin-top: 1.75rem;
+        width: calc(var(--u) * 14);
+        height: calc(var(--u) * 14);
+        margin-top: calc(var(--u) * 2.2);
         overflow: visible;
       }
       .loader__lines path {
@@ -226,9 +234,9 @@
           loader-train 2800ms cubic-bezier(0.65, 0, 0.35, 1) 1250ms infinite alternate both;
       }
       .loader__meter {
-        width: 9.25rem;
+        width: calc(var(--u) * 11.5);
         height: 2px;
-        margin-top: 1.75rem;
+        margin-top: calc(var(--u) * 2.2);
         overflow: hidden;
         background: rgb(238 241 244 / 0.12);
       }
@@ -241,12 +249,41 @@
         transition: transform 700ms cubic-bezier(0.23, 1, 0.32, 1);
       }
       .loader__status {
-        min-height: 1em;
-        margin: 0.875rem 0 0;
-        font: 600 0.6875rem/1 'Libre Franklin Variable', 'Helvetica Neue', Arial, sans-serif;
+        /* One line's worth, reserved: the lines swap, and the stack must not hop. */
+        min-height: 1.5em;
+        max-width: min(28rem, 100%);
+        margin: calc(var(--u) * 1.1) 0 0;
+        font: 600 calc(var(--u) * 0.86) / 1.5 'Libre Franklin Variable', 'Helvetica Neue', Arial, sans-serif;
         letter-spacing: 0.14em;
         text-transform: uppercase;
+        text-align: center;
+        text-wrap: balance;
         color: #818b97;
+        /* The waiting lines cross-fade into one another; see src/loader.ts. */
+        transition: opacity 200ms ease;
+      }
+      /*
+       * Sideways, or on a short laptop: height is what runs out, so the drawing,
+       * much the tallest thing here, gives way rather than the stack running off.
+       */
+      @media (max-height: 34rem) {
+        .loader__logo {
+          height: calc(var(--u) * 1.5);
+        }
+        .loader__map {
+          width: calc(var(--u) * 9);
+          height: calc(var(--u) * 9);
+          margin-top: calc(var(--u) * 1.2);
+        }
+        .loader__meter {
+          margin-top: calc(var(--u) * 1.2);
+        }
+      }
+      /* The narrowest phones: tighter tracking keeps the longest line unbroken. */
+      @media (max-width: 22.5rem) {
+        .loader__status {
+          letter-spacing: 0.1em;
+        }
       }
       /* Text lives in CSS, not the DOM, so crawlers never index a loading message. */
       .loader__status::before {
@@ -342,7 +379,7 @@
           <circle class="loader__train" r="2.8" />
         </svg>
         <div class="loader__meter"><span class="loader__bar" data-loader-bar></span></div>
-        <p class="loader__status" data-loader-status data-status="Loading the map"></p>
+        <p class="loader__status" data-loader-status data-status="Stuck in traffic"></p>
       </div>
     </div>
 
@@ -352,6 +389,41 @@
       <a class="masthead__logo" href="https://www.thedailystar.net" aria-label="The Daily Star home">
         <img src="./src/assets/tds-logo-light.svg" alt="The Daily Star" width="176" height="35" />
       </a>
+
+      <!--
+        Section jumps. Wide screens get the four links in a row. Phones get the
+        ride shortcut on its own, next to a tray holding the whole list: the
+        game is one tap away where there is no room for four labels.
+
+        Hidden until src/nav.ts reveals it: two of the four sections (the map
+        and the ride) are built by script, so without one there is nowhere to go.
+      -->
+      <nav class="sitenav" aria-label="Jump to a section" data-sitenav hidden>
+        <a class="sitenav__ride" href="#game" data-nav-link>Take a tour!</a>
+
+        <div class="sitenav__tray" id="sitenav-tray" data-sitenav-tray>
+          <ul class="sitenav__list" role="list">
+            <li><a class="sitenav__link" href="#network" data-nav-link>The Map</a></li>
+            <li><a class="sitenav__link" href="#timeline" data-nav-link>Timeline</a></li>
+            <li><a class="sitenav__link" href="#costs" data-nav-link>Price Tag</a></li>
+            <li><a class="sitenav__link sitenav__link--ride" href="#game" data-nav-link>Take a tour!</a></li>
+          </ul>
+        </div>
+
+        <button
+          class="sitenav__toggle"
+          type="button"
+          data-sitenav-toggle
+          aria-controls="sitenav-tray"
+          aria-expanded="false"
+          hidden
+        >
+          <svg class="sitenav__toggle-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
+          </svg>
+          <span class="visually-hidden">Sections</span>
+        </button>
+      </nav>
     </header>
 
     <main id="story">
@@ -584,6 +656,11 @@
                       </li>
                     </ul>
 
+                    <!--
+                      Picking a line or a station writes the detail here, and the
+                      explorer scrolls it to the top of its own box: the change is
+                      seen the instant it happens, wherever the reader had scrolled to.
+                    -->
                     <div class="detail" data-detail aria-live="polite"></div>
 
                     <div class="map-key" aria-hidden="true">
@@ -625,16 +702,16 @@
           </p>
         </section>
 
-        <section class="timeline" aria-labelledby="timeline-title">
+        <section class="timeline" id="timeline" aria-labelledby="timeline-title">
           <h2 class="timeline__title" id="timeline-title">From a 2005 plan to a 2036 deadline, and counting</h2>
           <ol class="tl" data-timeline>
-            <li class="tl__item" data-date="2005-01-01" style="--gap: 0">
+            <li class="tl__item" data-date="2005-01-01">
               <time class="tl__date" datetime="2005">2005</time>
               <p class="tl__text">
                 The government and the World Bank draw up a 20-year Strategic Transport Plan recommending MRT corridors.
               </p>
             </li>
-            <li class="tl__item" data-date="2012-01-01" style="--gap: 7">
+            <li class="tl__item" data-date="2012-01-01">
               <time class="tl__date" datetime="2012">2012</time>
               <p class="tl__text">
                 ECNEC approves <span class="line-ref" data-line="6">MRT Line-6</span> with Japan's JICA, at an initial
@@ -642,11 +719,11 @@
               </p>
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-6)">6</span></span>
             </li>
-            <li class="tl__item" data-date="2016-01-01" style="--gap: 4">
+            <li class="tl__item" data-date="2016-01-01">
               <time class="tl__date" datetime="2016">2016</time>
               <p class="tl__text">The government approves the Revised Strategic Transport Plan (RSTP 2015-2035).</p>
             </li>
-            <li class="tl__item" data-date="2019-10-15" style="--gap: 3.8">
+            <li class="tl__item" data-date="2019-10-15">
               <time class="tl__date" datetime="2019-10-15">Oct 15, 2019</time>
               <p class="tl__text">
                 ECNEC approves <span class="line-ref" data-line="1">MRT Line-1</span> (Tk&nbsp;52,561&nbsp;crore) and
@@ -657,7 +734,7 @@
                 ><span class="badge badge--sm" style="--c: var(--line-5n)">5N</span></span
               >
             </li>
-            <li class="tl__item" data-date="2022-12-28" style="--gap: 3.2">
+            <li class="tl__item" data-date="2022-12-28">
               <time class="tl__date" datetime="2022-12-28">Dec 28, 2022</time>
               <p class="tl__text">
                 <span class="line-ref" data-line="6">Line-6</span> is inaugurated. Its cost has climbed 48.82 percent,
@@ -665,12 +742,12 @@
               </p>
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-6)">6</span></span>
             </li>
-            <li class="tl__item" data-date="2023-11-04" style="--gap: 0.9">
+            <li class="tl__item" data-date="2023-11-04">
               <time class="tl__date" datetime="2023-11">Nov 2023</time>
               <p class="tl__text"><span class="line-ref" data-line="6">Line-6</span> service reaches Motijheel.</p>
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-6)">6</span></span>
             </li>
-            <li class="tl__item" data-date="2026-09-16" style="--gap: 2.9">
+            <li class="tl__item" data-date="2026-09-16">
               <time class="tl__date" datetime="2026-09-16">Sep 16, 2026</time>
               <p class="tl__text">
                 ECNEC approves the revised cost of <span class="line-ref" data-line="1">Line-1</span> (Tk&nbsp;1,14,394&nbsp;crore)
@@ -683,18 +760,18 @@
                 ><span class="badge badge--sm" style="--c: var(--line-5s)">5S</span></span
               >
             </li>
-            <li class="tl__item" data-date="2027-03-01" style="--gap: 0.46">
+            <li class="tl__item" data-date="2027-03-01">
               <time class="tl__date" datetime="2027">Early 2027</time>
               <p class="tl__text">
                 Kamlapur station is due to open on <span class="line-ref" data-line="6">Line-6</span>.
               </p>
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-6)">6</span></span>
             </li>
-            <li class="tl__item" data-date="2030-01-01" style="--gap: 2.9">
+            <li class="tl__item" data-date="2030-01-01">
               <time class="tl__date" datetime="2030">2030</time>
               <p class="tl__text">The original target for completing every MRT line, never considered realistic.</p>
             </li>
-            <li class="tl__item" data-date="2034-12-01" style="--gap: 4.92">
+            <li class="tl__item" data-date="2034-12-01">
               <time class="tl__date" datetime="2034-12">Dec 2034</time>
               <p class="tl__text">
                 Completion deadline for <span class="line-ref" data-line="5N">Line-5 North</span>, now budgeted at
@@ -702,7 +779,7 @@
               </p>
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-5n)">5N</span></span>
             </li>
-            <li class="tl__item" data-date="2035-12-01" style="--gap: 1">
+            <li class="tl__item" data-date="2035-12-01">
               <time class="tl__date" datetime="2035-12">Dec 2035</time>
               <p class="tl__text">
                 Completion deadline for <span class="line-ref" data-line="1">Line-1</span>, the country's first subway,
@@ -710,7 +787,7 @@
               </p>
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-1)">1</span></span>
             </li>
-            <li class="tl__item" data-date="2036-12-01" style="--gap: 1">
+            <li class="tl__item" data-date="2036-12-01">
               <time class="tl__date" datetime="2036-12">Dec 2036</time>
               <p class="tl__text">
                 Completion deadline for <span class="line-ref" data-line="5S">Line-5 South</span>, budgeted at Tk&nbsp;45,504&nbsp;crore.
@@ -718,7 +795,7 @@
               <span class="tl__lines"><span class="badge badge--sm" style="--c: var(--line-5s)">5S</span></span>
             </li>
             <!-- No date: marked as future in the markup, since the timeline script only dates items with data-date. -->
-            <li class="tl__item tl__item--undated" data-future style="--gap: 1.6">
+            <li class="tl__item tl__item--undated" data-future>
               <span class="tl__date">No date yet</span>
               <p class="tl__text">
                 <span class="line-ref" data-line="2">Line-2</span> and <span class="line-ref" data-line="4">Line-4</span>
@@ -737,7 +814,7 @@
           --from and --to are each cost divided by 120000. Rows are sorted by percentage change.
           Plain HTML and CSS, so every figure reads without JavaScript; src/costs.ts only animates it in.
         -->
-        <section class="costs" aria-labelledby="costs-title">
+        <section class="costs" id="costs" aria-labelledby="costs-title">
           <div class="costs__intro">
             <p>
               By the time of its completion, the MRT network is slated to serve millions of commuters, taking a huge
@@ -840,7 +917,7 @@
         </section>
 
         <!-- The route game. Needs JavaScript, so it stays hidden until src/game/game.ts starts it. -->
-        <section class="game" aria-labelledby="game-title" data-game hidden>
+        <section class="game" id="game" aria-labelledby="game-title" data-game hidden>
           <header class="game__intro">
             <p class="game__kicker">Pick a station</p>
             <h2 class="game__title" id="game-title">Take the unfinished metro for a test ride</h2>

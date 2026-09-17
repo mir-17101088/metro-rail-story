@@ -40,7 +40,7 @@ vite.config.ts
 api/                    (Vercel token endpoint)
 data/source/mrt-network.kml
 functions/              (Cloudflare adapter, harmless elsewhere)
-public/                 (share image, icons, robots.txt, sitemap.xml, llms.txt, _headers)
+public/                 (share image, icons, robots.txt, sitemap.xml, llms.txt, _headers, .htaccess)
 scripts/                (builds the map data from the KML)
 server/                 (Node server + token endpoint logic)
 src/                    (all story code, styles and data)
@@ -115,14 +115,27 @@ metro-rail-story/
   robots.txt
   sitemap.xml
   llms.txt
+  .htaccess                (Apache: compression and caching. Upload it.)
   _headers                 (only used by Cloudflare; harmless, can be skipped)
 ```
+
+> `.htaccess` starts with a dot, so FTP clients and file managers often hide it
+> and zip tools sometimes drop it. Check it arrived. On Apache it applies the
+> settings in the next section by itself; on Nginx it is ignored and those
+> settings have to go in the server config.
 
 ### Do NOT upload to the Daily Star server
 
 `src/`, `node_modules/`, `api/`, `functions/`, `server/`, `scripts/`, `data/`, `public/` (its files are already copied into `dist/`), `package.json`, `package-lock.json`, `vite.config.ts`, `tsconfig*.json`, `vercel.json`, `.env*`, `README.md`, `DEPLOY.md`.
 
 ### Server settings for the developer (recommended)
+
+On Apache the `.htaccess` in the upload already does all of this, as long as the
+site allows overrides (`AllowOverride FileInfo Indexes` or `All` for the
+directory). On Nginx, or where overrides are off, set it in the server config.
+
+These matter: without caching, every visit re-downloads about 600 KB of map
+code, and without compression it is about 2.3 MB.
 
 - Serve `/metro-rail-story/` with `index.html` as the directory index.
 - Enable gzip or brotli for `.js`, `.css`, `.html`, `.svg`, `.json`, `.txt`, `.xml`.
