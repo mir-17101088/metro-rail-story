@@ -56,7 +56,10 @@ src/                    (all story code, styles and data)
 | `.claude/` | local editor settings |
 | `data/source/*.docx` | optional: the storyline and station documents are not used by the build. Leave them out if the repository is public. |
 
-The `.gitignore` file already excludes everything in that table except the `.docx` files. If you upload through GitHub's website instead of git, drag in only the items in the "Upload" list.
+The `.gitignore` file already excludes everything in that table except the `.docx` files. If you upload through GitHub's website instead of git, drag in only the items in the "Upload" list, and check afterwards that these made it too (they are easy to miss):
+
+- `data/source/mrt-network.kml`, inside a `data/source/` folder. The build regenerates the map from it. Without it the build still succeeds, using the already generated `src/data/network.json`, but map edits made in the KML will not reach the site.
+- `.gitignore` and `.env.example` (names starting with a dot).
 
 ---
 

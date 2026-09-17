@@ -1,7 +1,7 @@
 /**
  * Line metadata shown in the network explorer.
- * Every figure here comes from the story text (MRT story line.docx). Keep the
- * two in sync when the copy desk edits numbers.
+ * Figures come from the story text (MRT story line.docx) and the editors' route
+ * cost list. Keep them in sync with index.html when the copy desk edits numbers.
  */
 
 export type LineId = '6' | '1' | '5N' | '5S' | '2' | '4';
@@ -26,8 +26,8 @@ export const LINES: Record<LineId, LineMeta> = {
     status:
       'Runs on elevated piers from Uttara North to Motijheel. Kamlapur station is 77.2% built and due to be added by early 2027.',
     facts: [
-      ['Cost at inception', 'Tk 21,985 crore'],
-      ['Cost by 2022', 'Tk 33,472 crore'],
+      ['Initial cost', 'Tk 21,985 crore'],
+      ['Final cost', 'Tk 33,472 crore'],
     ],
   },
   '1': {
@@ -37,10 +37,12 @@ export const LINES: Record<LineId, LineMeta> = {
     route: 'Kamlapur to Airport, with a Purbachal branch',
     status: "Approved on October 15, 2019. It will be the country's first subway.",
     facts: [
+      ['Initial cost', 'Tk 52,561 crore'],
+      ['Revised cost', 'Tk 1,20,794 crore'],
+      ['Second revised cost', 'Tk 1,14,000 crore'],
       ['Underground', '19.87 km'],
       ['Elevated', '11.37 km'],
       ['Underground stations', '12 of 21'],
-      ['Revised cost, Lines 1 and 5N', 'Tk 2,03,800 crore'],
     ],
   },
   '5N': {
@@ -50,8 +52,10 @@ export const LINES: Record<LineId, LineMeta> = {
     route: 'Hemayetpur to Vatara',
     status: 'Approved on October 15, 2019, alongside Line 1.',
     facts: [
+      ['Initial cost', 'Tk 41,239 crore'],
+      ['Revised cost', 'Tk 93,190 crore'],
+      ['Second revised cost', 'Tk 89,800 crore'],
       ['Underground stations', '9 of 14'],
-      ['Revised cost, Lines 1 and 5N', 'Tk 2,03,800 crore'],
     ],
   },
   '5S': {
@@ -61,7 +65,7 @@ export const LINES: Record<LineId, LineMeta> = {
     route: 'Gabtoli to Dasherkandi',
     status: 'Approved by ECNEC with loan assistance from the ADB and South Korea. The project runs to August 2033.',
     facts: [
-      ['Estimated cost', 'Tk 45,503 crore'],
+      ['Initial cost', 'Tk 45,504 crore'],
       ['Length', '17.4 km'],
       ['Underground', '12.8 km'],
       ['Elevated', '4.6 km'],
@@ -73,7 +77,7 @@ export const LINES: Record<LineId, LineMeta> = {
     color: '#7e62d6',
     route: 'Gabtoli to Narayanganj, with a Sadarghat branch',
     status: 'Part of the planned six-line network.',
-    facts: [],
+    facts: [['Initial cost', 'Tk 61,000 crore']],
   },
   '4': {
     id: '4',
@@ -81,7 +85,7 @@ export const LINES: Record<LineId, LineMeta> = {
     color: '#f0ca2c',
     route: 'Kamlapur to Madanpur',
     status: 'Part of the planned six-line network.',
-    facts: [],
+    facts: [['Initial cost', 'Tk 28,400 crore']],
   },
 };
 

@@ -18,7 +18,7 @@
  *
  * Output: src/data/network.json (committed, imported by the map chunk).
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DOMParser } from '@xmldom/xmldom';
@@ -27,6 +27,18 @@ import { kml } from '@tmcw/togeojson';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = resolve(ROOT, 'data/source/mrt-network.kml');
 const OUT = resolve(ROOT, 'src/data/network.json');
+
+// The output is committed, so a build can go ahead without the KML (a hosted
+// build from an upload that left data/ out, say). It only regenerates when the
+// source is there.
+if (!existsSync(SRC)) {
+  if (existsSync(OUT)) {
+    console.warn('[data] data/source/mrt-network.kml not found: using the committed src/data/network.json unchanged.');
+    process.exit(0);
+  }
+  console.error('[data] data/source/mrt-network.kml not found, and there is no src/data/network.json to fall back on.');
+  process.exit(1);
+}
 
 /* ------------------------------------------------------------------ config */
 

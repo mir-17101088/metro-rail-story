@@ -42,6 +42,7 @@ The endpoint rejects cross-site callers unless they are listed in `ALLOWED_ORIGI
 - The map code, mapbox's shared chunk and its worker are preloaded from `<head>` (see `preloadMap` in `vite.config.ts`), so they download in parallel with the entry script instead of one after another. Chrome may log "preloaded but not used" for the worker file; that is expected and harmless.
 - The basemap's TileJSON is inlined in `src/map/basemap.ts`, saving a request before the first tile.
 - `npm start` pre-compresses every asset (brotli and gzip) at startup.
+- Older phones: `svh`/`lvh` units (Chrome 108+, Safari 15.4+) always follow a `vh` fallback, or the story's spacing collapses and the cards stack edge to edge. See the note above `.scrolly` in `main.css` before adding new ones.
 
 ## Reading and interaction
 
@@ -94,12 +95,12 @@ Station names follow the KML where the two documents differ. Mostul is tagged un
 
 These are in the storyline as supplied and were left unchanged unless noted:
 
-- **Lines 1 and 5N:** approved "for a combined cost of Tk 2,13,984 crore", then "revised ... at Tk 2,03,800 crore, an increase of 117 percent". A lower figure cannot be a 117% increase. A 117% rise to Tk 2,03,800 crore implies an original of about Tk 93,800 crore.
-- **Line 5S:** Tk 45,503 crore and BDT 45,504 crore in consecutive sentences; 17.2 km and 17.4 km in consecutive sentences. "The project will run from this month" has no date on a standalone page.
+- **Route costs** (from the editors' cost list; shown in the story, the timeline and the network explorer): Line 6 Tk 21,985 crore initial, Tk 33,472 crore final. Line 1 Tk 52,561 / 1,20,794 / 1,14,000 crore (initial / revised / second revised). Line 5N Tk 41,239 / 93,190 / 89,800 crore. Line 5S Tk 45,504 crore, Line 2 Tk 61,000 crore, Line 4 Tk 28,400 crore (initial). The figures add up: Lines 1 and 5N were approved at a combined Tk 93,800 crore, first revised to Tk 2,13,984 crore, then set at Tk 2,03,800 crore (+117%).
+- **Line 5S:** the story gives an estimated cost of Tk 45,504 crore, "a reduction of about 16.7%" from April 2024, and says it was approved "at Tk 54,619 crore, according to Planning Ministry sources". Tk 45,504 crore is exactly 16.7% below Tk 54,619 crore, so the second figure reads like the April 2024 estimate: confirm. Also 17.2 km and 17.4 km in consecutive sentences, and "The project will run from this month" has no date on a standalone page.
 - **"Wednesday, October 15"** has no year. The timeline assumes 2025.
 - **Line 1:** the text says 21 stations; the KML has 19.
 - **Timeline entries not in the storyline** (verify): Line 6 inauguration on Dec 28, 2022; service reaching Motijheel in Nov 2023.
-- **Typographic edits only:** em dashes replaced with commas or hyphens, "Tk45,503" spaced, and the 5S paragraph's trailing comma closed with a full stop.
+- **Typographic edits only:** em dashes replaced with commas or hyphens, and the 5S paragraph's trailing comma closed with a full stop. Currency is written "Tk 93,800 crore" (no full stop after Tk) throughout.
 
 ## Accessibility and motion
 

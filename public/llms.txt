@@ -13,20 +13,20 @@ Language: English
 - 2016: the government approved the Revised Strategic Transport Plan (RSTP 2015-2035), initially proposing five MRT and two BRT lines; DMTCL later expanded it to six MRT lines with more than 100 stations.
 - 2012: ECNEC approved MRT Line-6 with Japan's JICA. Its cost rose from Tk 21,985 crore at inception to Tk 33,472 crore by its 2022 inauguration, up 52.25 percent.
 - Kamlapur station on Line-6 is 77.2 percent built and due to be added by early 2027.
-- October 15, 2019: Line-1 and Line-5 North were approved for a combined Tk 2,13,984 crore.
+- October 15, 2019: Line-1 (Tk 52,561 crore) and Line-5 North (Tk 41,239 crore) were approved for a combined Tk 93,800 crore.
 - Line-1 has a 19.87 km underground section (Dhaka airport to Kamalapur) and an 11.37 km elevated section (Natunbazar to Pitalganj Depot, Narayanganj). Line-5 North runs from Hemayetpur to Bhatara.
-- On Wednesday, October 15 (2025), ECNEC revised the cost of Line-1 and Line-5 North to Tk 2,03,800 crore, described as an increase of 117 percent.
+- A first revision put Line-1 at Tk 1,20,794 crore and Line-5 North at Tk 93,190 crore. On Wednesday, October 15 (2025), ECNEC revised them to Tk 1,14,000 crore and Tk 89,800 crore, a combined Tk 2,03,800 crore and an increase of 117 percent.
 - Line-1 and Line-5 North will be Bangladesh's first underground rail projects: 12 of Line-1's 21 stations and 9 of Line-5 North's 14 stations will be underground. Line-1 will be the country's first subway.
-- The same day ECNEC approved MRT Line-5 (Southern) at an estimated Tk 45,503 crore, with loan assistance from the ADB and South Korea. It runs 17.4 km (12.8 km underground, 4.6 km elevated) from Gabtoli to Dasherkandi via Shyamoli, Asad Gate, Karwan Bazar, Hatirjheel, Tejgaon and Aftabnagar, with work scheduled to August 2033.
+- The same day ECNEC approved MRT Line-5 (Southern), with an estimated cost of Tk 45,504 crore, about 16.7 percent below its April 2024 estimate. It was approved with loan assistance from the ADB and South Korea at Tk 54,619 crore, according to Planning Ministry sources. It runs 17.4 km (12.8 km underground, 4.6 km elevated) from Gabtoli to Dasherkandi via Shyamoli, Asad Gate, Karwan Bazar, Hatirjheel, Tejgaon and Aftabnagar, with work scheduled to August 2033.
 - DMTCL is planning a fresh timeline for the remaining corridors: the 2030 target for all MRT lines is unlikely to be met, with completion now likely around 2035.
 
 ## The six lines
 
-- Line 6: Uttara North to Kamlapur (elevated; in service to Motijheel)
-- Line 1: Kamlapur to Airport, with a Purbachal branch
-- Line 5 North: Hemayetpur to Vatara
-- Line 5 South: Gabtoli to Dasherkandi
-- Line 2: Gabtoli to Narayanganj, with a Sadarghat branch
-- Line 4: Kamlapur to Madanpur
+- Line 6: Uttara North to Kamlapur (elevated; in service to Motijheel). Initial cost Tk 21,985 crore; final cost Tk 33,472 crore.
+- Line 1: Kamlapur to Airport, with a Purbachal branch. Initial cost Tk 52,561 crore; revised Tk 1,20,794 crore; second revision Tk 1,14,000 crore.
+- Line 5 North: Hemayetpur to Vatara. Initial cost Tk 41,239 crore; revised Tk 93,190 crore; second revision Tk 89,800 crore.
+- Line 5 South: Gabtoli to Dasherkandi. Initial cost Tk 45,504 crore.
+- Line 2: Gabtoli to Narayanganj, with a Sadarghat branch. Initial cost Tk 61,000 crore.
+- Line 4: Kamlapur to Madanpur. Initial cost Tk 28,400 crore.
 
 Map alignments and station locations in the story are approximate.
