@@ -95,12 +95,11 @@ Station names follow the KML where the two documents differ. Mostul is tagged un
 
 These are in the storyline as supplied and were left unchanged unless noted:
 
-- **Route costs** (from the editors' cost list; shown in the story, the timeline and the network explorer): Line 6 Tk 21,985 crore initial, Tk 33,472 crore final. Line 1 Tk 52,561 / 1,20,794 / 1,14,000 crore (initial / revised / second revised). Line 5N Tk 41,239 / 93,190 / 89,800 crore. Line 5S Tk 45,504 crore, Line 2 Tk 61,000 crore, Line 4 Tk 28,400 crore (initial). The figures add up: Lines 1 and 5N were approved at a combined Tk 93,800 crore, first revised to Tk 2,13,984 crore, then set at Tk 2,03,800 crore (+117%).
-- **Line 5S:** the story gives an estimated cost of Tk 45,504 crore, "a reduction of about 16.7%" from April 2024, and says it was approved "at Tk 54,619 crore, according to Planning Ministry sources". Tk 45,504 crore is exactly 16.7% below Tk 54,619 crore, so the second figure reads like the April 2024 estimate: confirm. Also 17.2 km and 17.4 km in consecutive sentences, and "The project will run from this month" has no date on a standalone page.
-- **"Wednesday, October 15"** has no year. The timeline assumes 2025.
+- **Route costs** (from the editors' cost list; shown in the story, the timeline and the network explorer): Line 6 Tk 21,985 crore initial, Tk 33,472 crore final. Line 1 Tk 52,561 / 1,20,794 / 1,14,394 crore (initial / revised / second revised). Line 5N Tk 41,239 / 93,190 / 89,848 crore. Line 5S Tk 45,504 crore, Line 2 Tk 61,000 crore, Line 4 Tk 28,400 crore (initial). The figures add up: Lines 1 and 5N were approved at a combined Tk 93,800 crore, first revised to Tk 2,13,984 crore, and approved by ECNEC on September 16, 2026 at Tk 2,04,242 crore. Line 5S was approved the same day.
+- **Line 5S:** 17.2 km and 17.4 km in consecutive sentences, and "The project will run from this month" has no date on a standalone page.
 - **Line 1:** the text says 21 stations; the KML has 19.
 - **Timeline entries not in the storyline** (verify): Line 6 inauguration on Dec 28, 2022; service reaching Motijheel in Nov 2023.
-- **Typographic edits only:** em dashes replaced with commas or hyphens, and the 5S paragraph's trailing comma closed with a full stop. Currency is written "Tk 93,800 crore" (no full stop after Tk) throughout.
+- **Typographic edits only:** em dashes (and "--") replaced with commas or hyphens. Currency is written "Tk 93,800 crore" (no full stop after Tk, and never a bare figure) throughout.
 
 ## Accessibility and motion
 
