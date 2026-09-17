@@ -1,0 +1,1012 @@
+/*
+ * "Pick a station": the route game after the timeline.
+ *
+ * Follows main.css: square editorial surfaces, round map glyphs, serif for
+ * the narrative voice (results), sans for controls and data.
+ *
+ * Layout: on wide screens the trip panel floats over the left of the map,
+ * like the network explorer. Below 1024px it sits above the map, so the
+ * station lists never cover the ride.
+ *
+ * Z-index inside the stage: map 0 · caption and result 3 · panel 4 · station list 20.
+ */
+
+.game {
+  --panel-w: 25rem;
+  /* Map area to the right of the panel on wide screens (caption and result centre in it). */
+  --panel-space: 0px;
+
+  position: relative;
+  z-index: 2;
+  padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(3rem, 7vw, 5rem);
+  background: var(--ink);
+  border-top: 1px solid var(--rule);
+}
+
+.game__intro {
+  max-width: calc(60rem + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.game__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font: 650 0.75rem/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.game__kicker::before {
+  content: '';
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--line-6);
+  box-shadow: 0 0 0 3px rgb(93 220 165 / 0.2);
+}
+
+.game__title {
+  margin-top: 0.875rem;
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 1.3rem + 1.9vw, 2.875rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.game__dek {
+  max-width: 38rem;
+  margin-top: 0.875rem;
+  font-family: var(--serif);
+  font-size: clamp(1.0625rem, 0.98rem + 0.36vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.game__stage {
+  position: relative;
+  margin-top: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+/* ------------------------------------------------------------------- map */
+
+.game__viewport {
+  position: relative;
+  height: 80vh;
+  min-height: 26rem;
+  max-height: 46rem;
+  overflow: hidden;
+  background: var(--land);
+  border-block: 1px solid var(--rule);
+  /* Keeps the ride's viewport clear of the fixed masthead when scrolled to. */
+  scroll-margin-top: var(--masthead-h);
+}
+
+@supports (height: 1svh) {
+  .game__viewport {
+    height: calc(100svh - var(--masthead-h) - 1rem);
+  }
+}
+
+/* Doubled class beats mapbox-gl.css (.mapboxgl-map { position: relative }). */
+.game__map.game__map {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.game__map[data-ready] {
+  opacity: 1;
+}
+
+.game__fallback {
+  position: absolute;
+  inset: auto var(--gutter) 1.5rem;
+  color: var(--text-2);
+  font: 400 0.9375rem/1.5 var(--sans);
+  text-align: center;
+}
+
+/* ----------------------------------------------------------------- panel */
+
+.game__panel {
+  position: relative;
+  z-index: 4;
+  margin: 0 var(--gutter) 1rem;
+  padding: 1.125rem 1.25rem 1.375rem;
+  background: rgb(15 20 26 / 0.96);
+  border: 1px solid var(--rule);
+  box-shadow: 0 1.25rem 2.5rem -1rem rgb(4 7 10 / 0.6);
+  font-family: var(--sans);
+}
+
+.game__panel:focus {
+  outline: none;
+}
+
+.game__form {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Title and Reset share a row above the fields, so Reset never sits on them. */
+.game__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.25rem;
+  margin-bottom: 0.875rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.game__panel-title {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.game__reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.25rem;
+  margin-right: -0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: none;
+  border: 0;
+  color: var(--text-2);
+  font: 600 0.8125rem/1 var(--sans);
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.game__reset:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game__reset:hover {
+    color: var(--text-1);
+  }
+}
+
+.game__reset-icon,
+.game-btn__icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.game__hint {
+  margin-top: 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.nobr {
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------- station field */
+
+.picker {
+  position: relative;
+  scroll-margin-top: calc(var(--masthead-h) + 0.75rem);
+}
+
+.picker__label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.picker__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.picker__pin {
+  position: absolute;
+  left: 0.625rem;
+  display: grid;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.picker__pin--from {
+  box-shadow: inset 0 0 0 2px var(--text-1);
+  color: var(--text-1);
+}
+
+.picker__pin--to {
+  background: var(--text-1);
+  color: var(--ink);
+}
+
+.picker__input {
+  width: 100%;
+  min-height: 3rem;
+  margin: 0;
+  padding: 0.5rem 2.5rem 0.5rem 2.625rem;
+  background: rgb(238 241 244 / 0.06);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  color: var(--text-1);
+  /* 16px or more: iOS does not zoom the page when the field is focused. */
+  font: 500 1rem/1.2 var(--sans);
+  text-overflow: ellipsis;
+  appearance: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.picker__input::placeholder {
+  color: var(--text-3);
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .picker__input:hover {
+    border-color: rgb(238 241 244 / 0.38);
+  }
+}
+
+.picker__input:focus {
+  outline: none;
+  background: rgb(238 241 244 / 0.09);
+  border-color: var(--text-1);
+}
+
+.picker[data-filled] .picker__input {
+  font-weight: 650;
+}
+
+.picker__chevron {
+  position: absolute;
+  right: 0.875rem;
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: var(--text-2);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: transform 220ms var(--ease-out);
+}
+
+.picker__input[aria-expanded='true'] ~ .picker__chevron {
+  transform: rotate(180deg);
+}
+
+.picker__popup {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  max-height: min(19rem, 46vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #151b23;
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 1rem 2rem -0.5rem rgb(4 7 10 / 0.85);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(238 241 244 / 0.22) transparent;
+}
+
+.picker__list {
+  padding: 0.25rem 0;
+  list-style: none;
+}
+
+.picker__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.625rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.picker__option[data-active] {
+  background: rgb(238 241 244 / 0.1);
+}
+
+.picker__option[aria-selected='true'] .picker__name {
+  font-weight: 700;
+}
+
+.picker__option[aria-selected='true'] .picker__name::before {
+  content: '';
+  display: inline-block;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  margin: 0 0.5rem 0.125rem 0;
+  border-radius: 50%;
+  background: var(--text-1);
+}
+
+.picker__lines {
+  display: flex;
+  flex: none;
+  gap: 0.1875rem;
+}
+
+.picker__empty {
+  padding: 0.875rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.badge--xs {
+  min-width: 1.3125rem;
+  height: 1.3125rem;
+  padding: 0 0.25rem;
+  font-size: 0.625rem;
+}
+
+/* --------------------------------------------------------------- options */
+
+.game-options {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.game-options__title {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.game-options__text {
+  margin-top: 0.125rem;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+.game-options__list {
+  display: grid;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  list-style: none;
+}
+
+.route-btn {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.625rem;
+  background: rgb(238 241 244 / 0.05);
+  border: 1px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.route-btn:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .route-btn:hover {
+    background: rgb(238 241 244 / 0.1);
+  }
+
+  .route-btn:hover .route-btn__go {
+    color: var(--text-1);
+    transform: translateX(2px);
+  }
+}
+
+.route-btn[aria-pressed='true'] {
+  background: rgb(238 241 244 / 0.1);
+  border-color: var(--rule-strong);
+}
+
+.route-btn__lines {
+  display: flex;
+  align-items: center;
+}
+
+.route-btn__to {
+  width: 0.4375rem;
+  height: 2px;
+  background: var(--rule-strong);
+}
+
+.route-btn__text {
+  display: grid;
+  min-width: 0;
+}
+
+.route-btn__name {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.route-btn__meta {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.route-btn__go {
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+  transition:
+    color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.route-btn__go svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* --------------------------------------------------------------- caption */
+
+.game-caption,
+.game-result {
+  position: absolute;
+  z-index: 3;
+  left: calc(var(--panel-space) + (100% - var(--panel-space)) / 2);
+  /* Clear of the Mapbox logo and, on phones, the back-to-top button. */
+  bottom: 3.75rem;
+  width: min(30rem, calc(100% - var(--panel-space) - 1.25rem));
+  font-family: var(--sans);
+  border: 1px solid var(--rule);
+  box-shadow: 0 1.25rem 2.5rem -1rem rgb(4 7 10 / 0.75);
+}
+
+.game-caption {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.625rem 0.625rem 0.75rem;
+  background: rgb(15 20 26 / 0.95);
+  border-left: 3px solid var(--c, var(--text-1));
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 0.5rem);
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out),
+    border-color 220ms ease,
+    visibility 0s linear 220ms;
+}
+
+.game-caption[data-visible] {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+
+.game-caption[data-swap] .game-caption__badges,
+.game-caption[data-swap] .game-caption__body {
+  animation: caption-swap 320ms var(--ease-out) both;
+}
+
+.game-caption[data-swap] .game-caption__body {
+  animation-delay: 40ms;
+}
+
+@keyframes caption-swap {
+  from {
+    opacity: 0;
+    transform: translateY(0.3125rem);
+  }
+}
+
+.game-caption__badges {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* A small chevron between two line badges: from one line to the next. */
+.game-caption__arrow {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  margin: 0 0.1875rem 0 0.0625rem;
+  border-top: 1.75px solid var(--text-2);
+  border-right: 1.75px solid var(--text-2);
+  transform: rotate(45deg);
+}
+
+.game-caption__body {
+  display: grid;
+  min-width: 0;
+}
+
+.game-caption__title {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.game-caption__text {
+  margin-top: 0.0625rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--text-2);
+}
+
+.game-caption__skip {
+  min-height: 2.25rem;
+  padding: 0.25rem 0.625rem;
+  background: none;
+  border: 1px solid var(--rule-strong);
+  color: var(--text-2);
+  font: 600 0.75rem/1 var(--sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.game-caption__skip:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-caption__skip:hover {
+    color: var(--text-1);
+    border-color: var(--text-2);
+  }
+}
+
+/* ---------------------------------------------------------------- result */
+
+.game-result {
+  max-height: calc(100% - 5rem);
+  overflow-y: auto;
+  padding: 1.125rem 1.25rem 1.125rem;
+  background: rgb(15 20 26 / 0.97);
+  border-top: 3px solid var(--c, var(--text-1));
+  transform: translateX(-50%);
+  animation: result-in 440ms var(--ease-out) both;
+}
+
+@keyframes result-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.75rem);
+  }
+}
+
+.game-result__kicker {
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.game-result__title {
+  margin-top: 0.4375rem;
+  font-family: var(--serif);
+  font-size: clamp(1.1875rem, 1.05rem + 0.55vw, 1.4375rem);
+  font-weight: 500;
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+.game-result__text {
+  margin-top: 0.5rem;
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.trip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.375rem;
+  margin-top: 0.875rem;
+  list-style: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.trip__ride {
+  display: flex;
+  align-items: center;
+}
+
+/* The ride drawn in its line colour on either side of the badge. */
+.trip__ride::before,
+.trip__ride::after {
+  content: '';
+  width: 0.5rem;
+  height: 3px;
+  background: var(--c);
+}
+
+.game-result__meta {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.game-result__alt {
+  margin-top: 1rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--rule);
+}
+
+.game-result__alt-title {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.game-result__alt-text {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.game-result__alt .route-btn {
+  margin-top: 0.625rem;
+}
+
+.game-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--text-1);
+  border: 0;
+  color: var(--ink);
+  font: 650 0.875rem/1 var(--sans);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.game-btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-btn:hover {
+    background: #fff;
+  }
+
+  .game-btn--quiet:hover {
+    background: rgb(238 241 244 / 0.08);
+    border-color: var(--text-2);
+  }
+}
+
+/* Secondary to the suggested route above it. */
+.game-btn--quiet {
+  background: none;
+  border: 1px solid var(--rule-strong);
+  color: var(--text-1);
+}
+
+/* ------------------------------------------------------------ map markers */
+
+.game-pin {
+  pointer-events: none;
+}
+
+.game-pin__inner {
+  display: grid;
+  justify-items: center;
+  animation: pin-drop 460ms var(--ease-out) both;
+}
+
+.game-pin__head {
+  display: grid;
+  place-items: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 50%;
+  font: 700 0.75rem/1 var(--sans);
+  box-shadow: 0 0.375rem 0.75rem rgb(4 7 10 / 0.6);
+}
+
+.game-pin__stem {
+  width: 2px;
+  height: 0.4375rem;
+  background: var(--text-1);
+}
+
+.game-pin--from .game-pin__head {
+  background: var(--ink);
+  color: var(--text-1);
+  box-shadow:
+    inset 0 0 0 2px var(--text-1),
+    0 0.375rem 0.75rem rgb(4 7 10 / 0.6);
+}
+
+.game-pin--to .game-pin__head {
+  background: var(--text-1);
+  color: var(--ink);
+}
+
+@keyframes pin-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+.game-train {
+  pointer-events: none;
+}
+
+.game-train__body {
+  position: relative;
+  display: block;
+  width: 1.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  background: #f4f6f7;
+  box-shadow:
+    0 0 0 2px var(--c, var(--line-6)),
+    0 0 0 4px rgb(15 20 26 / 0.7),
+    0 0.25rem 0.75rem rgb(4 7 10 / 0.6);
+  transition:
+    transform 240ms var(--ease-out),
+    opacity 200ms ease;
+}
+
+/* A soft glow in the line colour, so the train stays easy to find when the camera pulls back. */
+.game-train__halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3rem;
+  height: 3rem;
+  margin: -1.5rem 0 0 -1.5rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c, var(--line-6)) 0%, transparent 68%);
+  opacity: 0.35;
+  animation: halo 1600ms ease-in-out infinite alternate;
+}
+
+@keyframes halo {
+  to {
+    opacity: 0.12;
+    transform: scale(1.35);
+  }
+}
+
+.game-train[data-switching] .game-train__body {
+  opacity: 0;
+  transform: scale(0.3);
+}
+
+.game-train[data-switching] .game-train__halo {
+  opacity: 0;
+}
+
+.game-ripple {
+  width: 2rem;
+  height: 2rem;
+  pointer-events: none;
+}
+
+.game-ripple__ring,
+.game-ripple::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--c, var(--text-1));
+}
+
+.game-ripple::before {
+  content: '';
+  opacity: 0.6;
+}
+
+.game-ripple__ring {
+  animation: ripple 1800ms var(--ease-out) infinite;
+}
+
+.map-tip__action {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+/* ------------------------------------------------------------ wide screens */
+
+@media (min-width: 1024px) {
+  .game {
+    --panel-space: calc(var(--step-inset) + var(--panel-w) + 1rem);
+  }
+
+  .game__viewport {
+    height: calc(100vh - var(--masthead-h) - 2rem);
+    min-height: 36rem;
+    max-height: 52rem;
+  }
+
+  @supports (height: 1svh) {
+    .game__viewport {
+      height: calc(100svh - var(--masthead-h) - 2rem);
+    }
+  }
+
+  .game__panel {
+    position: absolute;
+    top: 1.5rem;
+    left: var(--step-inset);
+    width: var(--panel-w);
+    margin: 0;
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .game-caption,
+  .game-result {
+    bottom: 2.75rem;
+  }
+}
+
+/* ------------------------------------------------------ map failed to load */
+
+.game[data-map-failed] .game__viewport {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 0 var(--gutter);
+  background: none;
+  border: 0;
+}
+
+.game[data-map-failed] .game__map {
+  display: none;
+}
+
+.game[data-map-failed] .game__fallback {
+  position: static;
+  margin-top: 0.5rem;
+}
+
+.game[data-map-failed] .game-result {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  width: auto;
+  max-width: 30rem;
+  max-height: none;
+  margin: 1rem auto 0;
+  transform: none;
+  animation-name: result-in-flow;
+}
+
+@keyframes result-in-flow {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .game[data-map-failed] .game__stage {
+    display: grid;
+    grid-template-columns: var(--panel-w) minmax(0, 30rem);
+    align-items: start;
+    justify-content: center;
+    gap: 2rem;
+    padding-inline: var(--gutter);
+  }
+
+  .game[data-map-failed] .game__panel {
+    position: relative;
+    top: auto;
+    left: auto;
+  }
+
+  .game[data-map-failed] .game__viewport {
+    padding: 0;
+  }
+
+  .game[data-map-failed] .game-result {
+    margin-top: 0;
+  }
+}
+
+/* ---------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .game-pin__inner,
+  .game-caption[data-swap] .game-caption__badges,
+  .game-caption[data-swap] .game-caption__body,
+  .game-train__halo,
+  .game-ripple__ring {
+    animation: none;
+  }
+
+  .game-result {
+    animation-name: result-fade;
+  }
+
+  .game[data-map-failed] .game-result {
+    animation-name: result-fade;
+  }
+
+  .game-caption,
+  .game-caption[data-visible] {
+    transform: translate(-50%, 0);
+  }
+
+  .route-btn,
+  .game-btn,
+  .game__reset,
+  .game-caption__skip {
+    transition-property: background-color, border-color, color;
+  }
+}
+
+@keyframes result-fade {
+  from {
+    opacity: 0;
+  }
+}

@@ -1,14 +1,18 @@
 import '@fontsource-variable/newsreader/wght.css';
 import '@fontsource-variable/libre-franklin/wght.css';
 import './styles/main.css';
+import './styles/costs.css';
+import './styles/game.css';
 
 import { Loader, wait } from './loader';
 import { observeSteps } from './scroll/steps';
 import { initTimeline } from './timeline';
+import { initCosts } from './costs';
 import { NetworkPanel } from './explorer/panel';
 import { Dock } from './explorer/dock';
-import { fetchMapToken } from './map/token';
+import { fetchMapToken, type MapToken } from './map/token';
 import { prefersReducedMotion } from './lib/motion';
+import { initGame } from './game/game';
 import type { StoryMap } from './map/story-map';
 
 document.documentElement.classList.add('js');
@@ -60,6 +64,10 @@ function showFallback(error: unknown): void {
   stage.querySelector<HTMLElement>('[data-map-fallback]')?.removeAttribute('hidden');
 }
 
+/** One token request for the page: the story map and the route game share it. */
+let tokenRequest: Promise<MapToken> | null = null;
+const mapToken = (): Promise<MapToken> => (tokenRequest ??= fetchMapToken());
+
 function webglAvailable(): boolean {
   try {
     const canvas = document.createElement('canvas');
@@ -78,7 +86,7 @@ async function loadMap(): Promise<void> {
     // Token and map code in parallel; the code is already downloading thanks
     // to the modulepreload hints in <head>.
     const [token, module] = await Promise.all([
-      fetchMapToken(),
+      mapToken(),
       import('./map/story-map').then((m) => {
         loader.step(0.4, 'Laying the tracks');
         return m;
@@ -136,6 +144,12 @@ if (!CSS.supports('animation-timeline: view()')) {
 
 const timeline = document.querySelector<HTMLOListElement>('[data-timeline]');
 if (timeline) initTimeline(timeline);
+
+const costs = document.querySelector<HTMLElement>('[data-costs]');
+if (costs) initCosts(costs);
+
+const game = document.querySelector<HTMLElement>('[data-game]');
+if (game) initGame(game, { token: mapToken, webgl: webglAvailable() });
 
 const year = document.querySelector('[data-year]');
 if (year) year.textContent = String(new Date().getFullYear());

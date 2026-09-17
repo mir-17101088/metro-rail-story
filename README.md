@@ -53,6 +53,20 @@ The endpoint rejects cross-site callers unless they are listed in `ALLOWED_ORIGI
 - On the map, a plain scroll always scrolls the story. Ctrl + scroll (⌘ + scroll, or a trackpad pinch) zooms the map in the explorer; the +/- buttons, double-click and two-finger pinch work too.
 - A back-to-top button appears once the reader has scrolled past the map.
 
+## The cost chart
+
+Between the timeline and the route game, two paragraphs lead into a dumbbell chart of four lines: each line's initial estimate (hollow dot) and revised cost (filled dot) on one shared scale, sorted by percentage change. It is plain HTML and CSS in `index.html` (every figure reads without JavaScript); `src/costs.ts` only animates the revised dots out from the estimates the first time the chart is seen, and `src/styles/costs.css` styles it. Each row's `--from` and `--to` are its two costs divided by 1,20,000, the top of the scale: update them together with the printed figures.
+
+## The route game ("Pick a station")
+
+After the timeline, readers pick a start and a destination (in the two station fields, or by tapping stations on a second map) and ride the finished network.
+
+- **Routes** (`src/game/routes.ts`): every chain of up to four rides is enumerated, then pruned to trips a person would take: no station passed twice, no change at a station where an earlier or later line could have been boarded directly, and one option per sequence of lines (the shortest place to change). Lines running side by side (6 and 2 at Motijheel and Kamlapur, 2 and 4 to Signboard) keep only the option that can be ridden soonest. An extra change is only offered if it shortens the trip by 10%. At most three options are listed, fewest changes first, then shortest.
+- **Lines still being planned** (2 and 4): trips on them have no date. The ride is drawn dashed, the caption says the line is "still on paper", and the result says the trip happens once the line "leaves the drawing board". If another route avoids those lines, the result card offers it with its date and plays it in one tap (`findDatedRoute` in `src/game/routes.ts`).
+- **What the reader sees:** the same station twice gives "You can just walk"; one route plays at once; several are listed (hover or focus previews one on the map); no connection gives "No route exists" (every pair of stations is connected today, so this only guards against future data changes). Reset, or "Plan another trip" on the result card, starts over.
+- **The ride** (`src/game/game-map.ts`): the camera is close on the platform, pulls back as the train gets going and closes in again on the interchange or destination, where a caption says which line to switch to. The ride pauses while the map is off screen or the tab is hidden, and "Skip ride" jumps to the end. The result names the latest completion deadline among the lines used.
+- **Loading:** the game's map is a second Mapbox map, created only when the section comes within a screen of view (so it adds a map load only for readers who get that far). Its code is a small separate chunk; mapbox-gl itself is shared with the story map. Without WebGL or a token, the fields still work and the result card appears without the ride.
+
 ## Deploy targets
 
 The token endpoint logic lives in `server/mapbox-token.mjs` (Web standard `Request`/`Response`) and runs unchanged on:
@@ -78,6 +92,9 @@ The token endpoint logic lives in `server/mapbox-token.mjs` (Web standard `Reque
 | Numbers in the network explorer | `src/data/lines.ts` |
 | What the map shows at each step (lines, labels, camera) | `src/story/steps.ts` |
 | Turn camera moves or trains off | `src/config.ts` (`cameraMotion`, `trains`) |
+| Cost chart figures | the `.costs` section of `index.html` (see "The cost chart" above) |
+| Route game wording (prompts, captions, results) | `src/game/copy.ts` |
+| Line completion deadlines used by the route game | `completion` in `src/data/lines.ts` (`'running'`, `'planning'` or a year and month; also `KAMLAPUR_OPENING`) |
 | Line colours | `src/data/lines.ts`, `--line-*` and `--text-line-*` in `src/styles/main.css`, and the loading screen colours in `index.html` (the set was validated for colour-blind readers, so re-check if you change them) |
 
 ## Map data
@@ -95,10 +112,12 @@ Station names follow the KML where the two documents differ. Mostul is tagged un
 
 These are in the storyline as supplied and were left unchanged unless noted:
 
-- **Route costs** (from the editors' cost list; shown in the story, the timeline and the network explorer): Line 6 Tk 21,985 crore initial, Tk 33,472 crore final. Line 1 Tk 52,561 / 1,20,794 / 1,14,394 crore (initial / revised / second revised). Line 5N Tk 41,239 / 93,190 / 89,848 crore. Line 5S Tk 45,504 crore, Line 2 Tk 61,000 crore, Line 4 Tk 28,400 crore (initial). The figures add up: Lines 1 and 5N were approved at a combined Tk 93,800 crore, first revised to Tk 2,13,984 crore, and approved by ECNEC on September 16, 2026 at Tk 2,04,242 crore. Line 5S was approved the same day.
+- **Route costs** (from the editors' cost table; shown in the story, the timeline, the cost chart and the network explorer): Line 6 Tk 21,985.07 crore initial, Tk 32,717.72 crore revised (+48.82%). Line 1 Tk 52,561 / 1,20,794 / 1,14,394 crore (initial / revised / second revised; +117.64% overall). Line 5N Tk 41,238.54 / 93,190 / 89,848 crore (+117.87%). Line 5S Tk 54,619 crore initial, Tk 45,504 crore revised (-16.69%). Line 2 Tk 61,000 crore, Line 4 Tk 28,400 crore (initial). The figures add up: Lines 1 and 5N were approved at a combined Tk 93,800 crore, first revised to Tk 2,13,984 crore, and approved by ECNEC on September 16, 2026 at Tk 2,04,242 crore. Line 5S was approved the same day.
 - **Line 5S:** 17.2 km and 17.4 km in consecutive sentences, and "The project will run from this month" has no date on a standalone page.
 - **Line 1:** the text says 21 stations; the KML has 19.
 - **Timeline entries not in the storyline** (verify): Line 6 inauguration on Dec 28, 2022; service reaching Motijheel in Nov 2023.
+- **Completion deadlines** (supplied by the editors; used in the timeline, the network explorer and the route game): Line 6 running; Line 5 North December 2034; Line 1 December 2035; Line 5 South December 2036. Line 2 and Line 4 are still in the planning stage, with no deadline. To check: the Line 5 South story card still says the project runs "to August 2033"; the timeline's "Around 2035" entry was replaced by the three deadlines (the afterword still says "likely around 2035"); and trips that use Line 6's Kamlapur station say "early 2027" rather than "running now".
+- **Cost section copy** (as supplied, en dash replaced with a comma): "is forecast to 1,339,197 daily boardings" may want a verb ("forecast to reach").
 - **Typographic edits only:** em dashes (and "--") replaced with commas or hyphens. Currency is written "Tk 93,800 crore" (no full stop after Tk, and never a bare figure) throughout.
 
 ## Accessibility and motion
@@ -106,3 +125,4 @@ These are in the storyline as supplied and were left unchanged unless noted:
 - The full narrative is plain HTML and reads without JavaScript (the loading screen is hidden when scripts are off). The network explorer is keyboard-operable and works without WebGL; the bottom sheet's grip also resizes with the arrow keys.
 - `prefers-reduced-motion`: lines fade in instead of drawing, the camera cuts instead of flying, trains park at stations, panels change state without sliding, back-to-top jumps instead of gliding, and scroll-linked fades keep opacity only.
 - Map motion runs only while the map is on screen and the tab is visible.
+- Route game: the station fields are ARIA comboboxes (arrow keys, Enter, Escape; typing narrows the list and accepts common spellings such as Kamalapur or Natun Bazar). Boarding, changes and the result are announced to screen readers. With reduced motion there is no ride: the trip is drawn and the result appears at once.

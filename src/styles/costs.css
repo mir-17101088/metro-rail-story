@@ -1,0 +1,339 @@
+/*
+ * The cost section between the timeline and the route game: two paragraphs,
+ * then a dumbbell chart of each line's initial estimate (hollow dot) and
+ * revised cost (filled dot) on one shared Tk crore scale.
+ *
+ * Marks carry the line colours; every value and label stays in text colours,
+ * and each row names its line, so nothing depends on colour alone.
+ */
+
+.costs {
+  position: relative;
+  z-index: 2;
+  padding: clamp(3.5rem, 8vw, 6rem) var(--gutter);
+  background: var(--ink);
+  border-top: 1px solid var(--rule);
+}
+
+.costs__intro,
+.costs__chart {
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+.costs__intro p {
+  max-width: 40rem;
+  font-family: var(--serif);
+  font-size: clamp(1.1875rem, 1.05rem + 0.55vw, 1.4375rem);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.costs__intro .costs__turn {
+  margin-top: 1.25em;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+  font-weight: 500;
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+/* ----------------------------------------------------------------- chart */
+
+.costs__chart {
+  /* The plot column: between the line names and the change figures. */
+  --label-w: 12.5rem;
+  --change-w: 8.5rem;
+  --col-gap: 1.5rem;
+  --grid: rgb(238 241 244 / 0.08);
+
+  margin-top: clamp(2.75rem, 6vw, 4.25rem);
+  font-family: var(--sans);
+}
+
+.costs__title {
+  font-family: var(--serif);
+  font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.costs__sub {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.costs__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+.costs__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.costs__dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+
+.costs__dot--initial {
+  box-shadow: inset 0 0 0 2px var(--text-2);
+}
+
+.costs__dot--revised {
+  background: var(--text-2);
+}
+
+.costs__rows {
+  margin-top: 1.25rem;
+  list-style: none;
+}
+
+.cost,
+.costs__axis {
+  display: grid;
+  grid-template-columns: var(--label-w) minmax(0, 1fr) var(--change-w);
+  column-gap: var(--col-gap);
+}
+
+.cost {
+  grid-template-areas:
+    'label plot change'
+    'values plot change';
+  align-items: center;
+  transition: opacity 200ms ease;
+}
+
+.cost__label {
+  grid-area: label;
+  align-self: end;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding-top: 1.125rem;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.cost__values {
+  grid-area: values;
+  align-self: start;
+  margin-top: 0.25rem;
+  /* Under the name, clear of the badge. */
+  padding: 0 0 1.125rem 2.125rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.cost__amount {
+  white-space: nowrap;
+}
+
+.cost__arrow {
+  color: var(--text-3);
+}
+
+.cost__change {
+  grid-area: change;
+  display: grid;
+  justify-items: end;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.cost__change strong {
+  font-size: 1.25rem;
+  font-weight: 650;
+  line-height: 1.2;
+  color: var(--text-1);
+}
+
+/* The plot fills the row's full height, so the gridlines run unbroken from row to row. */
+.cost__plot {
+  grid-area: plot;
+  align-self: stretch;
+  position: relative;
+  min-height: 3rem;
+  /* The sliding dot layer is as wide as the plot and moves right: keep it from widening the page. */
+  overflow: hidden;
+  background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px);
+  background-size: 25% 100%;
+  box-shadow: inset -1px 0 0 var(--grid);
+}
+
+.cost__run {
+  position: absolute;
+  top: 50%;
+  left: calc(min(var(--from), var(--to)) * 100%);
+  width: calc((max(var(--from), var(--to)) - min(var(--from), var(--to))) * 100%);
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 2px;
+  background: var(--c);
+  transform-origin: left center;
+}
+
+/* A cut runs right to left, from the higher estimate down to the revised cost. */
+.cost--down .cost__run {
+  transform-origin: right center;
+}
+
+.cost__dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin: -0.4375rem 0 0 -0.4375rem;
+  border-radius: 50%;
+}
+
+.cost__dot--initial {
+  left: calc(var(--from) * 100%);
+  background: var(--ink);
+  box-shadow:
+    inset 0 0 0 2px var(--c),
+    0 0 0 2px var(--ink);
+}
+
+/* Spans the plot, so its translate is a share of the plot's width. */
+.cost__slide {
+  position: absolute;
+  inset: 0;
+  transform: translateX(calc(var(--to) * 100%));
+}
+
+.cost__dot--revised {
+  width: 1rem;
+  height: 1rem;
+  margin: -0.5rem 0 0 -0.5rem;
+  background: var(--c);
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.costs__axis {
+  margin-top: 0.25rem;
+}
+
+.costs__ticks {
+  grid-column: 2;
+  position: relative;
+  height: 1.5rem;
+  border-top: 1px solid var(--rule-strong);
+  font-size: 0.75rem;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.costs__ticks span {
+  position: absolute;
+  top: 0.375rem;
+  left: calc(var(--at) * 100%);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.costs__ticks span:first-child {
+  transform: none;
+}
+
+.costs__ticks span:last-child {
+  transform: translateX(-100%);
+}
+
+/* Pointing at a line brings it forward. */
+@media (hover: hover) and (pointer: fine) {
+  .costs__rows:hover .cost:not(:hover) {
+    opacity: 0.45;
+  }
+}
+
+/* The revised dots travel out from the initial estimates the first time the chart is seen. */
+.js .costs__chart:not([data-revealed]) .cost__run {
+  transform: scaleX(0);
+}
+
+.js .costs__chart:not([data-revealed]) .cost__slide {
+  transform: translateX(calc(var(--from) * 100%));
+}
+
+.js .costs__chart:not([data-revealed]) .cost__dot--revised {
+  opacity: 0;
+}
+
+.costs__chart[data-revealed] .cost__run,
+.costs__chart[data-revealed] .cost__slide {
+  transition: transform 1000ms var(--ease-in-out) calc(var(--i) * 140ms + 120ms);
+}
+
+.costs__chart[data-revealed] .cost__dot--revised {
+  transition: opacity 180ms ease calc(var(--i) * 140ms + 120ms);
+}
+
+/* Wide screens: room for "Tk 21,985.07 cr → Tk 32,717.72 cr" on one line. */
+@media (min-width: 1024px) {
+  .costs__chart {
+    --label-w: 15.5rem;
+  }
+}
+
+/* ---------------------------------------------------------------- phones */
+
+@media (max-width: 719px) {
+  .cost {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label change'
+      'values change'
+      'plot plot';
+    column-gap: 1rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .cost__label {
+    padding-top: 1rem;
+  }
+
+  .cost__values {
+    padding-bottom: 0.5rem;
+  }
+
+  .cost__change strong {
+    font-size: 1.125rem;
+  }
+
+  .cost__plot {
+    min-height: 2rem;
+  }
+
+  .costs__axis {
+    display: block;
+    margin-top: 0;
+  }
+
+  .costs__ticks {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .costs__chart[data-revealed] .cost__run,
+  .costs__chart[data-revealed] .cost__slide,
+  .costs__chart[data-revealed] .cost__dot--revised {
+    transition: none;
+  }
+}

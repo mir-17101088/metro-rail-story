@@ -66,22 +66,32 @@ function preloadMap(): Plugin {
       if (!storyMap) return [];
 
       const entry = chunks.find((chunk) => chunk.isEntry)?.fileName;
-      const scripts = [
-        storyMap.fileName,
-        ...storyMap.imports.filter((file) => file !== entry),
+      // The map chunk and everything it statically imports. mapbox-gl and the map
+      // code shared with the route game sit in their own chunks, one level or more down.
+      const byFile = new Map(chunks.map((chunk) => [chunk.fileName, chunk]));
+      const graph = new Set<(typeof chunks)[number]>();
+      const visit = (chunk: (typeof chunks)[number] | undefined) => {
+        if (!chunk || chunk.fileName === entry || graph.has(chunk)) return;
+        graph.add(chunk);
+        chunk.imports.forEach((file) => visit(byFile.get(file)));
+      };
+      visit(storyMap);
+
+      const scripts = new Set([
+        ...[...graph].map((chunk) => chunk.fileName),
         // mapbox-gl imports its small debug chunk on every start; its 3D/Standard-style chunks are never used here.
-        ...storyMap.dynamicImports.filter((file) => /(^|\/)debug-[\w-]+\.js$/.test(file)),
-      ];
-      const styles = [...(storyMap.viteMetadata?.importedCss ?? [])];
+        ...[...graph].flatMap((chunk) => chunk.dynamicImports).filter((file) => /(^|\/)debug-[\w-]+\.js$/.test(file)),
+      ]);
+      const styles = new Set([...graph].flatMap((chunk) => [...(chunk.viteMetadata?.importedCss ?? [])]));
       const worker = Object.keys(bundle).find((file) => /(^|\/)worker-[\w-]+\.js$/.test(file));
 
       return [
-        ...scripts.map((file) => ({
+        ...[...scripts].map((file) => ({
           tag: 'link',
           attrs: { rel: 'modulepreload', href: `./${file}`, crossorigin: '' },
           injectTo: 'head' as const,
         })),
-        ...styles.map((file) => ({
+        ...[...styles].map((file) => ({
           tag: 'link',
           attrs: { rel: 'preload', as: 'style', href: `./${file}`, crossorigin: '' },
           injectTo: 'head' as const,

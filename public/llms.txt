@@ -11,22 +11,25 @@ Language: English
 
 - 2005: the government and the World Bank formulated a 20-year Strategic Transport Plan recommending MRT corridors.
 - 2016: the government approved the Revised Strategic Transport Plan (RSTP 2015-2035), initially proposing five MRT and two BRT lines; DMTCL later expanded it to six MRT lines with more than 100 stations.
-- 2012: ECNEC approved MRT Line-6 with Japan's JICA. Its cost rose from Tk 21,985 crore at inception to Tk 33,472 crore by its 2022 inauguration, up 52.25 percent.
+- 2012: ECNEC approved MRT Line-6 with Japan's JICA. Its cost rose from Tk 21,985.07 crore at inception to Tk 32,717.72 crore by its 2022 inauguration, up 48.82 percent.
 - Kamlapur station on Line-6 is 77.2 percent built and due to be added by early 2027.
-- October 15, 2019: Line-1 (Tk 52,561 crore) and Line-5 North (Tk 41,239 crore) were approved for a combined Tk 93,800 crore.
+- October 15, 2019: Line-1 (Tk 52,561 crore) and Line-5 North (Tk 41,238.54 crore) were approved for a combined Tk 93,800 crore.
 - Line-1 has a 19.87 km underground section (Dhaka airport to Kamalapur) and an 11.37 km elevated section (Natunbazar to Pitalganj Depot, Narayanganj). Line-5 North runs from Hemayetpur to Bhatara.
 - A first revision put Line-1 at Tk 1,20,794 crore and Line-5 North at Tk 93,190 crore. On September 16, 2026, ECNEC approved the two lines with a revised cost of Tk 2,04,242 crore: Tk 1,14,394 crore for Line-1 and Tk 89,848 crore for Line-5 North.
 - Line-1 and Line-5 North will be Bangladesh's first underground rail projects: 12 of Line-1's 21 stations and 9 of Line-5 North's 14 stations will be underground. Line-1 will be the country's first subway.
-- The same day ECNEC approved a third line, MRT Line-5 (South), at a cost of Tk 45,504 crore. It runs 17.4 km (12.8 km underground, 4.6 km elevated) from Gabtoli to Dasherkandi via Shyamoli, Asad Gate, Karwan Bazar, Hatirjheel, Tejgaon and Aftabnagar, with work scheduled to August 2033.
+- The same day ECNEC approved a third line, MRT Line-5 (South), at a cost of Tk 45,504 crore, 16.69 percent below its initial estimate of Tk 54,619 crore. It runs 17.4 km (12.8 km underground, 4.6 km elevated) from Gabtoli to Dasherkandi via Shyamoli, Asad Gate, Karwan Bazar, Hatirjheel, Tejgaon and Aftabnagar, with work scheduled to August 2033.
 - DMTCL is planning a fresh timeline for the remaining corridors: the 2030 target for all MRT lines is unlikely to be met, with completion now likely around 2035.
+- Completion deadlines: Line-5 North December 2034, Line-1 December 2035, Line-5 South December 2036. Line-2 and Line-4 are still in the planning stage, with no deadline set.
+- MRT-6 already carries 300,000 trips a day; Lines 5 North and South together are forecast to reach 1,339,197 daily boardings.
+- Initial vs revised cost: Line-1 Tk 52,561 to Tk 1,14,394 crore (+117.64%); Line-5 North Tk 41,238.54 to Tk 89,848 crore (+117.87%); Line-6 Tk 21,985.07 to Tk 32,717.72 crore (+48.82%); Line-5 South Tk 54,619 to Tk 45,504 crore (-16.69%).
 
 ## The six lines
 
-- Line 6: Uttara North to Kamlapur (elevated; in service to Motijheel). Initial cost Tk 21,985 crore; final cost Tk 33,472 crore.
+- Line 6: Uttara North to Kamlapur (elevated; in service to Motijheel). Initial cost Tk 21,985.07 crore; revised cost Tk 32,717.72 crore.
 - Line 1: Kamlapur to Airport, with a Purbachal branch. Initial cost Tk 52,561 crore; revised Tk 1,20,794 crore; second revision Tk 1,14,394 crore.
-- Line 5 North: Hemayetpur to Vatara. Initial cost Tk 41,239 crore; revised Tk 93,190 crore; second revision Tk 89,848 crore.
-- Line 5 South: Gabtoli to Dasherkandi. Initial cost Tk 45,504 crore.
-- Line 2: Gabtoli to Narayanganj, with a Sadarghat branch. Initial cost Tk 61,000 crore.
-- Line 4: Kamlapur to Madanpur. Initial cost Tk 28,400 crore.
+- Line 5 North: Hemayetpur to Vatara. Initial cost Tk 41,238.54 crore; revised Tk 93,190 crore; second revision Tk 89,848 crore.
+- Line 5 South: Gabtoli to Dasherkandi. Initial cost Tk 54,619 crore; revised Tk 45,504 crore.
+- Line 2: Gabtoli to Narayanganj, with a Sadarghat branch. Initial cost Tk 61,000 crore. Still in the planning stage.
+- Line 4: Kamlapur to Madanpur. Initial cost Tk 28,400 crore. Still in the planning stage.
 
 Map alignments and station locations in the story are approximate.

@@ -1276,34 +1276,34 @@ a {
   background: rgb(238 241 244 / 0.9);
 }
 
-.stage .mapboxgl-ctrl-group:not(:empty) {
+:is(.stage, .game__viewport) .mapboxgl-ctrl-group:not(:empty) {
   border-radius: 0;
   background: rgb(15 20 26 / 0.92);
   box-shadow: 0 0 0 1px var(--rule-strong);
   transition: opacity 240ms ease;
 }
 
-.stage .mapboxgl-ctrl-group button {
+:is(.stage, .game__viewport) .mapboxgl-ctrl-group button {
   width: 2.25rem;
   height: 2.25rem;
   transition: background-color 160ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .stage .mapboxgl-ctrl-group button:not(:disabled):hover {
+  :is(.stage, .game__viewport) .mapboxgl-ctrl-group button:not(:disabled):hover {
     background-color: rgb(238 241 244 / 0.08);
   }
 }
 
-.stage .mapboxgl-ctrl-group button + button {
+:is(.stage, .game__viewport) .mapboxgl-ctrl-group button + button {
   border-top-color: var(--rule);
 }
 
-.stage .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+:is(.stage, .game__viewport) .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
   filter: invert(1);
 }
 
-.stage:not([data-interactive]) .mapboxgl-ctrl-group:not(:empty) {
+:is(.stage, .game__viewport):not([data-interactive]) .mapboxgl-ctrl-group:not(:empty) {
   opacity: 0;
   pointer-events: none;
 }

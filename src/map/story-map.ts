@@ -3,7 +3,6 @@ import {
   AttributionControl,
   NavigationControl,
   Marker,
-  setAccessToken,
   type ExpressionSpecification,
   type PointLike,
 } from 'mapbox-gl/esm';
@@ -24,11 +23,12 @@ import {
 import type { NetworkPanel, Selection } from '../explorer/panel';
 import { clamp, easeOut, invertEase, easeInOut, onReducedMotionChange, prefersReducedMotion } from '../lib/motion';
 import { STEPS, DRAW_SEQUENCE, type StepState } from '../story/steps';
+import { applyToken } from './access';
 import { buildBasemapStyle } from './basemap';
 import { boundsOf, frame, paddingFor } from './camera';
 import { LineDrawer } from './draw';
 import { addNetworkLayers, LAYER, stationFill, stationOpacity } from './layers';
-import { keepTokenFresh, type MapToken } from './token';
+import type { MapToken } from './token';
 import { Trains } from './trains';
 
 const STORY_DIM = 0.3;
@@ -45,8 +45,7 @@ interface Options {
 
 export async function createStoryMap(options: Options): Promise<StoryMap> {
   const { container, stage, token } = options;
-  setAccessToken(token.token);
-  keepTokenFresh(token, (next) => setAccessToken(next));
+  applyToken(token);
 
   const wide = window.matchMedia('(min-width: 1024px)').matches;
   const corner = wide ? 'bottom-right' : 'top-right';
