@@ -113,21 +113,27 @@ function preloadMap(): Plugin {
   };
 }
 
-/** Preload the headline font: the hero title is the page's largest paint. */
-function preloadHeadlineFont(): Plugin {
+/**
+ * Preload both typefaces' Latin files: the hero title is the page's largest
+ * paint, the loading screen's line is set in the sans, and the story is only
+ * revealed once both are in (see main.ts). Found only through the stylesheet,
+ * they would start a round trip later.
+ */
+function preloadFonts(): Plugin {
   return {
-    name: 'preload-headline-font',
+    name: 'preload-fonts',
     apply: 'build',
     transformIndexHtml(_html, ctx) {
-      const file = Object.keys(ctx.bundle ?? {}).find((name) => /newsreader-latin-wght-normal-.*\.woff2$/.test(name));
-      if (!file) return [];
-      return [
-        {
-          tag: 'link',
-          attrs: { rel: 'preload', href: `./${file}`, as: 'font', type: 'font/woff2', crossorigin: '' },
-          injectTo: 'head-prepend',
-        },
-      ];
+      const files = Object.keys(ctx.bundle ?? {}).filter((name) =>
+        /(newsreader|libre-franklin)-latin-wght-normal-.*\.woff2$/.test(name),
+      );
+      // The headline face first.
+      files.sort((a, b) => Number(b.includes('newsreader')) - Number(a.includes('newsreader')));
+      return files.map((file) => ({
+        tag: 'link',
+        attrs: { rel: 'preload', href: `./${file}`, as: 'font', type: 'font/woff2', crossorigin: '' },
+        injectTo: 'head-prepend' as const,
+      }));
     },
   };
 }
@@ -138,7 +144,7 @@ export default defineConfig(({ mode }) => {
   return {
     // Relative asset URLs: the build works from any sub-directory.
     base: './',
-    plugins: [mapboxTokenEndpoint(env), preloadMap(), preloadHeadlineFont()],
+    plugins: [mapboxTokenEndpoint(env), preloadMap(), preloadFonts()],
     optimizeDeps: {
       // mapbox-gl's ESM build spawns its worker via new URL(..., import.meta.url);
       // pre-bundling would break that path in dev.

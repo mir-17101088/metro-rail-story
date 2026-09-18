@@ -1860,6 +1860,66 @@ a {
   transform: none;
 }
 
+/*
+ * Sections after the map skip their rendering until the reader comes near
+ * them. Every full layout (the first frame, the fonts arriving, a phone's
+ * address bar showing or hiding) otherwise lays out the whole page, and the
+ * timeline and the cost chart were a large share of it: skipping them took
+ * the median full relayout from 13.4 ms to 7.8 ms on a laptop, and a phone is
+ * several times slower.
+ *
+ * Until a section has been drawn once, the browser holds its place with the
+ * size below (measured at each width); after that it remembers the real one.
+ * The afterword is left out: its fade to ink paints above its own box, which
+ * this would clip. The route game is left out too: its map measures itself.
+ */
+.timeline,
+.costs,
+.site-footer {
+  content-visibility: auto;
+}
+
+.timeline {
+  contain-intrinsic-block-size: auto 2300px;
+}
+
+.costs {
+  contain-intrinsic-block-size: auto 1200px;
+}
+
+.site-footer {
+  contain-intrinsic-block-size: auto 350px;
+}
+
+@media (min-width: 640px) {
+  .timeline {
+    contain-intrinsic-block-size: auto 1850px;
+  }
+
+  .costs {
+    contain-intrinsic-block-size: auto 1000px;
+  }
+
+  .site-footer {
+    contain-intrinsic-block-size: auto 290px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .timeline {
+    contain-intrinsic-block-size: auto 2075px;
+  }
+
+  .costs {
+    contain-intrinsic-block-size: auto 1075px;
+  }
+}
+
+/* A section jump draws them all first, so the page lands exactly where it aims (see src/nav.ts). */
+[data-jumping] :is(.timeline, .costs, .site-footer) {
+  content-visibility: visible;
+}
+
 /* Footer */
 
 .site-footer {
@@ -1939,6 +1999,13 @@ a {
   line-height: 1.55;
   color: var(--text-2);
   text-wrap: pretty;
+}
+
+/* One role to a line: the label, then the names. */
+.site-footer__credits dt,
+.site-footer__credits dd {
+  display: inline;
+  margin: 0;
 }
 
 .site-footer__credits-label {

@@ -2,7 +2,7 @@
   "name": "mrt-story",
   "private": true,
   "version": "1.0.0",
-  "description": "The Daily Star visual story: Dhaka's Metro Lifeline and Its Ballooning Price Tag",
+  "description": "The Daily Star visual story “Dhaka’s Metro Rail: Essential Transport, Escalating Costs”",
   "type": "module",
   "engines": {
     "node": ">=20"

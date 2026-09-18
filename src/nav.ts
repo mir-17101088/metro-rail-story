@@ -77,6 +77,8 @@ export function initNav(root: HTMLElement, options: Options = {}): void {
 
   /* --------------------------------------------------------- the jumping */
 
+  let jumps = 0;
+
   for (const link of links) {
     link.addEventListener('click', (event) => {
       // Let the browser handle anything it would handle differently anyway.
@@ -96,9 +98,19 @@ export function initNav(root: HTMLElement, options: Options = {}): void {
     const target = document.getElementById(id);
     if (!target) return;
     options.onJump?.(id);
+    // Sections not yet drawn stand in at an estimated height (content-visibility
+    // in main.css). Draw them for the trip, so the page aims at where the target
+    // really is and nothing above it changes size on the way.
+    const html = document.documentElement;
+    const trip = ++jumps;
+    html.setAttribute('data-jumping', '');
     target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     // The address bar follows without the browser also jumping the page there.
     history.replaceState(null, '', `#${id}`);
+    // A second jump mid-glide takes over; only the latest one tidies up.
+    whenScrollEnds(() => {
+      if (trip === jumps) html.removeAttribute('data-jumping');
+    });
   }
 
   /* -------------------------------------------------------- what is on screen */
@@ -142,4 +154,23 @@ export function initNav(root: HTMLElement, options: Options = {}): void {
     const target = document.getElementById(id);
     if (target) spy.observe(target);
   }
+}
+
+/** Once the page stops moving: `scrollend` where there is one, a quiet spell otherwise. */
+function whenScrollEnds(callback: () => void): void {
+  let timer = 0;
+  const done = () => {
+    window.clearTimeout(timer);
+    window.removeEventListener('scroll', restart);
+    window.removeEventListener('scrollend', done);
+    callback();
+  };
+  // No scrolling at all (already there) still has to finish.
+  const restart = () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(done, 'onscrollend' in window ? 3000 : 180);
+  };
+  window.addEventListener('scroll', restart, { passive: true });
+  window.addEventListener('scrollend', done, { once: true });
+  restart();
 }

@@ -39,6 +39,8 @@ export interface PlayHooks {
   board(index: number): void;
   /** The train has arrived at the interchange between ride `index` and the next. */
   change(index: number): void;
+  /** Every frame of ride `index` (how far along it the train is) or of the change after it (how far through), 0-1. */
+  progress?(stage: 'ride' | 'change', index: number, t: number): void;
   /** The train has arrived at the destination. */
   arrive(): void;
 }
@@ -315,13 +317,13 @@ export class GameMap {
       await this.wait(BOARD_MS, run);
 
       for (let i = 0; i <= last; i++) {
-        await this.ride(route, i, tracks[i], run);
+        await this.ride(route, i, tracks[i], run, (along) => hooks.progress?.('ride', i, along));
         if (i === last) break;
         const next = route.legs[i + 1].line;
         hooks.change(i);
         this.ripple(route.legs[i].to, next);
         await this.switchTrain(next, pointOnTrack(tracks[i + 1], 0), run);
-        await this.wait(CHANGE_MS, run);
+        await this.animate(CHANGE_MS, run, (t) => hooks.progress?.('change', i, t));
         this.ripple(null);
         hooks.board(i + 1);
         await this.wait(NEXT_RIDE_MS, run);
@@ -362,7 +364,7 @@ export class GameMap {
     this.setInteractive(true);
   }
 
-  private ride(route: Route, index: number, track: Track, run: number): Promise<void> {
+  private ride(route: Route, index: number, track: Track, run: number, onProgress: (along: number) => void): Promise<void> {
     const line = route.legs[index].line;
     const km = track.length / 1000;
     const duration = clamp(1400 + km * 260, 2400, 6000);
@@ -379,6 +381,7 @@ export class GameMap {
       const position = pointOnTrack(track, along * track.length);
       this.placeTrain(line, position);
       this.setDone(index, along);
+      onProgress(along);
 
       // 0 on the platforms, 1 at cruising speed.
       const out = smoothstep(0, 0.3, t) * (1 - smoothstep(0.7, 1, t));

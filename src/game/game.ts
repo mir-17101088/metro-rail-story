@@ -46,21 +46,64 @@ const esc = (s: string) =>
 const badge = (line: LineId) =>
   `<span class="badge badge--sm" style="--c: var(--line-${line.toLowerCase()})">${line}</span>`;
 
-/** A route as a button: its line badges, where it changes, and when it can be ridden. */
-function routeButton(route: Route, attributes: string): string {
+/**
+ * A route as a button: its line badges, where it changes, when it can be
+ * ridden, and what it takes in time and money. `tags` marks the fastest or
+ * cheapest of several.
+ */
+function routeButton(route: Route, attributes: string, tags: string[] = []): string {
   const lines = route.legs.map((leg) => leg.line);
   const spoken = lines.map((l) => LINES[l].name).join(', then ');
+  const figures = copy.routeFigures(route);
+  const labels = tags
+    .map((tag) => `<span class="visually-hidden">, </span><span class="route-btn__tag">${esc(tag)}</span>`)
+    .join('');
   return `<button class="route-btn" type="button" ${attributes}>
     <span class="route-btn__lines" aria-hidden="true">${lines.map(badge).join('<span class="route-btn__to"></span>')}</span>
     <span class="route-btn__text">
-      <span class="route-btn__name">${esc(copy.routeName(route))}</span>
+      <span class="route-btn__name">${esc(copy.routeName(route))}${labels}</span>
       <span class="route-btn__meta">${esc(copy.routeMeta(route))}<span class="visually-hidden">. ${esc(spoken)}.</span></span>
+    </span>
+    <span class="route-btn__figures">
+      <span class="route-btn__time"><span class="visually-hidden">. </span>${copy.toHtml(figures.time)}</span>
+      <span class="route-btn__fare"><span class="visually-hidden">, </span>${copy.toHtml(figures.fare)}</span>
     </span>
     <span class="route-btn__go" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M6 3.5 10.5 8 6 12.5" /></svg></span>
   </button>`;
 }
 
+const CLOCK_ICON =
+  '<svg class="game-caption__clock-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.25" /><path d="M8 4.75V8l2.25 1.5" /></svg>';
+
 const wait = (ms: number) => new Promise<null>((resolve) => window.setTimeout(() => resolve(null), ms));
+
+/** Calls back once the page has not scrolled for a moment. */
+function whenStill(callback: () => void, quietMs = 250): void {
+  let timer = 0;
+  const done = () => {
+    window.removeEventListener('scroll', arm);
+    callback();
+  };
+  const arm = () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(done, quietMs);
+  };
+  window.addEventListener('scroll', arm, { passive: true });
+  arm();
+}
+
+/** How long the result card takes to fade out when closed (matches result-out in game.css). */
+const CLOSE_MS = 160;
+
+/** A result card as one announcement for screen readers. */
+function resultText(result: copy.Result, suggestion: copy.Suggestion | null = null): string {
+  const f = result.figures;
+  const numbers = f
+    ? `${copy.STAT_LABELS.time}: ${f.time.value}, ${f.time.note}. ${copy.STAT_LABELS.fare}: ${f.fare.value}, ${f.fare.note}. ${f.quip}`
+    : '';
+  const now = result.today ? `${result.today.title}. ${result.today.text}` : '';
+  return copy.toPlain([result.title, result.text, numbers, now, suggestion?.title, suggestion?.text].filter(Boolean).join(' '));
+}
 
 export function initGame(root: HTMLElement, options: Options): Game {
   return new Game(root, options);
@@ -88,6 +131,13 @@ export class Game {
   private alternative: Route | null = null;
   private phase: Phase = 'idle';
   private hintText = '';
+  /** Heading over the route options, written once per pair of stations. */
+  private heading: copy.Heading | null = null;
+  /** The caption whose trip clock is on screen, and the minute it shows. */
+  private clockCaption: copy.Caption | null = null;
+  private clockMinute = -1;
+  private clockElement: HTMLElement | null = null;
+  private closeTimer = 0;
   /** Increments on every change of trip; async work for an older trip checks it and stops. */
   private ticket = 0;
   private skipping = false;
@@ -132,8 +182,12 @@ export class Game {
 
     this.result.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
-      if (target.closest('[data-game-again]')) this.reset();
+      if (target.closest('[data-game-close]')) this.closeResult();
+      else if (target.closest('[data-game-again]')) this.reset();
       else if (target.closest('[data-game-alt]') && this.alternative) void this.start(this.alternative);
+    });
+    this.result.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') this.closeResult();
     });
     this.caption.addEventListener('click', (event) => {
       if ((event.target as HTMLElement).closest('[data-game-skip]')) this.skip();
@@ -206,11 +260,14 @@ export class Game {
           ? copy.pick(from ? copy.HINT.fromOnly : copy.HINT.toOnly)
           : '';
 
+    this.heading = this.phase === 'choose' ? copy.optionsHeading(this.routes) : null;
     this.renderOptions();
     this.hideCaption();
 
-    if (this.phase === 'walk') this.showResult(copy.walkResult(from!));
-    else if (this.phase === 'none') this.showResult(copy.noRouteResult(from!, to!));
+    let result: copy.Result | null = null;
+    if (this.phase === 'walk') result = copy.walkResult(from!);
+    else if (this.phase === 'none') result = copy.noRouteResult(from!, to!);
+    if (result) this.showResult(result);
     else this.hideResult();
 
     this.render();
@@ -223,8 +280,8 @@ export class Game {
     this.applyToMap();
     // Wide screens: the panel rides on the map, so show the whole map once both stations are in.
     if (WIDE.matches && from && to) this.bringIntoView();
-    if (this.phase === 'choose') this.announce(`${copy.optionsHeading(this.routes.length).title}.`);
-    if (this.phase === 'walk' || this.phase === 'none') this.announce(this.result.textContent ?? '');
+    if (this.heading) this.announce(copy.toPlain(`${this.heading.title}. ${this.heading.text}`));
+    if (result) this.announce(resultText(result));
   }
 
   private async start(route: Route): Promise<void> {
@@ -246,12 +303,15 @@ export class Game {
 
     this.bringIntoView();
     this.map?.setPins(this.from, this.to);
-    this.showCaption(copy.boardCaption(route, 0), false);
+    // Written once, so a caption shown twice reads the same both times.
+    const script = copy.rideScript(route);
+    this.showCaption(script.board[0], false);
     let outcome: 'done' | 'cancelled' = 'done';
     try {
       outcome = await map.play(route, {
-        board: (i) => this.showCaption(copy.boardCaption(route, i), true),
-        change: (i) => this.showCaption(copy.changeCaption(route, i), true),
+        board: (i) => this.showCaption(script.board[i], true),
+        change: (i) => this.showCaption(script.change[i], true),
+        progress: (stage, i, t) => this.tick((stage === 'ride' ? script.board : script.change)[i], t),
         arrive: () => this.hideCaption(),
       });
     } catch (error) {
@@ -274,7 +334,7 @@ export class Game {
     // After the card is on screen, so the camera frames the trip around it.
     this.map?.setPins(this.from, this.to);
     this.map?.showTrip(route);
-    this.announce(copy.toPlain([result.title, result.text, suggestion?.title, suggestion?.text].filter(Boolean).join(' ')));
+    this.announce(resultText(result, suggestion));
   }
 
   private skip(): void {
@@ -339,7 +399,11 @@ export class Game {
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
-        this.loadMap();
+        // A second map's first frames (shaders, first tiles) are the heaviest work
+        // on the page: measured at 290-480 ms a frame. Started mid-scroll they
+        // stutter the page, so the map waits for the reader to pause, usually
+        // over the cost chart just above. Touching the game starts it at once.
+        whenStill(() => void this.loadMap());
       },
       { rootMargin: '100% 0px' },
     );
@@ -419,13 +483,14 @@ export class Game {
       this.optionsList.innerHTML = '';
       return;
     }
-    const heading = copy.optionsHeading(this.routes.length);
+    const heading = this.heading ?? copy.optionsHeading(this.routes);
+    const tags = copy.routeTags(this.routes);
     const items = this.routes
-      .map((route, i) => `<li>${routeButton(route, `data-route="${i}" aria-pressed="false"`)}</li>`)
+      .map((route, i) => `<li>${routeButton(route, `data-route="${i}" aria-pressed="false"`, tags[i])}</li>`)
       .join('');
     this.optionsList.innerHTML = `
       <p class="game-options__title">${esc(heading.title)}</p>
-      <p class="game-options__text">${esc(heading.text)}</p>
+      <p class="game-options__text">${copy.toHtml(heading.text)}</p>
       <ul class="game-options__list" role="list">${items}</ul>`;
     this.optionsList.hidden = false;
   }
@@ -433,27 +498,46 @@ export class Game {
   private showCaption(caption: copy.Caption, announce: boolean): void {
     if (this.skipping) return;
     const lines = caption.lines.map(badge).join('<span class="game-caption__arrow" aria-hidden="true"></span>');
+    const { from, total, exact } = caption.clock;
+    // As wide as the total's digits, so the counting clock never nudges the figures after it.
+    const clock = `<span class="game-caption__clock" aria-hidden="true">${CLOCK_ICON}<span class="game-caption__minute" style="min-width: ${String(total).length}ch" data-clock>${from}</span>&nbsp;of ${exact ? '' : '~'}${total}&nbsp;min</span>`;
+    const figures = caption.figures.map((f) => `<span class="game-caption__figure">${copy.toHtml(f)}</span>`).join('');
     const html = `<span class="game-caption__badges">${lines}</span>
       <span class="game-caption__body">
         <span class="game-caption__title">${esc(caption.title)}</span>
         <span class="game-caption__text">${esc(caption.text)}</span>
+        <span class="game-caption__meta">${clock}${figures}</span>
       </span>
       <button class="game-caption__skip" type="button" data-game-skip>Skip ride</button>`;
-    const key = `${caption.title}|${caption.lines.join()}`;
+    const key = `${caption.title}|${caption.text}|${caption.lines.join()}`;
     if (this.caption.dataset.key !== key) {
       this.caption.dataset.key = key;
       this.caption.innerHTML = html;
+      this.clockElement = this.caption.querySelector('[data-clock]');
       // Restart the swap-in animation for the new message.
       this.caption.removeAttribute('data-swap');
       void this.caption.offsetWidth;
       this.caption.setAttribute('data-swap', '');
     }
+    this.clockCaption = caption;
+    this.clockMinute = from;
+    if (this.clockElement) this.clockElement.textContent = String(from);
     const last = caption.lines[caption.lines.length - 1];
     this.caption.style.setProperty('--c', `var(--line-${last.toLowerCase()})`);
     this.caption.hidden = false;
     this.caption.inert = false;
     this.caption.setAttribute('data-visible', '');
-    if (announce) this.announce(`${caption.title}. ${caption.text}`);
+    if (announce) this.announce(copy.toPlain(`${caption.title}. ${caption.text} ${caption.figures.join('. ')}.`));
+  }
+
+  /** Moves the caption's trip clock on as the train runs: `t` is how far through its ride or change, 0-1. */
+  private tick(caption: copy.Caption | undefined, t: number): void {
+    if (!caption || caption !== this.clockCaption || !this.clockElement) return;
+    const minute = Math.round(caption.clock.from + (caption.clock.to - caption.clock.from) * t);
+    // Only touch the DOM when the minute changes: a few dozen writes a ride, not one a frame.
+    if (minute === this.clockMinute) return;
+    this.clockMinute = minute;
+    this.clockElement.textContent = String(minute);
   }
 
   private hideCaption(): void {
@@ -462,11 +546,53 @@ export class Game {
     this.caption.removeAttribute('data-visible');
     this.caption.inert = true;
     this.caption.dataset.key = '';
+    this.clockCaption = null;
+    this.clockElement = null;
   }
 
   private showResult(result: copy.Result, route?: Route, suggestion: copy.Suggestion | null = null): void {
+    const figures = result.figures;
+    let numbers = '';
+    if (figures) {
+      const stat = (label: string, s: copy.Stat) =>
+        `<div class="stat"><dt class="stat__label">${esc(label)}</dt><dd class="stat__value">${copy.toHtml(s.value)}</dd><dd class="stat__note">${copy.toHtml(s.note)}</dd></div>`;
+      numbers = `<dl class="game-result__stats">${stat(copy.STAT_LABELS.time, figures.time)}${stat(copy.STAT_LABELS.fare, figures.fare)}</dl>
+        ${figures.quip ? `<p class="game-result__quip">${copy.toHtml(figures.quip)}</p>` : ''}`;
+    }
+    if (result.today) {
+      numbers += `<div class="game-result__today">
+          <p class="game-result__today-title">${copy.toHtml(result.today.title)}</p>
+          <p class="game-result__today-text">${copy.toHtml(result.today.text)}</p>
+        </div>`;
+    }
+
+    // Stops and distance, then where the numbers come from.
+    const about = figures?.meta
+      ? `<p class="game-result__meta">${esc(figures.meta)}</p>${figures.basis ? `<p class="game-result__basis">${esc(figures.basis)}</p>` : ''}`
+      : '';
     let trip = '';
-    if (route) {
+    if (route && figures?.steps.length) {
+      // With changes: leg by leg, each ride with its time and fare, each change with its time.
+      const rows = figures.steps.map((step) => {
+        const mark = step.line
+          ? `<span class="visually-hidden">${esc(LINES[step.line].name)}: </span>${badge(step.line)}`
+          : '<span class="legs__dot"></span>';
+        return `<li class="legs__row${step.line ? '' : ' legs__row--change'}">
+          <span class="legs__mark">${mark}</span>
+          <span class="legs__text"><span class="legs__name">${esc(step.text)}</span><span class="legs__detail">${copy.toHtml(step.detail)}</span></span>
+          <span class="legs__time"><span class="visually-hidden">, </span>${copy.toHtml(step.time)}</span>
+          <span class="legs__fare">${step.fare ? `<span class="visually-hidden">, </span>${copy.toHtml(step.fare)}` : ''}</span>
+        </li>`;
+      });
+      // The ride's captions already went leg by leg, and the card sits over the map, so the
+      // breakdown waits to be asked for. Without a ride (no map, reduced motion) it starts open.
+      const watched = Boolean(this.map) && !prefersReducedMotion();
+      trip = `<details class="game-result__steps"${watched ? '' : ' open'} data-game-steps>
+          <summary class="game-result__steps-toggle">${esc(copy.STAT_LABELS.steps)}<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 6 8 10.5 12.5 6" /></svg></summary>
+          <ol class="legs" aria-label="Your trip, leg by leg">${rows.join('')}</ol>
+          ${about}
+        </details>`;
+    } else if (route) {
       const parts = [`<li class="trip__stop">${esc(copy.stationName(route.legs[0].from))}</li>`];
       for (const leg of route.legs) {
         parts.push(
@@ -476,14 +602,19 @@ export class Game {
           `<li class="trip__stop">${esc(copy.stationName(leg.to))}</li>`,
         );
       }
-      const changes = copy.changes(route.changes.length);
-      trip = `<ol class="trip" aria-label="Your trip">${parts.join('')}</ol>
-        <p class="game-result__meta">${esc(changes)} · ${esc(copy.stops(route.stops))}</p>`;
+      trip = `<ol class="trip" aria-label="Your trip">${parts.join('')}</ol>${about}`;
     }
+
+    window.clearTimeout(this.closeTimer);
+    this.result.removeAttribute('data-closing');
     this.result.innerHTML = `
+      <button class="game-result__close" type="button" data-game-close aria-label="Close trip details">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+      </button>
       <p class="game-result__kicker">${copy.toHtml(result.kicker)}</p>
       <h3 class="game-result__title">${copy.toHtml(result.title)}</h3>
       <p class="game-result__text">${copy.toHtml(result.text)}</p>
+      ${numbers}
       ${trip}
       ${
         suggestion && this.alternative
@@ -500,13 +631,37 @@ export class Game {
       </button>`;
     this.result.hidden = false;
     this.result.setAttribute('data-visible', '');
+    // The card grows or shrinks with the breakdown: frame the trip again around it.
+    this.result.querySelector('[data-game-steps]')?.addEventListener('toggle', () => {
+      if (this.active && this.phase === 'done') this.map?.showTrip(this.active);
+    });
     this.result.style.setProperty('--c', route ? `var(--line-${route.legs[route.legs.length - 1].line.toLowerCase()})` : 'var(--text-1)');
   }
 
   private hideResult(): void {
+    window.clearTimeout(this.closeTimer);
+    this.result.removeAttribute('data-closing');
     this.result.removeAttribute('data-visible');
     this.result.hidden = true;
     this.result.innerHTML = '';
+  }
+
+  /** The reader has seen the card: fade it out and give the map its room back. */
+  private closeResult(): void {
+    if (this.result.hidden || this.result.hasAttribute('data-closing')) return;
+    // Its buttons are about to go: keep keyboard focus in the game.
+    if (this.result.contains(document.activeElement)) this.panel.focus({ preventScroll: true });
+    const close = () => {
+      this.hideResult();
+      // Frame the trip (or the stations) again, now with the whole map to use.
+      this.applyToMap();
+    };
+    if (prefersReducedMotion()) {
+      close();
+      return;
+    }
+    this.result.setAttribute('data-closing', '');
+    this.closeTimer = window.setTimeout(close, CLOSE_MS);
   }
 
   private announce(message: string): void {

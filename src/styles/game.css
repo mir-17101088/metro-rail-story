@@ -407,9 +407,9 @@
 
 .route-btn {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
   width: 100%;
   min-height: 3.25rem;
   padding: 0.5rem 0.5rem 0.5rem 0.625rem;
@@ -470,6 +470,43 @@
   line-height: 1.35;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
+}
+
+/* "Fastest", "Cheapest": only on the one route that is. */
+.route-btn__tag {
+  display: inline-block;
+  margin-left: 0.375rem;
+  padding: 0.1875rem 0.3125rem 0.125rem;
+  vertical-align: 0.125em;
+  border: 1px solid var(--rule-strong);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* Time over fare, right-aligned like a price tag. */
+.route-btn__figures {
+  display: grid;
+  justify-items: end;
+  gap: 0.125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.route-btn__time {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.route-btn__fare {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  color: var(--text-2);
 }
 
 .route-btn__go {
@@ -581,6 +618,47 @@
   color: var(--text-2);
 }
 
+/* The trip clock, counting as the train runs, and the fares. */
+.game-caption__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.125rem 0.75rem;
+  margin-top: 0.3125rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-caption__clock {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.game-caption__clock-icon {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  margin-right: 0.3125rem;
+  fill: none;
+  stroke: var(--c, currentColor);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.game-caption__minute {
+  display: inline-block;
+  text-align: right;
+}
+
+.game-caption__figure {
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
 .game-caption__skip {
   min-height: 2.25rem;
   padding: 0.25rem 0.625rem;
@@ -626,7 +704,71 @@
   }
 }
 
+/* Close: top right, clear of the kicker. */
+.game-result__close {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: none;
+  border: 0;
+  color: var(--text-2);
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.game-result__close:active {
+  transform: scale(0.92);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-result__close:hover {
+    background: rgb(238 241 244 / 0.08);
+    color: var(--text-1);
+  }
+}
+
+.game-result__close svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+/* Closing: a short fade, down and out. */
+.game-result[data-closing] {
+  pointer-events: none;
+  animation: result-out 160ms var(--ease-out) both;
+}
+
+.game[data-map-failed] .game-result[data-closing] {
+  animation-name: result-out-flow;
+}
+
+@keyframes result-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, 0.5rem);
+  }
+}
+
+@keyframes result-out-flow {
+  to {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
 .game-result__kicker {
+  padding-right: 2.25rem;
   font-size: 0.75rem;
   font-weight: 650;
   line-height: 1.2;
@@ -684,6 +826,217 @@
   font-size: 0.8125rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
+}
+
+/* Travel time and fare, side by side. */
+.game-result__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0.75rem;
+  border-block: 1px solid var(--rule);
+}
+
+.stat {
+  padding: 0.5rem 0.75rem 0.5625rem 0;
+}
+
+/* No browser indent on the figures. */
+.stat dd {
+  margin-inline-start: 0;
+}
+
+.stat + .stat {
+  padding-left: 0.875rem;
+  border-left: 1px solid var(--rule);
+}
+
+.stat__label {
+  font-size: 0.6875rem;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.stat__value {
+  margin-top: 0.25rem;
+  /* Eases down on the narrowest phones, so "~1 hr 26 min" stays on one line in its half of the card. */
+  font-size: clamp(1.1875rem, 6.2vw, 1.375rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__note {
+  margin-top: 0.1875rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--text-2);
+}
+
+/* A line about the numbers, bracketed in the trip's colour. */
+.game-result__quip {
+  margin-top: 0.625rem;
+  padding-inline: 0.75rem;
+  border-inline: 2px solid var(--c, var(--text-2));
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* What of the trip runs today: tinted, with Line 6's running dot. */
+.game-result__today {
+  margin-top: 0.75rem;
+  padding: 0.625rem 0.75rem 0.6875rem;
+  background: rgb(93 220 165 / 0.07);
+  border: 1px solid rgb(93 220 165 / 0.22);
+}
+
+.game-result__today-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.game-result__today-title::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--line-6);
+  box-shadow: 0 0 0 3px rgb(93 220 165 / 0.2);
+}
+
+.game-result__today-text {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+/* A trip with changes, leg by leg: folded away on phones until asked for. */
+.game-result__steps {
+  margin-top: 0.5rem;
+}
+
+.game-result__steps-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.25rem;
+  list-style: none;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.game-result__steps-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.game-result__steps-toggle svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 220ms var(--ease-out);
+}
+
+.game-result__steps[open] .game-result__steps-toggle svg {
+  transform: rotate(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-result__steps-toggle:hover {
+    color: var(--text-1);
+  }
+}
+
+.legs {
+  list-style: none;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.legs__row {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto 3.25rem;
+  align-items: center;
+  column-gap: 0.625rem;
+  padding: 0.4375rem 0;
+}
+
+.legs__row + .legs__row {
+  border-top: 1px solid var(--rule);
+}
+
+.legs__mark {
+  display: grid;
+  place-items: center;
+}
+
+.legs__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 2px solid var(--text-3);
+  border-radius: 50%;
+}
+
+.legs__text {
+  display: grid;
+  min-width: 0;
+}
+
+.legs__name {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.legs__row--change .legs__name {
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.legs__detail {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--text-3);
+}
+
+.legs__time,
+.legs__fare {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.legs__time {
+  font-weight: 600;
+}
+
+.legs__fare {
+  color: var(--text-2);
+}
+
+/* Where the numbers come from. */
+.game-result__basis {
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: var(--text-3);
+  text-wrap: pretty;
 }
 
 .game-result__alt {
