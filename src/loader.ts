@@ -1,4 +1,5 @@
 import { prefersReducedMotion } from './lib/motion';
+import { afterVisibleTime } from './lib/visible-time';
 
 /**
  * The loading screen painted by index.html before any script runs.
@@ -26,9 +27,13 @@ const SCROLL_KEYS = new Set([' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 
 
 /**
  * Long enough for the map to arrive over a poor mobile connection; reached
- * only when something has stopped answering altogether (ms since navigation).
+ * only when something has stopped answering altogether (ms of the page being
+ * visible since navigation).
  */
 const CEILING_MS = 60000;
+
+/** When index.html's CSS-only failsafe lifts the screen (its `loader-failsafe` delay). */
+const FAILSAFE_MS = 20000;
 
 /**
  * Shown in turn while the map loads. The first is in index.html, so this list
@@ -83,19 +88,23 @@ export class Loader {
     this.main?.setAttribute('aria-busy', 'true');
     this.unlockScroll = lockScroll();
     // Scripts that arrive after index.html's failsafe has already lifted the
-    // screen must not bring it back over a page the reader is using.
-    if (getComputedStyle(this.root).visibility === 'hidden') {
+    // screen must not bring it back over a page the reader is using. The
+    // failsafe fires 20 s in, so before that there is no style to check (and
+    // no reason to force a style pass ahead of the first paint).
+    if (performance.now() > FAILSAFE_MS - 1000 && getComputedStyle(this.root).visibility === 'hidden') {
       this.finish();
       return;
     }
     // Scripts are running: from here the map decides, not index.html's timer.
     this.root.style.animation = 'none';
     this.armLines(LINE_MS);
-    window.setTimeout(() => {
+    // Visible time: a tab opened in the background does no map work until it is
+    // brought forward, and must not lift its screen onto a map that never started.
+    afterVisibleTime(Math.max(0, CEILING_MS - performance.now()), () => {
       if (this.finished) return;
       console.warn('[loader] the map has not drawn after %d s; showing the story anyway', CEILING_MS / 1000);
       this.finish();
-    }, Math.max(0, CEILING_MS - performance.now()));
+    });
   }
 
   /**

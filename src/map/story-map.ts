@@ -22,6 +22,7 @@ import {
 } from '../data/network';
 import type { NetworkPanel, Selection } from '../explorer/panel';
 import { clamp, easeOut, invertEase, easeInOut, onReducedMotionChange, prefersReducedMotion } from '../lib/motion';
+import { afterVisibleTime } from '../lib/visible-time';
 import { STEPS, DRAW_SEQUENCE, type StepState } from '../story/steps';
 import { applyToken } from './access';
 import { buildBasemapStyle } from './basemap';
@@ -80,10 +81,11 @@ export async function createStoryMap(options: Options): Promise<StoryMap> {
   map.addControl(new NavigationControl({ showCompass: false }), corner);
   map.getCanvas().tabIndex = -1;
 
+  // Twenty seconds of the tab being seen: in a background tab the style waits for the reader.
   await new Promise<void>((resolve, reject) => {
-    const timer = window.setTimeout(() => reject(new Error('Map style timed out')), 20000);
+    const cancel = afterVisibleTime(20000, () => reject(new Error('Map style timed out')));
     map.once('style.load', () => {
-      window.clearTimeout(timer);
+      cancel();
       resolve();
     });
   });

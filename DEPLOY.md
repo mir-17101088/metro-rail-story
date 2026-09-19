@@ -177,5 +177,5 @@ Apache (`.htaccess` inside `metro-rail-story/`):
 - Submit `https://campaign.thedailystar.net/metro-rail-story/sitemap.xml` in Google Search Console (and Bing Webmaster Tools).
 - Test rich results: https://search.google.com/test/rich-results
 - Test the share card: https://developers.facebook.com/tools/debug/ (also refreshes Facebook's cached preview) and https://www.opengraph.xyz/ for X, LinkedIn and WhatsApp.
-- If the publish date is not 17 September 2026, update `datePublished`, `dateModified`, `article:published_time` and `article:modified_time` in `index.html`, and `lastmod` in `public/sitemap.xml`, then rebuild.
+- If the publish date is not 21 September 2026, update `datePublished`, `dateModified`, `article:published_time` and `article:modified_time` in `index.html`, and `lastmod` in `public/sitemap.xml`, then rebuild.
 - Every time the story changes: push to GitHub (Vercel rebuilds), run `npm run build` again, and re-upload the contents of `dist/`. Delete the old `assets/` folder on the server first so stale files do not pile up.

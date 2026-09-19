@@ -13,6 +13,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { LINES, LINE_ORDER, type LineId } from '../data/lines';
 import { ALL_FEATURES, network, stationById, type LngLat } from '../data/network';
 import { clamp, easeInOut, easeTrain, prefersReducedMotion } from '../lib/motion';
+import { afterVisibleTime } from '../lib/visible-time';
 import { applyToken } from '../map/access';
 import { BASE, buildBasemapStyle } from '../map/basemap';
 import { boundsOf, frame } from '../map/camera';
@@ -120,10 +121,11 @@ export async function createGameMap(options: Options): Promise<GameMap> {
   map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
   map.getCanvas().tabIndex = -1;
 
+  // Counted while the tab is seen, as on the story map (src/lib/visible-time.ts).
   await new Promise<void>((resolve, reject) => {
-    const timer = window.setTimeout(() => reject(new Error('Map style timed out')), 20000);
+    const cancel = afterVisibleTime(20000, () => reject(new Error('Map style timed out')));
     map.once('style.load', () => {
-      window.clearTimeout(timer);
+      cancel();
       resolve();
     });
   });
@@ -214,6 +216,8 @@ export class GameMap {
     this.revealed = true;
     window.clearTimeout(this.revealTimer);
     this.options.container.setAttribute('data-ready', '');
+    // Retires the "Loading the map" note underneath, whose pulse would otherwise run for good.
+    this.options.viewport.setAttribute('data-map-ready', '');
   }
 
   /* ------------------------------------------------------------- camera */

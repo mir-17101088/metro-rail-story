@@ -134,7 +134,7 @@ const thisYear = () => new Date().getFullYear();
 /* ------------------------------------------------------------- prompts */
 
 export const HINT = {
-  idle: 'Pick two stations. Or tap them on the map.',
+  idle: 'Enter stations here or click stations directly on the map.',
   idleNoMap: 'Pick two stations to plan a trip.',
   fromOnly: [
     'Good start. Now, where to?',

@@ -1,7 +1,7 @@
 import { prefersReducedMotion } from './lib/motion';
 
 /**
- * The section jumps in the masthead: The Map, Timeline, Price Tag, Take a tour!
+ * The section jumps in the masthead: The Map, Timeline, Price Tag, Plan a trip!
  *
  * Wide screens show all four in a row. Narrow ones keep only the ride, which
  * is the one thing a reader is most likely to want out of order, and fold the

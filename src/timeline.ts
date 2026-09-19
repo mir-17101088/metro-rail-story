@@ -45,10 +45,15 @@ export function initTimeline(list: HTMLOListElement): void {
 
   const observer = new IntersectionObserver(
     (entries) => {
+      // Items arriving together (a section jump, a fast flick) rise one after
+      // another rather than as a block; one on its own rises at once.
+      let order = 0;
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        entry.target.setAttribute('data-visible', '');
-        observer.unobserve(entry.target);
+        const item = entry.target as HTMLElement;
+        item.style.transitionDelay = `${Math.min(order++, 5) * 60}ms`;
+        item.setAttribute('data-visible', '');
+        observer.unobserve(item);
       }
     },
     { rootMargin: '0px 0px -12% 0px' },

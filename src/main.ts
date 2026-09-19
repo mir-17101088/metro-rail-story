@@ -77,12 +77,51 @@ let tokenRequest: Promise<MapToken> | null = null;
 const mapToken = (): Promise<MapToken> => (tokenRequest ??= fetchMapToken());
 
 /**
+ * Resolves once the loading screen is actually on screen. Everything the map
+ * starts with (a WebGL test context, then mapbox's modules, shaders and first
+ * render) keeps the main thread and the GPU busy, and begun straight away it
+ * held the loading screen back: its first frame was drawn, then queued behind
+ * the map's GPU work for a second or more, and the reader looked at a blank
+ * page. The browser's own first-contentful-paint entry is reported once that
+ * frame is presented. The map's files are already downloading (modulepreload
+ * in <head>), so this costs the map a frame or two, not a download.
+ *
+ * A background tab paints nothing until it is brought forward, and mapbox
+ * waits for that anyway, so there it goes straight on; so does a browser
+ * without paint timing (after a frame), and the timeout is a last resort.
+ */
+function afterFirstPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    if (document.visibilityState !== 'visible') {
+      resolve();
+      return;
+    }
+    const supported = typeof PerformanceObserver === 'function' && PerformanceObserver.supportedEntryTypes?.includes('paint');
+    if (!supported) {
+      requestAnimationFrame(() => window.setTimeout(resolve, 0));
+      return;
+    }
+    const observer = new PerformanceObserver((list) => {
+      if (!list.getEntriesByName('first-contentful-paint').length) return;
+      observer.disconnect();
+      resolve();
+    });
+    observer.observe({ type: 'paint', buffered: true });
+    window.setTimeout(() => {
+      observer.disconnect();
+      resolve();
+    }, 1000);
+  });
+}
+
+/**
  * Settles once the story map has drawn its opening view, or has failed for
  * good (no WebGL 2, no token, a chunk or the style that would not load). The
  * loading screen waits on exactly this: a reader never sees the story without
  * its map unless the map cannot be had.
  */
 async function loadMap(): Promise<void> {
+  await afterFirstPaint();
   const unsupported = mapUnsupportedReason();
   if (unsupported) {
     showFallback(new Error(unsupported));
@@ -125,8 +164,8 @@ async function loadMap(): Promise<void> {
   }
 }
 
-// Start immediately: the loading screen is already covering the page, so there
-// is no headline paint to protect, and every millisecond here is map time.
+// Start as soon as the loading screen is up: it covers the page, so there is
+// no headline paint to protect, and every millisecond after it is map time.
 const mapLoaded = loadMap();
 // Reveal once the map has drawn its opening view and the typefaces are in (no
 // swap flash). There is no short cap: on a slow connection the waiting lines
@@ -137,7 +176,6 @@ void Promise.all([mapLoaded, fontsLoaded]).then(() => loader.finish());
 void loader.done.then(() => {
   // Whatever lifted the screen, the stage never goes on hiding a half-drawn map.
   mapContainer.setAttribute('data-ready', '');
-  whenIdle(() => void ensureGame());
 });
 
 /* ---------------------------------------------- card fade without CSS support */
@@ -169,16 +207,35 @@ if (costsSection) initCosts(costsSection);
  * The game is the largest single piece of the page's own script, and it sits
  * below the timeline and the cost chart. Loading it with the entry meant its
  * bytes raced the map for the same connection while the reader was looking at
- * a loading screen, so it is fetched once the story is readable instead: at
- * the first idle moment, or sooner if the reader is already scrolling towards
- * it. Its stylesheet travels in the same chunk.
+ * a loading screen. Loading it at the first idle moment after that still built
+ * it (two lists of 80 stations, its stylesheet) while the story map was busy
+ * drawing its opening tiles, for every reader, including the many who never
+ * scroll that far. So it waits until the reader is headed for it: the
+ * timeline, two sections above it, coming within a screen; a jump from the
+ * masthead; or a link straight to it. Its stylesheet travels in the same chunk.
  */
 const gameRoot = document.querySelector<HTMLElement>('[data-game]');
+let gameCode: Promise<typeof import('./game/game')> | null = null;
 let gameRequest: Promise<unknown> | null = null;
+
+/** The game's code, fetched once; a failed fetch can be tried again. */
+function loadGameCode(): Promise<typeof import('./game/game')> {
+  return (gameCode ??= import('./game/game').catch((error: unknown) => {
+    gameCode = null;
+    throw error;
+  }));
+}
 
 function ensureGame(): Promise<unknown> {
   if (!gameRoot) return Promise.resolve();
-  return (gameRequest ??= import('./game/game').then((module) => module.initGame(gameRoot, { token: mapToken })));
+  // A download dropped by a phone's connection should not leave the game missing for good: the next ask tries again.
+  return (gameRequest ??= loadGameCode().then(
+    (module) => module.initGame(gameRoot, { token: mapToken }),
+    (error: unknown) => {
+      gameRequest = null;
+      throw error;
+    },
+  ));
 }
 
 function whenIdle(run: () => void): void {
@@ -187,12 +244,18 @@ function whenIdle(run: () => void): void {
 }
 
 if (gameRoot) {
+  // Only the download happens early, at the first idle moment once the story
+  // is up, so that a jump to the game later does not wait on the network.
+  void loader.done.then(() => whenIdle(() => void loadGameCode().catch(() => {})));
+
   // Linked to directly: the section has to exist before the browser can put
   // the reader in front of it.
   if (location.hash === '#game') void ensureGame();
 
-  // Otherwise, whichever comes first: the page falling quiet, or the reader arriving.
+  // Otherwise once the reader is on the way. Without IntersectionObserver (very
+  // old browsers), once the story is up.
   const ahead = document.querySelector('.timeline');
+  if (!('IntersectionObserver' in window)) void loader.done.then(() => ensureGame());
   if (ahead && 'IntersectionObserver' in window) {
     const near = new IntersectionObserver(
       ([entry]) => {
@@ -259,17 +322,18 @@ if (toTop && scrolly) {
     },
     { rootMargin: '-40% 0px 0px 0px' },
   ).observe(scrolly);
-  // ...and steps aside while the route game's map fills the bottom of the
-  // screen, where it would sit on the map's attribution and crowd the ride.
-  const gameViewport = document.querySelector('[data-game-viewport]');
-  if (gameViewport) {
+  // ...and steps aside while the route game fills the bottom of the screen:
+  // over the map it sat on the attribution and crowded the ride, and over the
+  // trip panel on a phone it covered the times and fares of the route options.
+  const gameStage = document.querySelector('.game__stage');
+  if (gameStage) {
     new IntersectionObserver(
       ([entry]) => {
         overGameMap = entry.isIntersecting;
         sync();
       },
       { rootMargin: '-85% 0px 0px 0px' },
-    ).observe(gameViewport);
+    ).observe(gameStage);
   }
 
   const hero = document.querySelector<HTMLElement>('.hero__title');

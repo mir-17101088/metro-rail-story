@@ -92,6 +92,9 @@ function whenStill(callback: () => void, quietMs = 250): void {
   arm();
 }
 
+/** The fixed masthead's height: anything scrolled to has to land below it. */
+const mastheadHeight = (): number => document.querySelector('.masthead')?.getBoundingClientRect().height ?? 68;
+
 /** How long the result card takes to fade out when closed (matches result-out in game.css). */
 const CLOSE_MS = 160;
 
@@ -183,7 +186,7 @@ export class Game {
     this.result.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
       if (target.closest('[data-game-close]')) this.closeResult();
-      else if (target.closest('[data-game-again]')) this.reset();
+      else if (target.closest('[data-game-again]')) this.planAnother();
       else if (target.closest('[data-game-alt]') && this.alternative) void this.start(this.alternative);
     });
     this.result.addEventListener('keydown', (event) => {
@@ -281,8 +284,7 @@ export class Game {
       return;
     }
     this.applyToMap();
-    // Wide screens: the panel rides on the map, so show the whole map once both stations are in.
-    if (WIDE.matches && from && to) this.bringIntoView();
+    if (from && to) this.showOutcome();
     if (this.heading) this.announce(copy.toPlain(`${this.heading.title}. ${this.heading.text}`));
     if (result) this.announce(resultText(result));
   }
@@ -356,6 +358,33 @@ export class Game {
     this.refresh();
     // The button just pressed has gone; keep keyboard focus in the game.
     if (byKeyboard) this.panel.focus({ preventScroll: true });
+  }
+
+  /**
+   * "Plan another trip" on the result card: start over, and take the reader
+   * back to the station fields to choose again. On wide screens the panel sits
+   * on the map, already in view; on phones it is above the map, off screen
+   * after a ride.
+   */
+  private planAnother(): void {
+    this.reset();
+    this.reveal(this.panel);
+  }
+
+  /**
+   * Both stations are in: put what comes next where the reader can see it.
+   * Wide screens show the whole map, where the choice (or the answer) now is.
+   * Phones close the keyboard first, which would otherwise cover it, then show
+   * the choice of routes under the fields, or the map with the answer on it.
+   */
+  private showOutcome(): void {
+    if (WIDE.matches) {
+      this.bringIntoView();
+      return;
+    }
+    this.dismissKeyboard();
+    if (this.phase === 'choose') this.reveal(this.optionsList);
+    else this.bringIntoView();
   }
 
   private preview(route: Route | null): void {
@@ -710,9 +739,25 @@ export class Game {
     if (COARSE.matches && focused instanceof HTMLInputElement && this.root.contains(focused)) focused.blur();
   }
 
+  /**
+   * Scroll only as far as it takes to show `element` whole below the masthead,
+   * or its top, when it is taller than the room. Nothing moves if it is
+   * already in view.
+   */
+  private reveal(element: HTMLElement): void {
+    const top = mastheadHeight() + 12;
+    const bottom = window.innerHeight - 12;
+    const rect = element.getBoundingClientRect();
+    let offset = 0;
+    if (rect.top < top || rect.height > bottom - top) offset = rect.top - top;
+    else if (rect.bottom > bottom) offset = rect.bottom - bottom;
+    if (Math.abs(offset) < 4) return;
+    window.scrollTo({ top: window.scrollY + offset, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  }
+
   /** Scroll so the whole map is on screen before the ride starts. */
   private bringIntoView(): void {
-    const masthead = document.querySelector('.masthead')?.getBoundingClientRect().height ?? 68;
+    const masthead = mastheadHeight();
     const rect = this.viewport.getBoundingClientRect();
     const vh = window.innerHeight;
     const room = vh - masthead;

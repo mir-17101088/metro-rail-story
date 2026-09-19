@@ -13,6 +13,24 @@ import { network } from '../data/network';
 
 export type CommitSource = 'list' | 'text' | 'clear';
 
+/**
+ * Phones and tablets held upright, where a keyboard comes up: the trip panel
+ * sits above the map there, often low on the screen, and the list opened
+ * straight under the keyboard.
+ */
+const TOUCH_STACKED = window.matchMedia('(pointer: coarse) and (max-width: 1023px)');
+/** The list never gets shorter than this (three stations and a bit), however little room is left. */
+const MIN_LIST_PX = 136;
+/** Space kept between the field and the masthead above it once lifted. */
+const LIFT_GAP_PX = 12;
+/**
+ * Fields too narrow for the full placeholder, which ran out of room mid-word:
+ * the smallest phones, and the side panel of a phone held sideways (game.css).
+ */
+const NARROW_FIELD = window.matchMedia(
+  '(max-width: 345px), (orientation: landscape) and (max-height: 540px) and (min-width: 560px) and (max-width: 1023px)',
+);
+
 interface Entry {
   id: string;
   name: string;
@@ -66,6 +84,7 @@ export class StationPicker {
   private active = -1;
   private selected: string | null = null;
   private pointerInside = false;
+  private fitFrame = 0;
   private listener: (id: string | null, source: CommitSource) => void = () => {};
 
   constructor(private readonly root: HTMLElement) {
@@ -99,6 +118,15 @@ export class StationPicker {
     this.byId = new Map(this.entries.map((e) => [e.id, e]));
     this.show(this.entries);
 
+    // The narrowest phones get the short placeholder ("Starting station").
+    const long = this.input.placeholder;
+    const short = this.input.dataset.placeholderNarrow;
+    if (short) {
+      const fit = () => (this.input.placeholder = NARROW_FIELD.matches ? short : long);
+      NARROW_FIELD.addEventListener('change', fit);
+      fit();
+    }
+
     this.bind();
   }
 
@@ -129,6 +157,8 @@ export class StationPicker {
     const { input, popup, list } = this;
 
     input.addEventListener('focus', () => {
+      // First, so the list opens measured against where the field ends up.
+      this.lift();
       this.open('');
       // Typing replaces the current pick instead of appending to it.
       window.setTimeout(() => {
@@ -201,6 +231,57 @@ export class StationPicker {
         if (this.isOpen) this.resolveText();
       }, 0);
     });
+
+    // The room below the field changes as the keyboard slides up or away and as
+    // the page scrolls: the list follows it, once a frame at most.
+    const refit = () => {
+      if (!this.isOpen || this.fitFrame) return;
+      this.fitFrame = requestAnimationFrame(() => {
+        this.fitFrame = 0;
+        this.fit();
+      });
+    };
+    window.visualViewport?.addEventListener('resize', refit);
+    window.visualViewport?.addEventListener('scroll', refit);
+    window.addEventListener('scroll', refit, { passive: true });
+    window.addEventListener('resize', refit);
+  }
+
+  /**
+   * On a touch phone, bring the field up under the masthead before the
+   * keyboard arrives, so the list has the screen between them. It jumps rather
+   * than glides: the browser scrolls a focused field into view on its own once
+   * the keyboard is up, and cut short by that, a glide left the field just
+   * above the keyboard with the list hidden behind it. The jump happens under
+   * the keyboard's own slide.
+   */
+  private lift(): void {
+    if (!TOUCH_STACKED.matches) return;
+    const masthead = document.querySelector('.masthead')?.getBoundingClientRect().height ?? 0;
+    const offset = this.root.getBoundingClientRect().top - masthead - LIFT_GAP_PX;
+    if (Math.abs(offset) > 8) window.scrollTo(0, window.scrollY + offset);
+  }
+
+  /**
+   * Keep the list inside what can be seen: above an on-screen keyboard, above
+   * the bottom of the screen. The visual viewport is the part not covered by
+   * the keyboard; where it is missing (very old browsers), the window.
+   */
+  private fit(): void {
+    const view = window.visualViewport;
+    const bottom = view ? view.offsetTop + view.height : window.innerHeight;
+    const room = Math.floor(bottom - this.popup.getBoundingClientRect().top - 8);
+    this.popup.style.setProperty('--room', `${Math.max(MIN_LIST_PX, room)}px`);
+  }
+
+  /** Scroll the list, and only the list, so that an option is in view. */
+  private scrollToOption(option: HTMLElement): void {
+    const popup = this.popup;
+    // The popup is the option's offset parent (it is absolutely positioned).
+    const top = option.offsetTop;
+    const bottom = top + option.offsetHeight;
+    if (top < popup.scrollTop) popup.scrollTop = top;
+    else if (bottom > popup.scrollTop + popup.clientHeight) popup.scrollTop = bottom - popup.clientHeight;
   }
 
   /* ----------------------------------------------------------------- state */
@@ -219,11 +300,13 @@ export class StationPicker {
     this.show(this.match(typed));
     this.popup.hidden = false;
     this.input.setAttribute('aria-expanded', 'true');
+    this.fit();
 
     const current = this.visible.findIndex((e) => e.id === this.selected);
     if (!typed && current >= 0) this.setActive(current, true);
     else this.setActive(this.visible.length && typed ? 0 : -1, true);
-    if (!typed && current < 0) this.list.scrollTop = 0;
+    // The popup is what scrolls, not the list inside it.
+    if (!typed && current < 0) this.popup.scrollTop = 0;
   }
 
   private close(): void {
@@ -265,7 +348,9 @@ export class StationPicker {
     }
     entry.option.setAttribute('data-active', '');
     this.input.setAttribute('aria-activedescendant', entry.option.id);
-    if (scroll) entry.option.scrollIntoView({ block: 'nearest' });
+    // Not scrollIntoView: that also scrolls the page, which on a phone could
+    // push the field under the masthead or the list under the keyboard.
+    if (scroll) this.scrollToOption(entry.option);
   }
 
   private resolveText(): void {

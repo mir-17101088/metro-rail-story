@@ -43,7 +43,10 @@ export function observeSteps(steps: HTMLElement[], onStep: StepHandler): () => v
     steps.forEach((s) => observer!.observe(s));
   };
 
-  connect();
+  // After the first frame: measured during start-up, the viewport height forced
+  // the whole page's first layout inside the start-up script, ahead of the
+  // loading screen's first paint. Once a frame is out, the layout is there to read.
+  requestAnimationFrame(() => window.setTimeout(() => lastHeight || connect(), 0));
 
   // Mobile browsers change innerHeight as the toolbar hides; only reconnect on
   // real layout changes to avoid re-triggering steps mid-scroll.

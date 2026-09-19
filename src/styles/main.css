@@ -51,13 +51,24 @@
   /* Drawers and sheets (iOS-like). */
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
-  --gutter: clamp(1rem, 4vw, 3.5rem);
+  /*
+   * Never less than the notch: the page runs under it (viewport-fit=cover),
+   * and on a phone held sideways that side's inset is wider than the gutter.
+   */
+  --gutter: max(clamp(1rem, 4vw, 3.5rem), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   /* Left inset of the reading column on wide screens. */
   --step-inset: clamp(2rem, 5vw, 5rem);
   --col: min(29rem, 100%);
   --masthead-h: 4.25rem;
 
   color-scheme: dark;
+}
+
+/* A phone held sideways has a few hundred pixels of height: the masthead gives some back. */
+@media (max-height: 500px) {
+  :root {
+    --masthead-h: 3.25rem;
+  }
 }
 
 /*
@@ -288,7 +299,7 @@ a {
 }
 
 /*
- * "Take a tour!" is the one link a reader jumps to out of order, so it is the
+ * "Plan a trip!" is the one link a reader jumps to out of order, so it is the
  * one with a box around it. Line 6's green is the accent: the only stretch of
  * this network anyone can actually ride.
  */
@@ -1231,9 +1242,10 @@ a {
  * movement to be noticed: the panel scrolls the detail up to its top edge
  * (see Dock.showDetail) and the detail itself slides in under the scroll.
  */
+/* Short: readers step through lines and stations one after another. */
 @media (prefers-reduced-motion: no-preference) {
   .detail--in {
-    animation: detail-in 380ms var(--ease-out) both;
+    animation: detail-in 240ms var(--ease-out) both;
   }
 
   @keyframes detail-in {
@@ -1532,6 +1544,18 @@ a {
   }
 }
 
+/*
+ * A phone held sideways: at half the screen the sheet left the map a strip
+ * across the top. It opens on the six lines and leaves the rest a scroll, a
+ * drag or a flick away.
+ */
+@media (max-width: 1023px) and (max-height: 540px) and (orientation: landscape) {
+  .network:not([data-sheet-full]) .network__body:not([style*='height']) {
+    max-height: 36vh;
+    max-height: 36svh;
+  }
+}
+
 /* The narrowest phones (320px class): tighter chips so "Line 6" never breaks. */
 @media (max-width: 359px) {
   .lines {
@@ -1639,11 +1663,12 @@ a {
   }
 }
 
+/* Bracketed in Line 6's colour on both edges, like the route game's captions. */
 .annot__label {
   display: grid;
   padding: 0.375rem 0.625rem;
   background: rgb(15 20 26 / 0.92);
-  border-left: 3px solid var(--line-6);
+  border-inline: 3px solid var(--line-6);
   font: 500 0.8125rem/1.3 var(--sans);
   color: var(--text-2);
   white-space: nowrap;
@@ -1675,6 +1700,16 @@ a {
  */
 .stage .mapboxgl-ctrl-top-right {
   top: var(--masthead-h);
+}
+
+/* Held sideways, a notched phone's edge would cover the controls and credits in its corners. */
+.mapboxgl-map .mapboxgl-ctrl-top-right,
+.mapboxgl-map .mapboxgl-ctrl-bottom-right {
+  right: env(safe-area-inset-right, 0px);
+}
+
+.mapboxgl-map .mapboxgl-ctrl-bottom-left {
+  left: env(safe-area-inset-left, 0px);
 }
 
 .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
@@ -1799,7 +1834,7 @@ a {
   @keyframes map-reset-in {
     from {
       opacity: 0;
-      transform: scale(0.8);
+      transform: scale(0.9);
     }
 
     to {
@@ -2306,6 +2341,12 @@ a {
   .to-top,
   .to-top[data-visible],
   .to-top[data-visible]:active {
+    transform: none;
+  }
+
+  /* The section tray and the Kamlapur label fade in place instead of sliding. */
+  .sitenav__tray,
+  .annot-enter {
     transform: none;
   }
 }
