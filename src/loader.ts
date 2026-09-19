@@ -14,9 +14,21 @@ import { prefersReducedMotion } from './lib/motion';
  * which at least keep them company while Mapbox pulls tiles down a connection
  * we do not control. index.html paints the first one before any script runs;
  * this picks up from there. On a quick connection only that first one is seen.
+ *
+ * The screen stays until main.ts calls `finish`: once the map has drawn its
+ * opening view, or has failed for good. index.html also carries a CSS-only
+ * failsafe for when no script runs at all; once this one runs it takes over
+ * from it, since on a slow connection the map can legitimately take longer
+ * than that failsafe allows. Its own ceiling only catches a request that hangs.
  */
 
 const SCROLL_KEYS = new Set([' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'Home', 'End']);
+
+/**
+ * Long enough for the map to arrive over a poor mobile connection; reached
+ * only when something has stopped answering altogether (ms since navigation).
+ */
+const CEILING_MS = 60000;
 
 /**
  * Shown in turn while the map loads. The first is in index.html, so this list
@@ -26,6 +38,7 @@ const WAITING_LINES = [
   'Stuck in traffic',
   'Your internet is probably slow',
   'Waiting at the signal',
+  'Dodging a Bangla Tesla',
   'Still quicker than Gulistan',
   'Counting the pillars',
   'Buying a single journey ticket',
@@ -52,6 +65,10 @@ export class Loader {
   private lineIndex = 0;
   private finished = false;
   private readonly unlockScroll: () => void;
+  private resolveDone: () => void = () => {};
+
+  /** Settles when the screen starts to lift, whatever lifted it. */
+  readonly done = new Promise<void>((resolve) => (this.resolveDone = resolve));
 
   constructor() {
     const html = document.documentElement;
@@ -59,12 +76,26 @@ export class Loader {
       html.classList.add('is-ready');
       this.finished = true;
       this.unlockScroll = () => {};
+      this.resolveDone();
       return;
     }
     html.classList.add('is-loading');
     this.main?.setAttribute('aria-busy', 'true');
     this.unlockScroll = lockScroll();
+    // Scripts that arrive after index.html's failsafe has already lifted the
+    // screen must not bring it back over a page the reader is using.
+    if (getComputedStyle(this.root).visibility === 'hidden') {
+      this.finish();
+      return;
+    }
+    // Scripts are running: from here the map decides, not index.html's timer.
+    this.root.style.animation = 'none';
     this.armLines(LINE_MS);
+    window.setTimeout(() => {
+      if (this.finished) return;
+      console.warn('[loader] the map has not drawn after %d s; showing the story anyway', CEILING_MS / 1000);
+      this.finish();
+    }, Math.max(0, CEILING_MS - performance.now()));
   }
 
   /**
@@ -91,6 +122,7 @@ export class Loader {
     const root = this.root;
     const reduced = prefersReducedMotion();
     this.setBar(1, 240);
+    this.resolveDone();
 
     window.setTimeout(
       () => {

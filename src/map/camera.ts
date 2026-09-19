@@ -71,10 +71,26 @@ export function paddingFor(stage: HTMLElement, stepId: string): PaddingOptions {
   return { top: masthead + 16, bottom: Math.min(bottom, h * 0.6), left: 44, right: 44 };
 }
 
+/**
+ * The same padding, scaled down on any axis where it would leave the bounds
+ * less than a third of the map. A panel measured at an awkward moment (mid
+ * rotation, a very short window) can ask for more padding than the map has
+ * pixels, and mapbox then offers no camera at all: the move silently never
+ * happens, and a map on its first frame stays on the empty ocean at 0°, 0°.
+ */
+function fitPadding(map: MapboxMap, padding: PaddingOptions): PaddingOptions {
+  const { clientWidth: w, clientHeight: h } = map.getContainer();
+  const { top = 0, bottom = 0, left = 0, right = 0 } = padding;
+  const shrink = (total: number, size: number) => (total > size * (2 / 3) && total > 0 ? (size * (2 / 3)) / total : 1);
+  const x = shrink(left + right, w);
+  const y = shrink(top + bottom, h);
+  return { top: top * y, bottom: bottom * y, left: left * x, right: right * x };
+}
+
 export function frame(
   map: MapboxMap,
   bounds: LngLatBoundsLike,
-  padding: PaddingOptions,
+  requested: PaddingOptions,
   {
     maxZoom = 13.2,
     instant = false,
@@ -86,7 +102,12 @@ export function frame(
     pace?: 'story' | 'ui';
   } = {},
 ): void {
-  const camera = map.cameraForBounds(bounds, { padding, maxZoom });
+  let padding = requested;
+  let camera = map.cameraForBounds(bounds, { padding, maxZoom });
+  if (!camera) {
+    padding = fitPadding(map, requested);
+    camera = map.cameraForBounds(bounds, { padding, maxZoom });
+  }
   if (!camera) return;
   // mapbox-gl v3 returns the plain centre of the bounds; the padding has to
   // travel with the camera move to shift that centre into the clear area.

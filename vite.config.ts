@@ -151,7 +151,18 @@ export default defineConfig(({ mode }) => {
       exclude: ['mapbox-gl'],
     },
     build: {
-      target: 'es2022',
+      /*
+       * Older phones matter here: in Bangladesh many run a Chrome, Samsung
+       * Internet or in-app browser (Facebook's, built on the phone's own
+       * WebView) that never updates. The page's own code has to parse and run
+       * on them, even where mapbox-gl 3 cannot (it needs WebGL 2), so that the
+       * story, the explorer and the route finder still work and the loading
+       * screen lifts onto the fallback instead of sitting there. Syntax is
+       * lowered to these; the one newer API the maps need is feature-tested
+       * before any map code loads (src/map/support.ts).
+       */
+      target: ['es2020', 'chrome87', 'edge88', 'firefox78', 'safari14'],
+      cssTarget: ['chrome87', 'edge88', 'firefox78', 'safari14'],
       sourcemap: false,
       cssCodeSplit: true,
       assetsInlineLimit: 0,

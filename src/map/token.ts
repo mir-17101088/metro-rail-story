@@ -14,27 +14,58 @@ export interface MapToken {
 const BUILD_TOKEN = ((import.meta.env.VITE_MAPBOX_PUBLIC_TOKEN as string | undefined) ?? '').trim();
 
 /**
+ * A token request that has not answered by now is not going to. The loading
+ * screen waits for the map, so a hung request must turn into a failure (and
+ * the fallback) rather than an endless wait.
+ */
+const REQUEST_TIMEOUT_MS = 10000;
+/** One retry: a serverless endpoint's cold start, or a dropped mobile connection. */
+const ATTEMPTS = 2;
+
+/**
  * Resolve a map token: the build-time public token when there is one,
  * otherwise ask our own server (Vercel / Node) for a short-lived token.
  */
-export async function fetchMapToken(signal?: AbortSignal): Promise<MapToken> {
+export async function fetchMapToken(): Promise<MapToken> {
   if (BUILD_TOKEN.startsWith('pk.')) return { token: BUILD_TOKEN, expires: null };
-  return requestServerToken(signal);
+  let failure: unknown;
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+    try {
+      return await requestServerToken();
+    } catch (error) {
+      failure = error;
+      // The server answered and said no: asking again will not change its mind.
+      if (error instanceof TokenRefused) break;
+    }
+  }
+  throw failure;
 }
 
-async function requestServerToken(signal?: AbortSignal): Promise<MapToken> {
+class TokenRefused extends Error {}
+
+async function requestServerToken(): Promise<MapToken> {
   const url = new URL(CONFIG.tokenUrl, document.baseURI);
-  const response = await fetch(url, {
-    headers: { Accept: 'application/json' },
-    credentials: 'same-origin',
-    cache: 'no-store',
-    signal,
-  });
-  if (!response.ok) throw new Error(`Map token request failed (${response.status})`);
-  const body = (await response.json()) as { token?: unknown; expires?: unknown };
-  if (typeof body.token !== 'string' || !body.token) throw new Error('Map token response was empty');
-  const expires = typeof body.expires === 'string' ? Date.parse(body.expires) : null;
-  return { token: body.token, expires: Number.isFinite(expires) ? expires : null };
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      credentials: 'same-origin',
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      const message = `Map token request failed (${response.status})`;
+      // 4xx and "not configured" are answers; other 5xx may be passing trouble.
+      throw response.status < 500 || response.status === 503 ? new TokenRefused(message) : new Error(message);
+    }
+    const body = (await response.json()) as { token?: unknown; expires?: unknown };
+    if (typeof body.token !== 'string' || !body.token) throw new TokenRefused('Map token response was empty');
+    const expires = typeof body.expires === 'string' ? Date.parse(body.expires) : null;
+    return { token: body.token, expires: Number.isFinite(expires) ? expires : null };
+  } finally {
+    window.clearTimeout(timer);
+  }
 }
 
 /**

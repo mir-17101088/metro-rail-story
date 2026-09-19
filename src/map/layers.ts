@@ -160,22 +160,36 @@ export function stationFill(depth: boolean): ExpressionSpecification {
   return ['case', activeInterchange, '#f1f3f5', regular] as unknown as ExpressionSpecification;
 }
 
+/**
+ * A capsule (a rectangle with fully rounded ends), traced with arcs. Not
+ * `ctx.roundRect`: that needs Chrome 99, Samsung Internet 18 or Safari 16, and
+ * on the older phones still in use it threw here and took both maps down.
+ */
+function capsule(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number): void {
+  const r = h / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arc(x + w - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+  ctx.lineTo(x + r, y + h);
+  ctx.arc(x + r, y + r, r, Math.PI / 2, (3 * Math.PI) / 2);
+  ctx.closePath();
+}
+
 function makeBadge(color: string, wide: boolean): ImageData {
   const ratio = 2;
   const h = 22 * ratio;
   const w = (wide ? 30 : 22) * ratio;
+  const inset = 2 * ratio;
   const canvas = document.createElement('canvas');
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext('2d')!;
-  const r = h / 2;
   ctx.fillStyle = BASE.ink;
-  ctx.beginPath();
-  ctx.roundRect(0, 0, w, h, r);
+  capsule(ctx, 0, 0, w, h);
   ctx.fill();
   ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.roundRect(2 * ratio, 2 * ratio, w - 4 * ratio, h - 4 * ratio, r - 2 * ratio);
+  capsule(ctx, inset, inset, w - 2 * inset, h - 2 * inset);
   ctx.fill();
   return ctx.getImageData(0, 0, w, h);
 }

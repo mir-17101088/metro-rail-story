@@ -53,6 +53,8 @@ interface Options {
   padding: () => PaddingOptions;
   /** A station was clicked or tapped. */
   onPick: (station: string) => void;
+  /** The map changed size (a phone turned sideways, a window resized), once it has settled. */
+  onResize?: () => void;
 }
 
 const ROUTE_SOURCE = 'game-route';
@@ -75,6 +77,9 @@ const CHANGE_MS = 2600;
 const NEXT_RIDE_MS = 650;
 const SWITCH_MS = 260;
 const ARRIVE_MS = 900;
+
+/** However its first frame is going, the map stops hiding after this long. */
+const REVEAL_AFTER_MS = 2500;
 
 const CANCELLED = Symbol('cancelled');
 const WIDE = window.matchMedia('(min-width: 1024px)');
@@ -129,9 +134,6 @@ export async function createGameMap(options: Options): Promise<GameMap> {
 }
 
 export class GameMap {
-  /** Resolves once the network has fully rendered for the first time. */
-  readonly ready: Promise<void>;
-
   private readonly finePointer = window.matchMedia('(pointer: fine)').matches;
   private readonly tip: HTMLDivElement;
   private readonly pinFrom: Marker;
@@ -162,6 +164,8 @@ export class GameMap {
   private interactive = false;
   /** On screen and in a visible tab: the ride clock only advances while true. */
   private active = true;
+  private revealed = false;
+  private revealTimer = 0;
 
   constructor(
     private readonly map: MapboxMap,
@@ -189,16 +193,27 @@ export class GameMap {
     this.tip.setAttribute('aria-hidden', 'true');
     options.viewport.appendChild(this.tip);
 
-    this.ready = new Promise((resolve) =>
-      map.once('idle', () => {
-        options.container.setAttribute('data-ready', '');
-        resolve();
-      }),
-    );
+    // Faded in on the first complete frame (`load`), as the story map is. Not on
+    // `idle`: that also waits for every camera move and fade to finish, which
+    // on a slow phone comes late and never comes while a ride is moving the
+    // camera, so a ride started while the map loaded played over an invisible
+    // map. A slow first frame is shown anyway after a moment, and a ride always
+    // shows the map (see `play`).
+    if (map.loaded()) this.reveal();
+    else map.once('load', () => this.reveal());
+    this.revealTimer = window.setTimeout(() => this.reveal(), REVEAL_AFTER_MS);
 
     this.bindInteractions();
     this.watchVisibility();
+    this.watchResize();
     this.setInteractive(true);
+  }
+
+  private reveal(): void {
+    if (this.revealed) return;
+    this.revealed = true;
+    window.clearTimeout(this.revealTimer);
+    this.options.container.setAttribute('data-ready', '');
   }
 
   /* ------------------------------------------------------------- camera */
@@ -297,6 +312,7 @@ export class GameMap {
     this.stop();
     const run = this.run;
     this.playing = true;
+    this.reveal();
     this.setInteractive(false);
     this.showRoute(route, 'none');
     const tracks = this.tracksOf(route);
@@ -490,6 +506,23 @@ export class GameMap {
       { threshold: [0, 0.2] },
     ).observe(this.options.viewport);
     document.addEventListener('visibilitychange', update);
+  }
+
+  /** mapbox resizes the canvas itself; the framing is ours to redo, once the size has settled. */
+  private watchResize(): void {
+    const container = this.map.getContainer();
+    let last = { w: container.clientWidth, h: container.clientHeight };
+    let timer = 0;
+    this.map.on('resize', () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (Math.abs(w - last.w) < 2 && Math.abs(h - last.h) < 2) return;
+        last = { w, h };
+        this.options.onResize?.();
+      }, 200);
+    });
   }
 
   /* ------------------------------------------------------------- layers */

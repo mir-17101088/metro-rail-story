@@ -47,6 +47,7 @@ export async function createStoryMap(options: Options): Promise<StoryMap> {
   const { container, stage, token } = options;
   applyToken(token);
 
+  // Zoom buttons: bottom right on desktop, top right on phones (the explorer sheet has the bottom).
   const wide = window.matchMedia('(min-width: 1024px)').matches;
   const corner = wide ? 'bottom-right' : 'top-right';
 
@@ -57,7 +58,9 @@ export async function createStoryMap(options: Options): Promise<StoryMap> {
     bounds: boundsOf(['6-operational', '6-extension']),
     fitBoundsOptions: { padding: paddingFor(stage, 'hero') },
     attributionControl: false,
-    logoPosition: corner,
+    // The two credits in opposite bottom corners, as on the route game's map,
+    // rather than stacked in one: the wordmark left, the attribution button right.
+    logoPosition: 'bottom-left',
     minZoom: 8,
     maxZoom: 16.5,
     fadeDuration: 250,
@@ -73,7 +76,7 @@ export async function createStoryMap(options: Options): Promise<StoryMap> {
     performanceMetricsCollection: false,
   });
 
-  map.addControl(new AttributionControl({ compact: true }), corner);
+  map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
   map.addControl(new NavigationControl({ showCompass: false }), corner);
   map.getCanvas().tabIndex = -1;
 

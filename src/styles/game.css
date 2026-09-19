@@ -105,6 +105,36 @@
   opacity: 1;
 }
 
+/*
+ * A quiet note under the map while it loads, so a slow phone shows an empty
+ * box that says why. The map covers it as it fades in (its canvas is opaque),
+ * so nothing has to take it away; a map that fails takes it along with itself.
+ * Centred in the map area clear of the panel on wide screens.
+ */
+.game__viewport::before {
+  content: 'Loading the map\2026';
+  position: absolute;
+  inset: 0 0 0 var(--panel-space);
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+  font: 600 0.75rem/1 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+  animation: map-wait 1400ms ease-in-out infinite alternate;
+}
+
+@keyframes map-wait {
+  to {
+    opacity: 0.4;
+  }
+}
+
+.game[data-map-failed] .game__viewport::before {
+  content: none;
+}
+
 .game__fallback {
   position: absolute;
   inset: auto var(--gutter) 1.5rem;
@@ -543,14 +573,21 @@
   box-shadow: 0 1.25rem 2.5rem -1rem rgb(4 7 10 / 0.75);
 }
 
+/*
+ * Bracketed in line colour on both edges, like the quip on the result card.
+ * Riding, both edges are the line under the train; changing, the left edge is
+ * the line being left and the right the line being boarded, in the same order
+ * as the badges.
+ */
 .game-caption {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.625rem 0.625rem 0.75rem;
+  padding: 0.625rem 0.75rem;
   background: rgb(15 20 26 / 0.95);
-  border-left: 3px solid var(--c, var(--text-1));
+  border-left: 3px solid var(--c-from, var(--c, var(--text-1)));
+  border-right: 3px solid var(--c, var(--text-1));
   opacity: 0;
   visibility: hidden;
   transform: translate(-50%, 0.5rem);
@@ -1329,6 +1366,7 @@
 /* ---------------------------------------------------------- reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
+  .game__viewport::before,
   .game-pin__inner,
   .game-caption[data-swap] .game-caption__badges,
   .game-caption[data-swap] .game-caption__body,

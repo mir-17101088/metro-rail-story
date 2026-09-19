@@ -10,18 +10,15 @@ import { initCosts } from './costs';
 import { initNav } from './nav';
 import { NetworkPanel } from './explorer/panel';
 import { Dock } from './explorer/dock';
+import { mapUnsupportedReason } from './map/support';
 import { fetchMapToken, type MapToken } from './map/token';
 import { prefersReducedMotion } from './lib/motion';
 import type { StoryMap } from './map/story-map';
 
 document.documentElement.classList.add('js');
 
-/** The loading screen never stays up longer than this (ms since navigation). */
-const MAX_LOADING_MS = 9000;
-/** ...and it does not wait on a slow tile server past this, either. */
-const MAX_MAP_WAIT_MS = 5000;
-/** However long the map takes, the stage stops hiding it after this. */
-const MAX_HIDDEN_MS = 8000;
+/** The typefaces get this long before the story is shown in the fallback faces. */
+const MAX_FONT_WAIT_MS = 3000;
 
 const loader = new Loader();
 loader.step(0.1);
@@ -79,18 +76,16 @@ function showFallback(error: unknown): void {
 let tokenRequest: Promise<MapToken> | null = null;
 const mapToken = (): Promise<MapToken> => (tokenRequest ??= fetchMapToken());
 
-function webglAvailable(): boolean {
-  try {
-    const canvas = document.createElement('canvas');
-    return Boolean(canvas.getContext('webgl2') ?? canvas.getContext('webgl'));
-  } catch {
-    return false;
-  }
-}
-
+/**
+ * Settles once the story map has drawn its opening view, or has failed for
+ * good (no WebGL 2, no token, a chunk or the style that would not load). The
+ * loading screen waits on exactly this: a reader never sees the story without
+ * its map unless the map cannot be had.
+ */
 async function loadMap(): Promise<void> {
-  if (!webglAvailable()) {
-    showFallback(new Error('WebGL is not available'));
+  const unsupported = mapUnsupportedReason();
+  if (unsupported) {
+    showFallback(new Error(unsupported));
     return;
   }
   try {
@@ -120,12 +115,11 @@ async function loadMap(): Promise<void> {
       }
     }
 
-    // The stage fades the map in on `painted` (style up, first tiles drawn),
-    // not on `ready` (every tile in the viewport settled). Waiting for the
-    // latter is what used to leave a reader on a blank stage when the loading
-    // screen timed out first.
+    // The loading screen lifts on `painted` (style up, opening tiles drawn),
+    // not on `ready` (every tile settled and every fade finished), which can
+    // trail it by seconds on a slow connection for no visible difference.
     void story.ready.then(() => performance.mark('story:map-ready'));
-    await Promise.race([story.painted, wait(MAX_MAP_WAIT_MS)]);
+    await story.painted;
   } catch (error) {
     showFallback(error);
   }
@@ -134,17 +128,15 @@ async function loadMap(): Promise<void> {
 // Start immediately: the loading screen is already covering the page, so there
 // is no headline paint to protect, and every millisecond here is map time.
 const mapLoaded = loadMap();
-// Last resort: a map still short of its first full frame is shown anyway rather
-// than leaving the stage empty behind a loading screen that has already gone.
-window.setTimeout(() => mapContainer.setAttribute('data-ready', ''), MAX_HIDDEN_MS);
-// Reveal once the map has rendered and the typefaces are in (no swap flash),
-// or when the cap is reached; a slow map then fades in on its own.
-const fontsLoaded = Promise.race([document.fonts?.ready ?? Promise.resolve(), wait(3000)]);
-void Promise.race([
-  Promise.all([mapLoaded, fontsLoaded]),
-  wait(Math.max(0, MAX_LOADING_MS - performance.now())),
-]).then(() => {
-  loader.finish();
+// Reveal once the map has drawn its opening view and the typefaces are in (no
+// swap flash). There is no short cap: on a slow connection the waiting lines
+// keep the reader company instead of the story arriving without its map. The
+// loader's own ceiling (src/loader.ts) covers a request that simply hangs.
+const fontsLoaded = Promise.race([document.fonts?.ready ?? Promise.resolve(), wait(MAX_FONT_WAIT_MS)]);
+void Promise.all([mapLoaded, fontsLoaded]).then(() => loader.finish());
+void loader.done.then(() => {
+  // Whatever lifted the screen, the stage never goes on hiding a half-drawn map.
+  mapContainer.setAttribute('data-ready', '');
   whenIdle(() => void ensureGame());
 });
 
@@ -186,9 +178,7 @@ let gameRequest: Promise<unknown> | null = null;
 
 function ensureGame(): Promise<unknown> {
   if (!gameRoot) return Promise.resolve();
-  return (gameRequest ??= import('./game/game').then((module) =>
-    module.initGame(gameRoot, { token: mapToken, webgl: webglAvailable() }),
-  ));
+  return (gameRequest ??= import('./game/game').then((module) => module.initGame(gameRoot, { token: mapToken })));
 }
 
 function whenIdle(run: () => void): void {
@@ -253,16 +243,34 @@ const toTop = document.querySelector<HTMLButtonElement>('[data-to-top]');
 if (toTop && scrolly) {
   toTop.hidden = false;
   toTop.inert = true;
+  let pastStory = false;
+  let overGameMap = false;
+  const sync = () => {
+    const shown = pastStory && !overGameMap;
+    toTop.toggleAttribute('data-visible', shown);
+    toTop.inert = !shown;
+  };
   // Appears once the map section has scrolled above the upper 40% of the
   // screen, i.e. the reader has moved on to the sections after it.
   new IntersectionObserver(
     ([entry]) => {
-      const past = !entry.isIntersecting && entry.boundingClientRect.bottom <= (entry.rootBounds?.top ?? 0) + 1;
-      toTop.toggleAttribute('data-visible', past);
-      toTop.inert = !past;
+      pastStory = !entry.isIntersecting && entry.boundingClientRect.bottom <= (entry.rootBounds?.top ?? 0) + 1;
+      sync();
     },
     { rootMargin: '-40% 0px 0px 0px' },
   ).observe(scrolly);
+  // ...and steps aside while the route game's map fills the bottom of the
+  // screen, where it would sit on the map's attribution and crowd the ride.
+  const gameViewport = document.querySelector('[data-game-viewport]');
+  if (gameViewport) {
+    new IntersectionObserver(
+      ([entry]) => {
+        overGameMap = entry.isIntersecting;
+        sync();
+      },
+      { rootMargin: '-85% 0px 0px 0px' },
+    ).observe(gameViewport);
+  }
 
   const hero = document.querySelector<HTMLElement>('.hero__title');
   toTop.addEventListener('click', () => {

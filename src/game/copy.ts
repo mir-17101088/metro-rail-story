@@ -362,6 +362,7 @@ const METRO_ENDS_HERE: Array<(line: string, due: string | null) => string> = [
   (l, d) => `For now, the metro ends here. Once ${l} opens${d ? ` (due ${d})` : ''}, switch here.`,
   (l, d) => `Today you'd step off here and flag down a rickshaw. ${d ? `${l} is due ${d}.` : `${l} has no date yet.`}`,
   (l, d) => `End of today's metro. ${l} picks up from here${d ? `, due ${d}` : ', someday'}.`,
+  (l, d) => `Today, this is where you brave a Bangla Tesla. Hold on tight until ${l} opens${d ? `, due ${d}` : ''}.`,
 ];
 
 /** Where the part of the trip that runs today begins: everything before it is future track. */
@@ -521,6 +522,7 @@ const NO_METRO_YET = [
   "For now, no metro route of any kind makes this trip. Keep your rickshaw fare handy; the road isn't going anywhere.",
   "Until then, no train goes this way. Dhaka's buses and rickshaws remain undefeated on this route.",
   'No metro alternative exists in the meantime. The road still does, horns and all.',
+  "Until then, this trip belongs to buses, rickshaws and Bangla Teslas, some of them even going the right way.",
 ];
 
 /**
@@ -731,16 +733,21 @@ const KAMLAPUR_TITLES = ["Can't wait for Kamlapur?", 'Until Kamlapur opens'];
 const TO_KAMLAPUR: Say2[] = [
   (h) => `Line 6 already gets you as far as Motijheel: ${h.time} and ${h.fare}. Kamlapur is ${h.after!.km} on, ${h.after!.walk} on foot.`,
   (h) => `Ride to Motijheel today (${h.time}, ${h.fare}) and cover the last ${h.after!.km} on foot (${h.after!.walk}). Or let a rickshaw do it.`,
+  (h) =>
+    `Line 6 runs as far as Motijheel today: ${h.time}, ${h.fare}. The last ${h.after!.km} is ${h.after!.walk} on foot, or a Bangla Tesla and a firm grip.`,
 ];
 const FROM_KAMLAPUR: Say2[] = [
   (h) => `Start at Motijheel instead, ${h.before!.km} away, ${h.before!.walk} on foot. Line 6 runs from there today: ${h.time} and ${h.fare} to ${h.b}.`,
   (h) => `Walk or rickshaw the ${h.before!.far} to Motijheel, and Line 6 takes over today: ${h.time}, ${h.fare} to ${h.b}.`,
+  (h) =>
+    `Motijheel is ${h.before!.km} away: ${h.before!.walk} on foot, or one Bangla Tesla ride if your nerves allow. Line 6 runs from there today: ${h.time}, ${h.fare} to ${h.b}.`,
 ];
 
 /** Motijheel to Kamlapur, or back: no train until the station opens, but hardly a trip. */
 const KAMLAPUR_HOP: Array<(km: string, walk: string, saved: string) => string> = [
   (km, walk) => `Until it opens, Motijheel and Kamlapur are ${km} apart: ${walk} on foot, or one short rickshaw ride.`,
   (_km, walk, saved) => `Until then, it's ${walk} on foot. Once the station opens, the metro will save you all of ${saved}.`,
+  (km) => `Until it opens, it's ${km} by road. A Bangla Tesla will do it in no time, one way or another.`,
 ];
 
 /** The note on what of a trip can be ridden today, or null when it all can (or none of it). */
@@ -808,7 +815,7 @@ const THEMES: Theme[] = [
       (t) => `${time(t)}. Blink and you'll miss your stop.`,
       () => 'Over before your cha goes cold.',
       () => 'Barely time to find a seat, let alone warm it.',
-      () => 'Quicker than settling a fare with a rickshaw-wallah.',
+      () => 'Over before a Bangla Tesla has run its second red light.',
     ],
   },
   {
@@ -868,6 +875,7 @@ const THEMES: Theme[] = [
       () => 'Pocket change for skipping the jam.',
       () => 'Cheap enough to do twice. You probably will: there and back.',
       (t) => `${fare(t)}, and not a single horn included.`,
+      () => 'A fixed fare on a fixed track. A Bangla Tesla offers neither.',
     ],
   },
   {
@@ -878,6 +886,7 @@ const THEMES: Theme[] = [
       (t) => `${fare(t)} to skip the jam entirely.`,
       () => 'Worth every taka if your evening matters to you.',
       () => "No haggling, and no meter that's 'broken today'.",
+      () => 'Worth it to skip the Bangla Tesla slalom on the main road.',
     ],
   },
   {
@@ -938,6 +947,19 @@ const THEMES: Theme[] = [
     ],
   },
   {
+    // The battery rickshaws that have taken over Dhaka's side streets: electric,
+    // everywhere, and not known for their respect for the rules of the road.
+    name: 'tesla',
+    when: () => true,
+    lines: [
+      () => 'Electric, like a Bangla Tesla. Unlike one, it stays on its own track.',
+      () => "Dhaka's other electric fleet. This one comes with brakes and a timetable.",
+      () => 'Every signal obeyed. Bangla Teslas, take notes.',
+      (t) => `${time(t)} on electric power, without once mounting the footpath.`,
+      () => 'Faster than a Bangla Tesla, and nobody overtakes on the wrong side.',
+    ],
+  },
+  {
     name: 'walk',
     when: (t) => t.e.km >= 3,
     lines: [
@@ -955,6 +977,7 @@ const THEMES: Theme[] = [
     lines: [
       (t) => `It's only ${kmText(t.e.km)}: ${mins(onFoot(t))} on foot, if the heat allows.`,
       (t) => `Honestly? ${kmText(t.e.km)} is walkable in ${mins(onFoot(t))}. But it's Dhaka, and it's hot.`,
+      (t) => `${kmText(t.e.km)} is ${mins(onFoot(t))} on foot. Mind the Bangla Teslas on the footpath.`,
     ],
   },
   {

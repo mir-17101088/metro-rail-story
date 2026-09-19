@@ -524,17 +524,129 @@ a {
   view-timeline: --hero block;
 }
 
+/*
+ * The headline, in three tiers and one colour. The subject sits on top as a
+ * small, widely tracked sans line between two hairlines, like a section flag
+ * on a front page; under it the argument in large serif, one phrase to a line
+ * ("Essential Transport," / "Escalating Costs"), so the two halves stack as a
+ * matched pair.
+ *
+ * Both tiers size off the tighter of the screen's two sides, like the loading
+ * screen: the width on a phone held upright, the height on a laptop or a phone
+ * turned sideways. "Essential Transport," is about 8.4em wide, so 10vw keeps
+ * each phrase on its line from a 280px phone up, inside the page gutters;
+ * 11vh keeps the block in proportion on short screens, and the cap stops it
+ * swallowing a 4K display. Should a phrase ever run out of room (a very large
+ * minimum font size, say), it wraps, balanced, instead of overflowing.
+ */
 .hero__title {
-  max-width: 24ch;
+  display: grid;
+  justify-items: center;
+  max-width: 100%;
   font-family: var(--serif);
-  font-size: clamp(2.375rem, 1.4rem + 3.6vw, 4.75rem);
+  font-size: clamp(1.75rem, min(10vw, 11vh), 6.5rem);
   font-weight: 500;
   line-height: 1.04;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.018em;
   text-align: center;
-  text-wrap: balance;
   pointer-events: auto;
+}
+
+/*
+ * The words run about 15.6em wide. On a phone they sit at 12px and the tracks
+ * take whatever width is left, so the line spans the column without ever
+ * pushing past it (down to a 280px phone). Should even that not fit, the
+ * tracks give way first and the words wrap last.
+ */
+.hero__kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  gap: clamp(0.625rem, 1.8vw, 1.125rem);
+  font: 700 clamp(0.75rem, min(2.7vw, 3.1vh), 1.375rem) / 1.2 var(--sans);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/*
+ * Either side, a stretch of track running into a station: the page's own map
+ * language (a solid line, a hollow stop) in the headline's one colour. Both
+ * draw in towards the words as the loading screen lifts, like trains pulling
+ * into the same station from opposite ends.
+ */
+.hero__kicker::before,
+.hero__kicker::after {
+  --stop: 0.62em;
+  content: '';
+  flex: 0 1 auto;
+  width: clamp(1.125rem, (100vw - 16.5rem) / 2, 4.75rem);
+  min-width: 0.75rem;
+  height: var(--stop);
+  background:
+    radial-gradient(circle closest-side, var(--ink) 48%, currentcolor 54% 86%, transparent 94%) var(--stop-at) / var(--stop)
+      var(--stop) no-repeat,
+    linear-gradient(currentcolor, currentcolor) var(--run-at) / calc(100% - var(--stop) / 2) max(2px, 0.12em) no-repeat;
+  animation: kicker-track-in 900ms var(--ease-out) 260ms both;
+}
+
+.hero__kicker::before {
+  --stop-at: right center;
+  --run-at: left center;
+}
+
+/* Tracking also trails the last letter: pulled in so both stops sit the same distance from the words. */
+.hero__kicker::after {
+  --stop-at: left center;
+  --run-at: right center;
+  margin-left: -0.26em;
+  animation-name: kicker-track-in-right;
+}
+
+@keyframes kicker-track-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes kicker-track-in-right {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+
+  to {
+    clip-path: inset(0);
+  }
+}
+
+.hero__line {
+  display: block;
+  max-width: 100%;
+  text-wrap: balance;
+}
+
+/* Space under the subject, in the headline's own em: it grows and shrinks with the headline. */
+.hero__kicker + .hero__line {
+  margin-top: 0.28em;
+}
+
+.hero__kicker,
+.hero__line {
   animation: hero-in 900ms var(--ease-out) both;
+}
+
+/* The tiers rise one after another as the loading screen lifts. */
+.hero__line {
+  animation-delay: 110ms;
+}
+
+.hero__line + .hero__line {
+  animation-delay: 200ms;
 }
 
 @keyframes hero-in {
@@ -550,7 +662,10 @@ a {
 }
 
 /* The headline waits behind the loading screen and rises as it lifts. */
-.js:not(.is-ready) .hero__title {
+.js:not(.is-ready) .hero__kicker,
+.js:not(.is-ready) .hero__kicker::before,
+.js:not(.is-ready) .hero__kicker::after,
+.js:not(.is-ready) .hero__line {
   animation-play-state: paused;
 }
 
@@ -766,12 +881,11 @@ a {
     animation-range: exit 0% exit 70%;
   }
 
+  /* The tiers rise in on their own; the headline as a whole leaves with the scroll. */
   .hero__title {
-    animation:
-      hero-in 900ms var(--ease-out) both,
-      hero-exit linear both;
-    animation-timeline: auto, view(block);
-    animation-range: normal, cover 50% cover 72%;
+    animation: hero-exit linear both;
+    animation-timeline: view(block);
+    animation-range: cover 50% cover 72%;
   }
 
   .stage__scrim {
@@ -1553,6 +1667,16 @@ a {
   transform: none;
 }
 
+/*
+ * Phones put the story map's controls top right (the explorer sheet has the
+ * bottom). Under the fixed masthead they sat behind the menu button: the
+ * Mapbox wordmark half hidden, the attribution button out of reach. Mapbox's
+ * terms require both to stay visible, so that corner starts below it.
+ */
+.stage .mapboxgl-ctrl-top-right {
+  top: var(--masthead-h);
+}
+
 .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
   background: rgb(15 20 26 / 0.72);
   color: var(--text-3);
@@ -1563,38 +1687,84 @@ a {
   color: var(--text-2);
 }
 
-.mapboxgl-ctrl-attrib.mapboxgl-compact {
-  background: rgb(238 241 244 / 0.9);
+/*
+ * Both maps credit Mapbox the same way, one mark in each bottom corner: the
+ * wordmark bottom left, the attribution folded into its (i) button bottom
+ * right. Both are as small and quiet as mapbox draws them and tucked tight
+ * into their corners; anything the story lays over the map (the cards, the
+ * explorer, the route game's panels) sits above them.
+ *
+ * The (i) is a dark disc with a light glyph rather than mapbox's white one,
+ * so it does not shout on a night map, and its opened credits read light on
+ * dark. (Three classes: mapbox-gl.css loads after this file and would win a tie.)
+ */
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib.mapboxgl-compact {
+  background: rgb(15 20 26 / 0.72);
+  box-shadow: 0 0 0 1px var(--rule-strong);
 }
 
-:is(.stage, .game__viewport) .mapboxgl-ctrl-group:not(:empty) {
+.mapboxgl-ctrl.mapboxgl-ctrl-attrib.mapboxgl-compact .mapboxgl-ctrl-attrib-button {
+  background-color: transparent;
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+/* Level with the wordmark opposite, which mapbox insets 6px. */
+.stage .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl,
+.game__viewport .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl {
+  margin: 0 6px 6px 0;
+}
+
+/*
+ * The stage is 100lvh tall, so on a phone its bottom edge starts out behind
+ * the browser's toolbar. The two credits follow the part of it on screen.
+ */
+@supports (height: 1dvh) {
+  .stage .mapboxgl-ctrl-bottom-left,
+  .stage .mapboxgl-ctrl-bottom-right {
+    bottom: calc(100lvh - 100dvh);
+  }
+}
+
+/*
+ * The zoom buttons on both maps. Selectors spelled out rather than grouped in
+ * :is(), which Chrome only learned in version 88: an older phone would drop
+ * the whole rule and draw dark icons on the dark buttons.
+ */
+.stage .mapboxgl-ctrl-group:not(:empty),
+.game__viewport .mapboxgl-ctrl-group:not(:empty) {
   border-radius: 0;
   background: rgb(15 20 26 / 0.92);
   box-shadow: 0 0 0 1px var(--rule-strong);
   transition: opacity 240ms ease;
 }
 
-:is(.stage, .game__viewport) .mapboxgl-ctrl-group button {
+.stage .mapboxgl-ctrl-group button,
+.game__viewport .mapboxgl-ctrl-group button {
   width: 2.25rem;
   height: 2.25rem;
   transition: background-color 160ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.stage, .game__viewport) .mapboxgl-ctrl-group button:not(:disabled):hover {
+  .stage .mapboxgl-ctrl-group button:not(:disabled):hover,
+  .game__viewport .mapboxgl-ctrl-group button:not(:disabled):hover {
     background-color: rgb(238 241 244 / 0.08);
   }
 }
 
-:is(.stage, .game__viewport) .mapboxgl-ctrl-group button + button {
+.stage .mapboxgl-ctrl-group button + button,
+.game__viewport .mapboxgl-ctrl-group button + button {
   border-top-color: var(--rule);
 }
 
-:is(.stage, .game__viewport) .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+.stage .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon,
+.game__viewport .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
   filter: invert(1);
 }
 
-:is(.stage, .game__viewport):not([data-interactive]) .mapboxgl-ctrl-group:not(:empty) {
+.stage:not([data-interactive]) .mapboxgl-ctrl-group:not(:empty),
+.game__viewport:not([data-interactive]) .mapboxgl-ctrl-group:not(:empty) {
   opacity: 0;
   pointer-events: none;
 }
@@ -1916,7 +2086,9 @@ a {
 }
 
 /* A section jump draws them all first, so the page lands exactly where it aims (see src/nav.ts). */
-[data-jumping] :is(.timeline, .costs, .site-footer) {
+[data-jumping] .timeline,
+[data-jumping] .costs,
+[data-jumping] .site-footer {
   content-visibility: visible;
 }
 
@@ -2083,7 +2255,11 @@ a {
 /* ------------------------------------------------------------ reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__title {
+  .hero__title,
+  .hero__kicker,
+  .hero__kicker::before,
+  .hero__kicker::after,
+  .hero__line {
     animation: none;
   }
 

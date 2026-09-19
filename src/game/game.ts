@@ -5,6 +5,7 @@ import '../styles/game.css';
 import type { PaddingOptions } from 'mapbox-gl/esm';
 import { LINES, type LineId } from '../data/lines';
 import { prefersReducedMotion } from '../lib/motion';
+import { mapUnsupportedReason } from '../map/support';
 import type { MapToken } from '../map/token';
 import * as copy from './copy';
 import type { GameMap } from './game-map';
@@ -21,7 +22,7 @@ import { findDatedRoute, findRoutes, readiness, type Route } from './routes';
  * - exactly one route: the ride plays straight away;
  * - several: they are listed, fewest changes first, and the chosen one plays.
  *
- * The page logic here works without the map (no WebGL, no token, or reduced
+ * The page logic here works without the map (no WebGL 2, no token, or reduced
  * motion): the reader then gets the result card without the ride. The map
  * itself (mapbox, the train) is a separate chunk, loaded as the section nears
  * the screen.
@@ -32,7 +33,6 @@ type Phase = 'idle' | 'half' | 'walk' | 'none' | 'choose' | 'play' | 'done';
 interface Options {
   /** The page's shared Mapbox token request. */
   token: () => Promise<MapToken>;
-  webgl: boolean;
 }
 
 const WIDE = window.matchMedia('(min-width: 1024px)');
@@ -413,7 +413,8 @@ export class Game {
 
   private loadMap(): Promise<GameMap | null> {
     this.mapLoad ??= (async () => {
-      if (!this.options.webgl) throw new Error('WebGL is not available');
+      const unsupported = mapUnsupportedReason();
+      if (unsupported) throw new Error(unsupported);
       const [token, module] = await Promise.all([this.options.token(), import('./game-map')]);
       const map = await module.createGameMap({
         container: this.mapContainer,
@@ -421,6 +422,10 @@ export class Game {
         token,
         padding: () => this.padding(),
         onPick: (id) => this.pickFromMap(id),
+        // A turned phone gets its view framed again; a ride in progress frames itself every frame.
+        onResize: () => {
+          if (this.phase !== 'play') this.applyToMap();
+        },
       });
       this.map = map;
       if (import.meta.env.DEV) Object.assign(window, { __gameMap: map });
@@ -522,7 +527,10 @@ export class Game {
     this.clockCaption = caption;
     this.clockMinute = from;
     if (this.clockElement) this.clockElement.textContent = String(from);
+    // Edge colours: the line being left on the left, the line ridden or boarded on the right.
+    const first = caption.lines[0];
     const last = caption.lines[caption.lines.length - 1];
+    this.caption.style.setProperty('--c-from', `var(--line-${first.toLowerCase()})`);
     this.caption.style.setProperty('--c', `var(--line-${last.toLowerCase()})`);
     this.caption.hidden = false;
     this.caption.inert = false;
