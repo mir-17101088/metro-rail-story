@@ -147,7 +147,12 @@ export const HINT = {
     'Lovely spot. And where are you coming from?',
     'Destination set. Where does the trip begin?',
   ],
+  /** Wide screens, while the route options wait in the middle of the map. */
+  choose: 'Pick one of the routes on the map to start the ride.',
 } as const;
+
+/** Over the route options when they wait in the middle of the map. */
+export const OPTIONS_KICKER = 'Choose a route';
 
 /* ------------------------------------------------------------- options */
 

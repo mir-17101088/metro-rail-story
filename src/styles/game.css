@@ -422,6 +422,91 @@
   line-height: 1.3;
 }
 
+/* Only over the card in the middle of the map (below). */
+.game-options__kicker {
+  display: none;
+}
+
+/*
+ * Wide screens: a choice of routes waits in a card in the middle of the map
+ * until one is picked (see Game.placeOptions), centred in the map area clear
+ * of the panel like the ride's caption, with the map dimmed around it so the
+ * choice reads as the next step. The dimming is the card's own shadow, clipped
+ * by the viewport: the map behind stays live, so hovering an option still
+ * previews it and a station can still be tapped.
+ */
+.game-options[data-centered] {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: calc(var(--panel-space) + (100% - var(--panel-space)) / 2);
+  width: min(30rem, calc(100% - var(--panel-space) - 2.5rem));
+  max-height: calc(100% - 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 1.125rem 1.25rem 1.25rem;
+  background: rgb(15 20 26 / 0.97);
+  border: 1px solid var(--rule-strong);
+  box-shadow:
+    0 1.25rem 2.5rem -1rem rgb(4 7 10 / 0.75),
+    0 0 0 100vmax rgb(15 20 26 / 0.42);
+  font-family: var(--sans);
+  transform: translate(-50%, -50%);
+  animation: choose-in 380ms var(--ease-out) both;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(238 241 244 / 0.22) transparent;
+}
+
+@keyframes choose-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 0.75rem));
+  }
+}
+
+/* The same flag as "Pick a station" over the game: Line 6's running dot. */
+.game-options[data-centered] .game-options__kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.game-options[data-centered] .game-options__kicker::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--line-6);
+  box-shadow: 0 0 0 3px rgb(93 220 165 / 0.2);
+}
+
+/* In the card the heading speaks in the story's voice, like the result card's. */
+.game-options[data-centered] .game-options__title {
+  font-family: var(--serif);
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.game-options[data-centered] .game-options__text {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.game-options[data-centered] .game-options__list {
+  margin-top: 0.875rem;
+}
+
 .game-options__text {
   margin-top: 0.125rem;
   font-size: 0.8125rem;
@@ -1375,7 +1460,8 @@
     animation: none;
   }
 
-  .game-result {
+  .game-result,
+  .game-options[data-centered] {
     animation-name: result-fade;
   }
 

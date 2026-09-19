@@ -204,6 +204,9 @@ export class Game {
     this.optionsList.addEventListener('pointerleave', () => this.preview(null));
     this.optionsList.addEventListener('focusin', (event) => this.preview(this.routeFrom(event.target)));
     this.optionsList.addEventListener('focusout', () => this.preview(null));
+
+    // A window crossing the breakpoint moves a waiting choice between the map and the panel.
+    WIDE.addEventListener('change', () => this.render());
   }
 
   private commit(field: 'from' | 'to', id: string | null, source: CommitSource): void {
@@ -437,10 +440,9 @@ export class Game {
       this.mapFailed = true;
       this.root.setAttribute('data-map-failed', '');
       this.fallback.hidden = false;
-      if (this.phase === 'idle') {
-        this.hintText = copy.HINT.idleNoMap;
-        this.render();
-      }
+      if (this.phase === 'idle') this.hintText = copy.HINT.idleNoMap;
+      // Without a map there is no middle of it: a waiting choice goes back under the fields.
+      this.render();
       return null;
     });
     return this.mapLoad;
@@ -474,12 +476,36 @@ export class Game {
   private render(): void {
     this.root.dataset.phase = this.phase;
     this.resetButton.hidden = !(this.from || this.to);
-    this.hint.textContent = this.hintText;
-    this.hint.hidden = !this.hintText;
+    this.placeOptions();
+    // With the choice out on the map, the panel says where it went.
+    const hint = this.optionsList.hasAttribute('data-centered') ? copy.HINT.choose : this.hintText;
+    this.hint.textContent = hint;
+    this.hint.hidden = !hint;
     for (const button of this.optionsList.querySelectorAll<HTMLElement>('[data-route]')) {
       const route = this.routes[Number(button.dataset.route)];
       button.setAttribute('aria-pressed', String(Boolean(route && route.key === this.active?.key)));
     }
+  }
+
+  /**
+   * Wide screens: while a choice of routes is waiting to be made, the options
+   * leave the panel for a card in the middle of the map, which is where the
+   * reader is looking once both stations are in. Tucked under the fields they
+   * were easy to miss, and nothing moves until one is picked. Once a route is
+   * chosen they go back under the fields, clear of the ride, where another
+   * can still be tried. Phones keep them under the fields throughout: there
+   * the panel sits directly above the map, in plain view.
+   */
+  private placeOptions(): void {
+    const list = this.optionsList;
+    const center = WIDE.matches && this.phase === 'choose' && !this.mapFailed;
+    if (list.hasAttribute('data-centered') === center) return;
+    // Moving an element drops focus from inside it: carry it along for keyboard readers.
+    const focused = list.contains(document.activeElement) ? (document.activeElement as HTMLElement) : null;
+    if (center) this.viewport.insertBefore(list, this.caption);
+    else this.panel.insertBefore(list, this.live);
+    list.toggleAttribute('data-centered', center);
+    focused?.focus({ preventScroll: true });
   }
 
   private renderOptions(): void {
@@ -494,6 +520,7 @@ export class Game {
       .map((route, i) => `<li>${routeButton(route, `data-route="${i}" aria-pressed="false"`, tags[i])}</li>`)
       .join('');
     this.optionsList.innerHTML = `
+      <p class="game-options__kicker">${esc(copy.OPTIONS_KICKER)}</p>
       <p class="game-options__title">${esc(heading.title)}</p>
       <p class="game-options__text">${copy.toHtml(heading.text)}</p>
       <ul class="game-options__list" role="list">${items}</ul>`;
